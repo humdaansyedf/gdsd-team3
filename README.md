@@ -1,4 +1,4 @@
-# global-dist-software-dev-team3
+# Global Distributed Software Development Team 3
 ## The Team
 
 | Student Name |            Student email            | GitHub Username |
