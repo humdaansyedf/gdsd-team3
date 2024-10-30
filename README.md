@@ -7,5 +7,5 @@
 | Masood Ahmed Mohiuddin | masood-ahmed.mohiuddin@informatik.hs-fulda.de |masood-ahmed-mohiuddin |
 | Muhammad Zaid Akhter | muhammad-zaid.akhter@informatik.hs-fulda.de | fd-zaidakhterr |
 | Andrii Kuripka | andrii.kuripka@informatik.hs-fulda.de| andrii-kuripka-hs |
-|              |                                     |                 |
+| Zubeena Shireen Sheikh | zubeena-shireen.sheikh@informatik.hs-fulda.de | Shireen527 |
 |              |                                     |                 |
