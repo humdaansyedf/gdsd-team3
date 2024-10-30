@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masood Ahmed</title>
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAaVBMVEVHcEz////////////////////////////////////////////y+e////////////9xv0Nmuy9tvjxiuSfy+e5pvDT6/fmRzHLB4bF2wUqp1pLT6siBxlvq9eXf8Nfb7tKe0YOz26BXtg9X5hTVAAAAD3RSTlMAFePQPWCh9SUJwn3sUIssNxMFAAABKElEQVQokY2S2XLDIAxFHcdrOo0AsS9e8v8fWRzAdZx0pvcF2Wd0EZKq6l9quhqi6q55Q9897OrbV3aDF10PaOzhrMsO3xnAmNn1AyvO7RZPXMpZO72GQtvddHIPaxGdFw8nM30+YgsoLNoyEQihgfLf1G4LUMG0MsoZERx9grfsKjFShygJMZxSt/tuh1y49jJ47oXnlC3lNZfnqZVhdI2FrRYMkgSHDBUjjDJUegqxHFfgmDIFVZwLJgSl6PXewhSImS+UECYYIUSYkAvKA1EYf1O7XWA8w5Aa2CZoMWZMPDKc4VncV1UVX3DCcIvx1hlgXmRqX3UvrZbWGKXL1/3vcUKf5zl8gsO+eO/ssILD2XmojuqOqDsv7vhVJ1LfxzNL7k3z4vcDrEglVA8jHjoAAAAASUVORK5CYII=" type="image/x-icon" />
+    <style>
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .disclaimer-card {
+            max-width: 900px;
+            background-color: #ddfbcb;
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+            animation: gradientFadeIndis 1.5s ease forwards;
+        }
+
+        .disclaimer-card img {
+            width: 280px;
+            height: 60px;
+            object-fit: cover;
+        }
+
+        .disclaimer-content h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .disclaimer-content p {
+            font-size: 16px;
+            color: #6e6e73;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            animation: gradientFadeIn 1.5s ease forwards;
+            
+        }
+
+        .container img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 12px;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+        }
+
+        .content h1 {
+            font-size: 42px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #6e6e73;
+            margin-bottom: 20px;
+        }
+
+        /* Hobbies Section */
+        .hobbies-container {
+            max-width: 800px;
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: space-between;
+            animation: gradientFadeIn 1.5s ease forwards;
+        }
+
+        /* Individual Hobby Card */
+        .hobby-card {
+            background: linear-gradient(270deg, #404040, #151218);
+            background-size: 200% 200%; /* Allows for gradient movement */
+            animation: gradientAnimation 5s ease infinite; /* Set duration and repeat */
+            color: #fff; /* Change text color for better visibility */
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center; /* Center align text */
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientFadeIn {
+        0% {
+            opacity: 1;
+            transform: translateY(20px);
+        }
+        100% {
+            background: #ffffff;
+            opacity: 1;
+            transform: translateY(0);
+            }
+        }
+
+        @keyframes gradientFadeIndis {
+        0% {
+            opacity: 1;
+            transform: translateY(20px);
+            background: #e2fd13;
+        }
+        100% {
+            background: #d8f9cf;
+            opacity: 1;
+            transform: translateY(0);
+            }
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!--disclaimer-->
+    <div class="disclaimer-card">
+        <img src="https://www.hs-fulda.de/assets/images/hs-fulda_logo_rechteckig_gruen-schwarz_keinhintergrund_keineschutzzone_RGB.svg" alt="Disclaimer Icon">
+        <div class="disclaimer-content">
+            <h2>Disclaimer</h2>
+            <p>This website is part of a Software Engineering Project for Fulda University of Applied Sciences, Fall 2024. It is intended for demonstration purposes only.</p>
+        </div>
+    </div>
+
+    <!-- Portfolio Section -->
+    <div class="container">
+        <img src="https://keenshi.github.io/masood.github.io/assets/img/picrb.png" alt="Masood Ahmed">
+        <div class="content">
+            <h1>Masood Ahmed Mohiuddin</h1>
+            <p>As a passionate frontend developer and master's student in software engineering, I am dedicated to creating user-centered designs that enhance user experiences and drive impactful solutions. My academic journey and hands-on projects have equipped me with a strong foundation in emerging technologies, allowing me to craft innovative applications that address real-world challenges.
+            </p>
+        </div>
+    </div>
+
+    <!-- Hobbies Section -->
+    <div class="hobbies-container">
+        <div class="hobby-card">Coding</div>
+        <div class="hobby-card">Reading</div>
+        <div class="hobby-card">Traveling</div>
+        <div class="hobby-card">Photography</div>
+        <div class="hobby-card">Fitness</div>
+    </div>
+
+    
+
+</body>
+</html>
