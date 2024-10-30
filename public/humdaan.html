@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Humdaan Syed</title>
+    <style>
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* disclaimer card*/ 
+        .disclaimer-card {
+            background-color: #ddfbcb;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+            animation: fadeIn 1.5s ease forwards;
+        }
+
+        .disclaimer-card img {
+            width: 280px;
+            height: 60px;
+            object-fit: cover;
+        }
+
+        .disclaimer-content h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .disclaimer-content p {
+            font-size: 14px;
+            color: #6e6e73;
+        }
+
+        main {
+            text-align: left;
+            margin: 20px 20px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 5rem;
+            font-weight: bold;
+            line-height: 0.9;
+        }
+
+        p {
+            font-size: 2rem;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .container {
+            height: 100%;
+            width: 100%;
+            padding: 1rem 0;
+            display: grid;
+            place-content: center;
+            
+            .cards {    
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            pointer-events: none;
+            }
+            
+            .card {
+            max-width: 15rem;
+            color: #ffffffda;
+            padding: 1.5rem;
+            background-color: #202022;
+            
+            pointer-events: auto;
+            
+            transform: scale(1);
+            opacity: 1;
+            transition: all 150ms ease-in-out; 
+            
+            display: flex;
+            flex-direction: column;
+            
+            .card-title {
+                position: relative;
+            }
+            
+            .description {
+                font-size: 0.9rem;
+                color: gainsboro;
+            }
+            
+            &:nth-child(even) {
+                transform: translateY(8px);
+            }
+            
+            &:nth-child(n) {
+                transform: rotate(-5deg);
+            }
+            }
+        }
+        
+        .cards:hover > .card:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        .cards:hover > .card:not(:hover) {
+            opacity: 0.5;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            p {
+                font-size: 1.2rem;
+            }
+
+            .contact-btn {
+                padding: 8px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            header div {
+                gap: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .contact-btn {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="disclaimer-card">
+        <img src="https://www.hs-fulda.de/assets/images/hs-fulda_logo_rechteckig_gruen-schwarz_keinhintergrund_keineschutzzone_RGB.svg" alt="Disclaimer Icon">
+        <div class="disclaimer-content">
+            <h2>Disclaimer</h2>
+            <p>This website is part of a Software Engineering Project for Fulda University of Applied Sciences, Fall 2024. It is intended for demonstration purposes only.</p>
+        </div>
+    </div>
+
+    <main>
+        <h1>HUMDAAN SYED </h1>
+        <p>Hello! I'm Humdaan Syed. 
+            <br>I am striving to become a Machine Learning Engineer and have a good few projects demonstrating my expertise with AI and Machine Learning.
+        </p>
+    </main>   
+
+    <div class="container">
+        <div class="cards">
+                <div class="card card-four">
+                    <h2 class="card-title">AI QA System</h2>
+                    <p class="description">
+                        A question-answering system focusing on extracting and answering questions from large digital textbooks.
+                    </p>
+                </div>
+          
+                <div class="card card-four">
+                    <h2 class="card-title">Heart Failure Risk Prediction</h2>
+                    <p class="description">
+                        Designed a customized model with hyperparameter tuning through Azure HyperDrive, and deployed the best-performing model.
+                    </p>
+                </div>
+          
+                <div class="card card-four">
+                    <h2 class="card-title">Stock Price Prediction</h2>
+                    <p class="description">
+                        Applied deep learning techniques to forecast stock prices, using an LSTM (Long Short-Term Memory) model
+                    </p>
+                </div>
+          
+                <div class="card card-four">
+                    <h2 class="card-title">Movie Recommender</h2>
+                    <p class="description">
+                        Deployed a movie recommendation system using Count Vectorizer and Cosine Similarity.
+                    </p>
+                </div>
+        </div>
+      </div>
+
+</body>
+</html>
