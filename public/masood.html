@@ -38,9 +38,12 @@
         }
 
         .disclaimer-card img {
-            width: 280px;
-            height: 60px;
-            object-fit: cover;
+            width: 150px; /* Set a fixed width for the image */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        .disclaimer-content {
+            flex: 1; /* Allow the content to fill the remaining space */
         }
 
         .disclaimer-content h2 {
@@ -67,7 +70,7 @@
             align-items: flex-start;
             margin-bottom: 30px;
             animation: gradientFadeIn 1.5s ease forwards;
-            
+            flex-wrap: wrap; /* Allow wrapping for smaller screens */
         }
 
         .container img {
@@ -103,45 +106,46 @@
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
-            justify-content: space-between;
+            justify-content: center; /* Center align hobby cards */
             animation: gradientFadeIn 1.5s ease forwards;
         }
 
         /* Individual Hobby Card */
         .hobby-card {
             background: linear-gradient(270deg, #404040, #151218);
-            background-size: 200% 200%; /* Allows for gradient movement */
-            animation: gradientAnimation 5s ease infinite; /* Set duration and repeat */
-            color: #fff; /* Change text color for better visibility */
+            background-size: 200% 200%;
+            animation: gradientAnimation 5s ease infinite;
+            color: #fff;
             padding: 20px;
             border-radius: 12px;
-            text-align: center; /* Center align text */
+            text-align: center;
             position: relative;
             overflow: hidden;
+            flex: 1 1 150px; /* Set a base width for hobby cards */
+            max-width: 200px; /* Maximum width for hobby cards */
         }
 
         @keyframes gradientFadeIn {
-        0% {
-            opacity: 1;
-            transform: translateY(20px);
-        }
-        100% {
-            background: #ffffff;
-            opacity: 1;
-            transform: translateY(0);
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
         @keyframes gradientFadeIndis {
-        0% {
-            opacity: 1;
-            transform: translateY(20px);
-            background: #e2fd13;
-        }
-        100% {
-            background: #d8f9cf;
-            opacity: 1;
-            transform: translateY(0);
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+                background: #e2fd13;
+            }
+            100% {
+                background: #d8f9cf;
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -157,11 +161,44 @@
             }
         }
 
+        /* Media Queries */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px; /* Reduced padding for mobile */
+            }
+
+            .disclaimer-card, .container, .hobbies-container {
+                padding: 20px; /* Reduce padding in cards */
+            }
+
+            .container {
+                flex-direction: column; /* Stack elements vertically */
+                align-items: center; /* Center align items */
+            }
+
+            .container img {
+                max-width: 45%; /* Set smaller max-width for mobile view */
+            }
+
+            .hobby-card {
+                flex: 1 1 100%; /* Full width on smaller screens */
+                max-width: none; /* Remove max-width to allow flexibility */
+                margin-bottom: 10px; /* Spacing between cards */
+            }
+
+            .content h1 {
+                font-size: 32px; /* Adjust font size for mobile */
+            }
+
+            .content p {
+                font-size: 14px; /* Adjust paragraph size for mobile */
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!--disclaimer-->
+    <!-- Disclaimer -->
     <div class="disclaimer-card">
         <img src="https://www.hs-fulda.de/assets/images/hs-fulda_logo_rechteckig_gruen-schwarz_keinhintergrund_keineschutzzone_RGB.svg" alt="Disclaimer Icon">
         <div class="disclaimer-content">
@@ -188,8 +225,6 @@
         <div class="hobby-card">Photography</div>
         <div class="hobby-card">Fitness</div>
     </div>
-
-    
 
 </body>
 </html>
