@@ -1,4 +1,5 @@
-const express = require('express');
+const express = require("express");
+const path = require("path");
 const app = express();
 const port = 3000;
 
@@ -7,21 +8,9 @@ app.use(express.json());
 // Middleware for parsing URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// Basic route
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-// Example route with JSON response
-app.get('/api/test', (req, res) => {
-  res.json({
-    message: 'This is a test endpoint',
-    status: 'success'
-  });
-});
+app.use(express.static(path.join(__dirname, "public")));
 
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
-

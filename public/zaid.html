@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Muhammad Zaid Akhter</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background: #f0f2f5;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        animation: fadeDown 1s ease-out;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #2d3436;
+      }
+
+      /* Add these new styles in your <style> tag */
+      .profile-section {
+        text-align: center;
+        margin: 2rem auto;
+        animation: fadeDown 1.2s ease-out;
+      }
+
+      .profile-pic {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .profile-pic:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .about {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 3rem;
+        animation: slideIn 1s ease-out;
+      }
+
+      .interests-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .interest-box {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      /* Individual interest box animations and colors */
+      .coding {
+        background: linear-gradient(135deg, #61dafb, #764abc);
+        color: white;
+        animation: pulse 2s infinite;
+      }
+
+      .football {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+        animation: bounce 2s infinite;
+      }
+
+      .barcelona {
+        background: linear-gradient(135deg, #a90432, #004d98);
+        color: white;
+        animation: shake 3s infinite;
+      }
+
+      .germany {
+        background: linear-gradient(135deg, #000000, #dd0000, #ffce00);
+        color: white;
+        animation: rotate 3s infinite;
+      }
+
+      .food {
+        background: linear-gradient(135deg, #ff7675, #fd79a8);
+        color: white;
+        animation: float 3s infinite;
+      }
+
+      .travel {
+        background: linear-gradient(135deg, #0984e3, #74b9ff);
+        color: white;
+        animation: swing 3s infinite;
+      }
+
+      .movies {
+        background: linear-gradient(135deg, #e84393, #f076b1);
+        color: white;
+        animation: glow 3s infinite;
+      }
+
+      .reading {
+        background: linear-gradient(135deg, #00b894, #00cec9);
+        color: white;
+        animation: scale 2s infinite;
+      }
+
+      /* Animations */
+      @keyframes fadeDown {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(5px);
+        }
+        75% {
+          transform: translateX(-5px);
+        }
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(2deg);
+        }
+        75% {
+          transform: rotate(-2deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(2deg);
+        }
+      }
+
+      @keyframes swing {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(3deg);
+        }
+        75% {
+          transform: rotate(-3deg);
+        }
+      }
+
+      @keyframes glow {
+        0%,
+        100% {
+          box-shadow: 0 0 5px rgba(232, 67, 147, 0.5), 0 0 15px rgba(232, 67, 147, 0.3),
+            0 0 25px rgba(232, 67, 147, 0.2), inset 0 0 5px rgba(232, 67, 147, 0.1);
+          transform: scale(1);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(232, 67, 147, 0.8), 0 0 35px rgba(232, 67, 147, 0.5),
+            0 0 45px rgba(232, 67, 147, 0.3), inset 0 0 15px rgba(232, 67, 147, 0.2);
+          transform: scale(1.02);
+        }
+      }
+
+      @keyframes scale {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(0.95);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="profile-section">
+          <img src="/batman.gif" alt="I'm Batman" class="profile-pic" />
+        </div>
+        <h1>Muhammad Zaid Akhter</h1>
+      </header>
+
+      <section class="about">
+        <p>
+          Hi there! I'm Zaid and I've been working as a software engineer for the past 3 years, mainly as a freelancer
+          on Upwork. During this time, I have successfully delivered projects for businesses of all sizes worldwide,
+          helping them transform their ideas into robust digital solutions.
+        </p>
+        <br />
+        <p>
+          Most of my professional experience has been with technologies such as React.js and Node.js, where I've
+          developed everything from e-commerce platforms to complex web applications. I'm passionate about writing
+          clean, maintainable code and creating intuitive user experiences.
+        </p>
+        <br />
+        <p>
+          Currently, I am studying Global Software Development at Hochschule Fulda in Germany, where I'm expanding my
+          knowledge in international software development practices, cloud computing, and agile methodologies. This
+          unique program is helping me understand diverse perspectives in software development while building a global
+          network of fellow developers.
+        </p>
+      </section>
+
+      <div class="interests-grid">
+        <div class="interest-box coding">
+          <h3>Coding</h3>
+          <p>JavaScript/TypeScript enthusiast, always exploring new frameworks and tools</p>
+        </div>
+        <div class="interest-box football">
+          <h3>Football</h3>
+          <p>Passionate about the beautiful game, both playing and watching</p>
+        </div>
+        <div class="interest-box barcelona">
+          <h3>FC Barcelona</h3>
+          <p>Devoted Culé since childhood. Més que un club!</p>
+        </div>
+        <div class="interest-box germany">
+          <h3>Germany</h3>
+          <p>Exploring German culture, language, and traditions</p>
+        </div>
+        <div class="interest-box food">
+          <h3>Food</h3>
+          <p>Love exploring different cuisines and cooking international dishes</p>
+        </div>
+        <div class="interest-box travel">
+          <h3>Travel</h3>
+          <p>Discovering new places and experiencing different cultures</p>
+        </div>
+        <div class="interest-box movies">
+          <h3>Movies & TV Shows</h3>
+          <p>Enthusiast of compelling storytelling and engaging series</p>
+        </div>
+        <div class="interest-box reading">
+          <h3>Reading</h3>
+          <p>Tech blogs, fiction, and personal development books</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
