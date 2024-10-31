@@ -24,6 +24,7 @@
             padding: 40px;
         }
 
+
         .disclaimer-card {
             max-width: 900px;
             background-color: #ddfbcb;
@@ -36,6 +37,18 @@
             gap: 15px;
             animation: gradientFadeIndis 1.5s ease forwards;
         }
+
+        .back-button {
+            font-size: 24px;
+            margin-right: 10px;
+            text-decoration: none;
+            color: rgb(7, 58, 4); /* You can adjust the color to match your design */
+        }
+
+        .back-button:hover {
+            color: #006400; /* Dark green hover color to match the Fulda University theme */
+        }
+
 
         .disclaimer-card img {
             width: 150px; /* Set a fixed width for the image */
@@ -167,6 +180,19 @@
                 padding: 20px; /* Reduced padding for mobile */
             }
 
+            .disclaimer-card {
+            text-align: center; /* Center align text */
+            }
+
+            .cc{
+                flex-direction: column; /* Stack elements vertically */
+                text-align: center;
+            }
+
+            .disclaimer-card img {
+            margin-bottom: 10px; /* Space between image and text */
+            }
+
             .disclaimer-card, .container, .hobbies-container {
                 padding: 20px; /* Reduce padding in cards */
             }
@@ -200,11 +226,17 @@
 
     <!-- Disclaimer -->
     <div class="disclaimer-card">
-        <img src="https://www.hs-fulda.de/assets/images/hs-fulda_logo_rechteckig_gruen-schwarz_keinhintergrund_keineschutzzone_RGB.svg" alt="Disclaimer Icon">
-        <div class="disclaimer-content">
-            <h2>Disclaimer</h2>
-            <p>This website is part of a Software Engineering Project for Fulda University of Applied Sciences, Fall 2024. It is intended for demonstration purposes only.</p>
-        </div>
+        <a href="https://gdsdteam3.live/" class="back-button">
+            < 
+        </a>
+        <span class="cc">
+            <img src="https://www.hs-fulda.de/assets/images/hs-fulda_logo_rechteckig_gruen-schwarz_keinhintergrund_keineschutzzone_RGB.svg" alt="Disclaimer Icon">
+            <div class="disclaimer-content">
+                <h2>Disclaimer</h2>
+                <p>This website is part of a Software Engineering Project for Fulda University of Applied Sciences, Fall 2024. It is intended for demonstration purposes only.</p>
+            </div>
+        </span>
+        
     </div>
 
     <!-- Portfolio Section -->
