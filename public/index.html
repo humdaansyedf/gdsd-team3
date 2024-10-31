@@ -1,315 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About Us - T3</title>
-    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAaVBMVEVHcEz////////////////////////////////////////////y+e////////////9xv0Nmuy9tvjxiuSfy+e5pvDT6/fmRzHLB4bF2wUqp1pLT6siBxlvq9eXf8Nfb7tKe0YOz26BXtg9X5hTVAAAAD3RSTlMAFePQPWCh9SUJwn3sUIssNxMFAAABKElEQVQokY2S2XLDIAxFHcdrOo0AsS9e8v8fWRzAdZx0pvcF2Wd0EZKq6l9quhqi6q55Q9897OrbV3aDF10PaOzhrMsO3xnAmNn1AyvO7RZPXMpZO72GQtvddHIPaxGdFw8nM30+YgsoLNoyEQihgfLf1G4LUMG0MsoZERx9grfsKjFShygJMZxSt/tuh1y49jJ47oXnlC3lNZfnqZVhdI2FrRYMkgSHDBUjjDJUegqxHFfgmDIFVZwLJgSl6PXewhSImS+UECYYIUSYkAvKA1EYf1O7XWA8w5Aa2CZoMWZMPDKc4VncV1UVX3DCcIvx1hlgXmRqX3UvrZbWGKXL1/3vcUKf5zl8gsO+eO/ssILD2XmojuqOqDsv7vhVJ1LfxzNL7k3z4vcDrEglVA8jHjoAAAAASUVORK5CYII=" type="image/x-icon" />
+    <link
+      rel="icon"
+      href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAaVBMVEVHcEz////////////////////////////////////////////y+e////////////9xv0Nmuy9tvjxiuSfy+e5pvDT6/fmRzHLB4bF2wUqp1pLT6siBxlvq9eXf8Nfb7tKe0YOz26BXtg9X5hTVAAAAD3RSTlMAFePQPWCh9SUJwn3sUIssNxMFAAABKElEQVQokY2S2XLDIAxFHcdrOo0AsS9e8v8fWRzAdZx0pvcF2Wd0EZKq6l9quhqi6q55Q9897OrbV3aDF10PaOzhrMsO3xnAmNn1AyvO7RZPXMpZO72GQtvddHIPaxGdFw8nM30+YgsoLNoyEQihgfLf1G4LUMG0MsoZERx9grfsKjFShygJMZxSt/tuh1y49jJ47oXnlC3lNZfnqZVhdI2FrRYMkgSHDBUjjDJUegqxHFfgmDIFVZwLJgSl6PXewhSImS+UECYYIUSYkAvKA1EYf1O7XWA8w5Aa2CZoMWZMPDKc4VncV1UVX3DCcIvx1hlgXmRqX3UvrZbWGKXL1/3vcUKf5zl8gsO+eO/ssILD2XmojuqOqDsv7vhVJ1LfxzNL7k3z4vcDrEglVA8jHjoAAAAASUVORK5CYII="
+      type="image/x-icon"
+    />
     <style>
-        /* Global Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      /* Global Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Body Styling */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #f5f5f7;
+        color: #1d1d1f;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px; /* Reduced padding for smaller screens */
+      }
+
+      /* Disclaimer Card */
+      .disclaimer-card {
+        max-width: 900px;
+        background-color: #f3faee;
+        padding: 20px;
+        border-radius: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 15px;
+        animation: gradientFadeIndis 1.5s ease forwards;
+        width: 100%; /* Ensures the card takes full width on small screens */
+      }
+
+      .disclaimer-card img {
+        width: 100px; /* Responsive size */
+        height: auto; /* Maintain aspect ratio */
+      }
+
+      .disclaimer-content h2 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      .disclaimer-content p {
+        font-size: 16px;
+        color: #6e6e73;
+      }
+
+      /* Main Container */
+      .container {
+        max-width: 900px;
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 30px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        animation: gradientFadeIn 1.5s ease forwards;
+        flex-direction: row; /* Default to row for larger screens */
+      }
+
+      .container img {
+        width: 100%;
+        max-width: 350px;
+        border-radius: 12px;
+      }
+
+      /* Content Area */
+      .content {
+        flex: 1;
+      }
+
+      .content h1 {
+        font-size: 32px; /* Responsive font size */
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .content p {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #6e6e73;
+        margin-bottom: 20px;
+        text-align: justify;
+      }
+
+      /* Card Container */
+      .card-container {
+        max-width: 900px;
+        padding: 20px;
+        border-radius: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        width: 100%;
+        animation: gradientFadeIn 1.5s ease forwards;
+        justify-content: center;
+      }
+
+      /* Individual Card */
+      .card {
+        flex: 1 1 200px;
+        max-width: 250px;
+        display: flex;
+        align-items: center;
+        background-color: #f3f3f3;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      }
+
+      .card img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 20px;
+      }
+
+      .card-content h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1d1d1f;
+        margin-bottom: 5px;
+      }
+
+      .card-content p {
+        font-size: 14px;
+        color: #6e6e73;
+        margin-bottom: 10px;
+      }
+
+      /* Portfolio Button */
+      .portfolio-button {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #343434;
+        color: #ffffff;
+        border-radius: 8px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .portfolio-button:hover {
+        background-color: #9d9d9d;
+      }
+
+      /* Keyframes for Animations */
+      @keyframes gradientFadeIn {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes gradientFadeIndis {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          background: #d8f9cf;
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .content h1 {
+          font-size: 28px; /* Smaller heading on mobile */
         }
 
-        /* Body Styling */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f5f5f7;
-            color: #1d1d1f;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px; /* Reduced padding for smaller screens */
+        .container {
+          padding: 20px; /* Reduced padding for smaller screens */
+          flex-direction: column; /* Stack vertically on smaller screens */
+          padding: 20px; /* Reduced padding for smaller screens */
+          align-items: center; /* Center items on smaller screens */
         }
 
-        /* Disclaimer Card */ 
         .disclaimer-card {
-            max-width: 900px;
-            background-color: #f3faee;
-            padding: 20px;
-            border-radius: 30px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 15px;
-            animation: gradientFadeIndis 1.5s ease forwards;
-            width: 100%; /* Ensures the card takes full width on small screens */
+          flex-direction: column; /* Stack elements vertically */
+          text-align: center; /* Center align text */
         }
 
         .disclaimer-card img {
-            width: 100px; /* Responsive size */
-            height: auto; /* Maintain aspect ratio */
+          margin-bottom: 10px; /* Space between image and text */
         }
 
-        .disclaimer-content h2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
+        .card {
+          flex: 1 1 150px; /* Smaller cards on mobile */
+          max-width: 100%; /* Full width for smaller screens */
         }
+      }
 
-        .disclaimer-content p {
-            font-size: 16px;
-            color: #6e6e73;
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 900px;
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-            margin-bottom: 30px;
-            animation: gradientFadeIn 1.5s ease forwards;
-            flex-direction: row; /* Default to row for larger screens */
-        }
-
-        .container img {
-            width: 100%;
-            max-width: 350px;
-            border-radius: 12px;
-        }
-
-        /* Content Area */
-        .content {
-            flex: 1;
-        }
-
+      @media (max-width: 480px) {
         .content h1 {
-            font-size: 32px; /* Responsive font size */
-            font-weight: 600;
-            margin-bottom: 20px;
+          font-size: 24px; /* Even smaller heading */
         }
 
         .content p {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #6e6e73;
-            margin-bottom: 20px;
-            text-align: justify;
+          font-size: 12px; /* Smaller text */
         }
 
-        /* Card Container */
-        .card-container {
-            max-width: 900px;
-            padding: 20px;
-            border-radius: 30px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            width: 100%;
-            animation: gradientFadeIn 1.5s ease forwards;
-            justify-content: center; 
+        .disclaimer-content h2 {
+          font-size: 18px; /* Smaller heading in disclaimer */
         }
 
-        /* Individual Card */
-        .card {
-            flex: 1 1 200px;
-            max-width: 250px; 
-            display: flex;
-            align-items: center;
-            background-color: #f3f3f3;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-            transition: box-shadow 0.3s ease;
+        .disclaimer-content p {
+          font-size: 14px; /* Smaller text in disclaimer */
         }
 
-        .card:hover {
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-        }
-
-        .card img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 20px;
-        }
-
-        .card-content h2 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1d1d1f;
-            margin-bottom: 5px;
-        }
-
-        .card-content p {
-            font-size: 14px;
-            color: #6e6e73;
-            margin-bottom: 10px;
-        }
-
-        /* Portfolio Button */
         .portfolio-button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #343434;
-            color: #ffffff;
-            border-radius: 8px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
+          padding: 6px 12px; /* Smaller button padding */
         }
-
-        .portfolio-button:hover {
-            background-color: #9d9d9d;
-        }
-
-        /* Keyframes for Animations */
-        @keyframes gradientFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes gradientFadeIndis {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                background: #d8f9cf;
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .content h1 {
-                font-size: 28px; /* Smaller heading on mobile */
-            }
-
-            .container {
-                padding: 20px; /* Reduced padding for smaller screens */
-                flex-direction: column; /* Stack vertically on smaller screens */
-                padding: 20px; /* Reduced padding for smaller screens */
-                align-items: center; /* Center items on smaller screens */
-            }
-
-            .disclaimer-card {
-                flex-direction: column; /* Stack elements vertically */
-                text-align: center; /* Center align text */
-            }
-
-            .disclaimer-card img {
-                margin-bottom: 10px; /* Space between image and text */
-            }
-
-            .card {
-                flex: 1 1 150px; /* Smaller cards on mobile */
-                max-width: 100%; /* Full width for smaller screens */
-            }
-        }
-
-        @media (max-width: 480px) {
-            .content h1 {
-                font-size: 24px; /* Even smaller heading */
-            }
-
-            .content p {
-                font-size: 12px; /* Smaller text */
-            }
-
-            .disclaimer-content h2 {
-                font-size: 18px; /* Smaller heading in disclaimer */
-            }
-
-            .disclaimer-content p {
-                font-size: 14px; /* Smaller text in disclaimer */
-            }
-
-            .portfolio-button {
-                padding: 6px 12px; /* Smaller button padding */
-            }
-        }
-
-
-        
-        </style>
-    </head>
-    <body>
-        <!-- disclaimer-->
-        <div class="disclaimer-card">
-            <img src="https://www.hs-fulda.de/assets/images/hs-fulda_logo_rechteckig_gruen-schwarz_keinhintergrund_keineschutzzone_RGB.svg" alt="Disclaimer Icon">
-            <div class="disclaimer-content">
-                <h2>Disclaimer</h2>
-                <p>This website is part of a Software Engineering Project for Fulda University of Applied Sciences, Fall 2024. It is intended for demonstration purposes only.</p>
-            </div>
-        </div>
-
-        <!-- About Section -->
-        <div class="container">
-            <img src="https://img.freepik.com/premium-photo/selfie-group-students-working-together-coding-project-with-their-excited_891336-68220.jpg" alt="Team Picture">
-            <div class="content">
-                <h1>About Us</h1>
-                <p>We are a team of five students working together on a project where our mission is to create a website aimed at solving the accommodation challenges faced by students coming to study at Hochschule Fulda in Germany. Recognizing the struggles that many incoming students experience in finding reliable, affordable, and accessible housing, we are developing a platform to streamline the accommodation search process and help them transition smoothly into their new academic life in Fulda.</p>
-            </div>
-        </div>
-
-        <!-- Team Members Section -->
-        <div class="card-container">
-            <div class="card">
-                <img src="https://gdsdteam3.live/shireen.jpg" alt="Shireen">
-                <div class="card-content">
-                    <h2>Shireen</h2>
-                    <p>Team Lead</p>
-                    <a href="https://gdsdteam3.live/shireen.html" class="portfolio-button" target="_blank">Portfolio</a>
-                </div>
-            </div>
-
-        <div class="card">
-            <img src="https://gdsdteam3.live/humdaan.jpg" alt="Hums">
-            <div class="card-content">
-                <h2>Humdaan Syed</h2>
-                <p>Git Master</p>
-                <a href="https://gdsdteam3.live/humdaan.html" class="portfolio-button" target="_blank">Portfolio</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="https://gdsdteam3.live/batman.gif" alt="Zaid">
-            <div class="card-content">
-                <h2>Zaid Akhter</h2>
-                <p>Backend Lead</p>
-                <a href="https://gdsdteam3.live/zaid.html" class="portfolio-button" target="_blank">Portfolio</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="https://keenshi.github.io/masood.github.io/assets/img/picrb.png" alt="Masood">
-            <div class="card-content">
-                <h2>Masood Ahmed</h2>
-                <p>Frontend Lead</p>
-                <a href="https://gdsdteam3.live/masood.html" class="portfolio-button" target="_blank">Portfolio</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="https://gdsdteam3.live/andrii.jpg" alt="Andrii">
-            <div class="card-content">
-                <h2>Andrii</h2>
-                <p>Team Member</p>
-                <a href="https://gdsdteam3.live/andrii.html" class="portfolio-button" target="_blank">Portfolio</a>
-            </div>
-        </div>
+      }
+    </style>
+  </head>
+  <body>
+    <!-- disclaimer-->
+    <div class="disclaimer-card">
+      <img
+        src="https://www.hs-fulda.de/assets/images/hs-fulda_logo_rechteckig_gruen-schwarz_keinhintergrund_keineschutzzone_RGB.svg"
+        alt="Disclaimer Icon"
+      />
+      <div class="disclaimer-content">
+        <h2>Disclaimer</h2>
+        <p>
+          This website is part of a Software Engineering Project for Fulda University of Applied Sciences, Fall 2024. It
+          is intended for demonstration purposes only.
+        </p>
+      </div>
     </div>
 
-</body>
+    <!-- About Section -->
+    <div class="container">
+      <img
+        src="https://img.freepik.com/premium-photo/selfie-group-students-working-together-coding-project-with-their-excited_891336-68220.jpg"
+        alt="Team Picture"
+      />
+      <div class="content">
+        <h1>About Us</h1>
+        <p>
+          We are a team of five students working together on a project where our mission is to create a website aimed at
+          solving the accommodation challenges faced by students coming to study at Hochschule Fulda in Germany.
+          Recognizing the struggles that many incoming students experience in finding reliable, affordable, and
+          accessible housing, we are developing a platform to streamline the accommodation search process and help them
+          transition smoothly into their new academic life in Fulda.
+        </p>
+      </div>
+    </div>
 
+    <!-- Team Members Section -->
+    <div class="card-container">
+      <div class="card">
+        <img src="https://gdsdteam3.live/shireen.jpg" alt="Shireen" />
+        <div class="card-content">
+          <h2>Shireen</h2>
+          <p>Team Lead</p>
+          <a href="https://gdsdteam3.live/shireen.html" class="portfolio-button">Portfolio</a>
+        </div>
+      </div>
 
+      <div class="card">
+        <img src="https://gdsdteam3.live/humdaan.jpg" alt="Hums" />
+        <div class="card-content">
+          <h2>Humdaan Syed</h2>
+          <p>Git Master</p>
+          <a href="https://gdsdteam3.live/humdaan.html" class="portfolio-button">Portfolio</a>
+        </div>
+      </div>
 
+      <div class="card">
+        <img src="https://gdsdteam3.live/batman.gif" alt="Zaid" />
+        <div class="card-content">
+          <h2>Zaid Akhter</h2>
+          <p>Backend Lead</p>
+          <a href="https://gdsdteam3.live/zaid.html" class="portfolio-button">Portfolio</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="https://keenshi.github.io/masood.github.io/assets/img/picrb.png" alt="Masood" />
+        <div class="card-content">
+          <h2>Masood Ahmed</h2>
+          <p>Frontend Lead</p>
+          <a href="https://gdsdteam3.live/masood.html" class="portfolio-button">Portfolio</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="https://gdsdteam3.live/andrii.jpg" alt="Andrii" />
+        <div class="card-content">
+          <h2>Andrii</h2>
+          <p>Team Member</p>
+          <a href="https://gdsdteam3.live/andrii.html" class="portfolio-button">Portfolio</a>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
