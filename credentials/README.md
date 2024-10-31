@@ -43,21 +43,30 @@ Steps to deploy manually:
 3. `git pull origin main`
 4. `pm2 restart gdsd`
 
----
-
 # Project Setup
 
 ## Prerequisites
 
+1. **NodeJS v20:** Install from https://nodejs.org/en/download/prebuilt-installer
+
+2. **MySQL v8:** Install either from [mysql.com](https://dev.mysql.com/downloads/) or for an easy setup use
+   [DBngin](https://dbngin.com/)
+
+## Running the project
+
+Steps to run the project on your local machine:
+
+1. Clone the repository
+2. Run `npm install`
+3. Run `npm start`
+4. Open `http://localhost:3000` in your browser to view the project
+
+## Additional Links
+
 1. **Nginx Setup Guide:**
    [How To Set Up a Node.js Application for Production on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-22-04)
 
-2. **NodeJS v20:** Install from https://nodejs.org/en/download/prebuilt-installer
-
-3. **MySQL v8:** Install either from [mysql.com](https://dev.mysql.com/downloads/) or for an easy setup use
-   [DBngin](https://dbngin.com/)
-
-4. **PuTTy (for Windows):**
+2. **PuTTy (for Windows):**
    - Go to the official PuTTY download page.
    - Download the appropriate installer for your system.
    - Run the installer and follow the installation instructions.
