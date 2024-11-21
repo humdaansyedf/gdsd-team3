@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Outlet, Link } from "react-router-dom";
 import { Home } from "./home";
+import { PropertyDetail } from "./property-detail";
 
 const AppLayout = () => {
   return (
@@ -35,6 +36,7 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<Home />} />
+          <Route path="property/:id" element={<PropertyDetail />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

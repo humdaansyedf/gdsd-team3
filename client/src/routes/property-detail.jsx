@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-export const Home = () => {
+export const PropertyDetail = () => {
+  const { id } = useParams();
   const { data, isLoading, error } = useQuery({
-    queryKey: ["property"],
+    queryKey: ["property", { id }],
     queryFn: async () => {
-      const response = await fetch("/api/property");
+      const response = await fetch(`/api/property/${id}`);
       const data = await response.json();
       return data;
     },
@@ -16,12 +17,7 @@ export const Home = () => {
       <h1>Home</h1>
       {isLoading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
-      {data &&
-        data.map((property) => (
-          <div key={property.id}>
-            <Link to={`/property/${property.id}`}>{property.title}</Link>
-          </div>
-        ))}
+      {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
     </div>
   );
 };
