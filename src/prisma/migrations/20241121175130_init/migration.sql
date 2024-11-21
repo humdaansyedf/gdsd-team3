@@ -1,0 +1,31 @@
+-- CreateTable
+CREATE TABLE `Property` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `address` VARCHAR(191) NOT NULL,
+    `longitude` DOUBLE NOT NULL,
+    `latitude` DOUBLE NOT NULL,
+    `propertyType` ENUM('APARTMENT', 'HOUSE', 'ROOM', 'STUDIO', 'SHARED_ROOM') NOT NULL DEFAULT 'APARTMENT',
+    `floorNumber` INTEGER NULL,
+    `totalFloors` INTEGER NULL,
+    `yearBuilt` INTEGER NULL,
+    `coldRent` DECIMAL(65, 30) NULL,
+    `additionalCosts` DECIMAL(65, 30) NULL,
+    `totalRent` DECIMAL(65, 30) NOT NULL,
+    `caution` DECIMAL(65, 30) NULL,
+    `livingSpaceSqm` DOUBLE NULL,
+    `numberOfRooms` INTEGER NULL,
+    `numberOfBeds` INTEGER NULL,
+    `numberOfBaths` INTEGER NULL,
+    `petsAllowed` BOOLEAN NOT NULL DEFAULT false,
+    `smokingAllowed` BOOLEAN NOT NULL DEFAULT false,
+    `minimumLeaseTerm` INTEGER NULL,
+    `maximumLeaseTerm` INTEGER NULL,
+    `liveFrom` DATETIME(3) NULL,
+    `availableFrom` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

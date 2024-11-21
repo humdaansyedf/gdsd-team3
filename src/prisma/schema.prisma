@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  ROOM
+  STUDIO
+  SHARED_ROOM
+}
+
+model Property {
+  id               Int          @id @default(autoincrement())
+  title            String
+  description      String
+  address          String
+  longitude        Float
+  latitude         Float
+  propertyType     PropertyType @default(APARTMENT)
+  floorNumber      Int?
+  totalFloors      Int?
+  yearBuilt        Int?
+  coldRent         Decimal?
+  additionalCosts  Decimal?
+  totalRent        Decimal
+  caution          Decimal?
+  livingSpaceSqm   Float?
+  numberOfRooms    Int?
+  numberOfBeds     Int?
+  numberOfBaths    Int?
+  petsAllowed      Boolean      @default(false)
+  smokingAllowed   Boolean      @default(false)
+  minimumLeaseTerm Int?
+  maximumLeaseTerm Int?
+  liveFrom         DateTime?
+  availableFrom    DateTime
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
