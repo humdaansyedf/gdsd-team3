@@ -18,8 +18,13 @@ export const Home = () => {
       {error && <p>Error: {error.message}</p>}
       {data &&
         data.map((property) => (
-          <div key={property.id}>
-            <Link to={`/property/${property.id}`}>{property.title}</Link>
+          <div key={property.id} className="property-card">
+            <img src={property.image} alt={property.title} />
+            <div>
+              <h4>{property.title}</h4>
+              <p>{property.description.slice(0, 50)}...</p>
+              <Link to={`/property/${property.id}`}>View</Link>
+            </div>
           </div>
         ))}
     </div>

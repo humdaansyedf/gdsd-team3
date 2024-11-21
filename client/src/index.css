@@ -45,3 +45,24 @@ body {
   background-color: #e5e5e5;
   padding: 20px;
 }
+
+.property-card {
+  display: flex;
+  border: 1px solid #e5e5e5;
+  margin-bottom: 20px;
+  width: 400px;
+}
+
+.property-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.property-card div {
+  padding: 5px;
+}
+
+.property-card p {
+  font-size: 14px;
+}

@@ -14,7 +14,7 @@ export const PropertyDetail = () => {
 
   return (
     <div>
-      <h1>Home</h1>
+      <h1>Property Detail</h1>
       {isLoading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
       {data && <pre>{JSON.stringify(data, null, 2)}</pre>}

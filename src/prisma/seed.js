@@ -5,12 +5,15 @@ const { faker } = require("@faker-js/faker");
 const prisma = new PrismaClient();
 
 async function main() {
+  // Clear the database
   await prisma.property.deleteMany();
+  await prisma.propertyMedia.deleteMany();
 
+  // Seed properties
   const properties = [];
   for (let i = 0; i < 100; i++) {
     const property = {
-      title: faker.location.streetAddress() + " - " + faker.lorem.words(3),
+      title: faker.lorem.words(3),
       description: faker.lorem.paragraphs(3),
       postcode: faker.helpers.arrayElement(["36037", "36039", "36041", "36043"]),
       // Fulda region coordinates. Fulda region approximate bounding box:
@@ -27,8 +30,18 @@ async function main() {
     };
     properties.push(property);
   }
-
   await prisma.property.createMany({ data: properties });
+
+  // Seed property media
+  const propertyMedia = [];
+  for (let i = 0; i < 200; i++) {
+    const media = {
+      url: "https://placehold.co/400?text=Placeholder",
+      propertyId: faker.number.int({ min: 1, max: 100 }),
+    };
+    propertyMedia.push(media);
+  }
+  await prisma.propertyMedia.createMany({ data: propertyMedia });
 }
 
 main()

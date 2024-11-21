@@ -9,12 +9,23 @@ propertyRouter.get("/property", async (req, res) => {
   const limit = 50;
   const offset = (page - 1) * limit;
 
-  const property = await prisma.property.findMany({
+  const properties = await prisma.property.findMany({
     take: limit,
     skip: offset,
+    include: {
+      media: true,
+    },
   });
 
-  res.json(property);
+  res.json(
+    properties.map((property) => {
+      const featuredMedia = property.media[0];
+      return {
+        ...property,
+        image: featuredMedia ? featuredMedia.url : "https://via.placeholder.com/150?text=No+Image",
+      };
+    })
+  );
 });
 
 // Route to get a single property
@@ -23,6 +34,9 @@ propertyRouter.get("/property/:id", async (req, res) => {
   const property = await prisma.property.findUnique({
     where: {
       id,
+    },
+    include: {
+      media: true,
     },
   });
 
