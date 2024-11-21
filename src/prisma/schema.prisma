@@ -7,39 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum PropertyType {
-  APARTMENT
-  HOUSE
-  ROOM
-  STUDIO
-  SHARED_ROOM
-}
-
 model Property {
-  id               Int          @id @default(autoincrement())
-  title            String
-  description      String
-  address          String
-  longitude        Float
-  latitude         Float
-  propertyType     PropertyType @default(APARTMENT)
-  floorNumber      Int?
-  totalFloors      Int?
-  yearBuilt        Int?
-  coldRent         Decimal?
-  additionalCosts  Decimal?
-  totalRent        Decimal
-  caution          Decimal?
-  livingSpaceSqm   Float?
-  numberOfRooms    Int?
-  numberOfBeds     Int?
-  numberOfBaths    Int?
-  petsAllowed      Boolean      @default(false)
-  smokingAllowed   Boolean      @default(false)
-  minimumLeaseTerm Int?
-  maximumLeaseTerm Int?
-  liveFrom         DateTime?
-  availableFrom    DateTime
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  id             Int      @id @default(autoincrement())
+  title          String   @db.Text()
+  description    String   @db.Text()
+  postcode       String
+  longitude      Float
+  latitude       Float
+  totalRent      Decimal
+  numberOfRooms  Int
+  petsAllowed    Boolean  @default(false)
+  smokingAllowed Boolean  @default(false)
+  availableFrom  DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
