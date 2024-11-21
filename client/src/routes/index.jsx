@@ -3,15 +3,20 @@ import { Home } from "./home";
 
 const AppLayout = () => {
   return (
-    <div>
-      <header>
-        <Link to="/">NeA</Link>
-      </header>
-      <main>
-        <Outlet />
-      </main>
-      <footer>NeA</footer>
-    </div>
+    <>
+      <div className="disclaimer">
+        Fulda University of Applied Sciences Software Engineering Project, Fall 2024. FOR DEMONSTRATION ONLY.
+      </div>
+      <div className="content">
+        <header>
+          <Link to="/">NeuAnfang</Link>
+        </header>
+        <main>
+          <Outlet />
+        </main>
+        <footer>NeuAnfang</footer>
+      </div>
+    </>
   );
 };
 
