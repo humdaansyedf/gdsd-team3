@@ -19,7 +19,7 @@ export const Home = () => {
       {data &&
         data.map((property) => (
           <div key={property.id} className="property-card">
-            <img src={property.image} alt={property.title} />
+            <img src={property.media} alt={property.title} />
             <div>
               <h4>{property.title}</h4>
               <p>{property.description.slice(0, 50)}...</p>
