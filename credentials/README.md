@@ -38,13 +38,14 @@
 
 Steps to deploy manually:
 
-1. `ssh into the server`
+1. ssh into the server
 2. `cd ~/gdsd`
 3. `git pull origin main`
-4. `npm install`
-5. `npm run build`
-6. `npm run db:migrate`
-7. `pm2 restart gdsd`
+4. update the `.env` file
+5. `npm install`
+6. `npm run build`
+7. `npm run db:migrate`
+8. `pm2 restart gdsd`
 
 # Project Setup
 
