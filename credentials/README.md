@@ -61,9 +61,23 @@ Steps to deploy manually:
 Steps to run the project on your local machine:
 
 1. Clone the repository
-2. Run `npm install`
-3. Run `npm start`
-4. Open `http://localhost:3000` in your browser to view the project
+2. Make sure mysql is running on your machine and create a database named `gdsd`
+3. Create a `.env` file in the root directory of the project and add the following environment variables:
+
+```
+PORT=3000
+NODE_ENV=development
+DATABASE_URL="mysql://root:@localhost:3306/gdsd"
+```
+
+**Note:** The database URL should be in the format `mysql://username:password@host:port/database`. Modify the values
+according to your database setup.
+
+2. Run `npm run setup`. This will install all dependencies for backend and frontend, create the database and run the
+   seed scripts.
+3. Run `npm run dev` to start the project in development mode. This will start the backend server on port 3000 and the
+   frontend server on port 5173.
+4. Open `http://localhost:5173` in your browser to view the project
 
 ## Additional Links
 
@@ -74,3 +88,7 @@ Steps to run the project on your local machine:
    - Go to the official PuTTY download page.
    - Download the appropriate installer for your system.
    - Run the installer and follow the installation instructions.
+
+```
+
+```

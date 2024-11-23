@@ -9,7 +9,8 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "cd client && npm install && npm run build",
     "db:migrate": "prisma migrate reset",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "setup": "npm install && npm run db:migrate && cd client && npm install"
   },
   "keywords": [],
   "author": "",
