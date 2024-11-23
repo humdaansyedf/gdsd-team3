@@ -10,6 +10,24 @@ body {
   min-height: 100vh;
 }
 
+input {
+  padding: 8px;
+  border: 1px solid #e5e5e5;
+  outline: none;
+}
+
+input:focus {
+  border-color: #72bf44;
+}
+
+button {
+  background-color: #72bf44;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
 .disclaimer {
   width: 100%;
   position: fixed;
@@ -50,19 +68,36 @@ body {
   display: flex;
   border: 1px solid #e5e5e5;
   margin-bottom: 20px;
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
 }
 
 .property-card img {
   width: 100px;
   height: 100px;
+  min-width: 100px;
   object-fit: cover;
 }
 
 .property-card div {
-  padding: 5px;
+  padding: 8px;
 }
 
 .property-card p {
   font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.search-form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  gap: 8px;
+}
+
+.search-form input {
+  flex-grow: 1;
 }
