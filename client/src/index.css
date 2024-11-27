@@ -1,0 +1,163 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  width: 100%;
+  min-height: 100vh;
+}
+
+input {
+  padding: 8px;
+  border: 1px solid #e5e5e5;
+  outline: none;
+}
+
+input:focus {
+  border-color: #72bf44;
+}
+
+button {
+  background-color: #72bf44;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.apply-filter {
+  padding: 0.5rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.filter-button {
+  background-color: #8f948c;
+
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  width: 100%;
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+  gap: 1rem;
+}
+
+.filters-section {
+  min-width: 200px;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: min-content;
+}
+
+.filters,
+.column-style {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.column-style {
+  gap: 0.5rem;
+}
+
+.filter-input {
+  margin-left: 0.5rem;
+  width: 100%;
+}
+
+.checkBox {
+  margin-right: 0.5rem;
+}
+
+.main-style {
+  flex: 1;
+}
+
+.date-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.disclaimer {
+  width: 100%;
+  position: fixed;
+  margin: 0 auto;
+  background-color: #72bf44;
+  color: white;
+  text-align: center;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content {
+  padding-top: 40px;
+  outline: 2px solid MediumBlue;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content header {
+  background-color: #e5e5e5;
+  padding: 20px;
+}
+
+.content main {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.content footer {
+  background-color: #e5e5e5;
+  padding: 20px;
+}
+
+.property-card {
+  display: flex;
+  border: 1px solid #e5e5e5;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.property-card img {
+  width: 100px;
+  height: 100px;
+  min-width: 100px;
+  object-fit: cover;
+}
+
+.property-card div {
+  padding: 8px;
+}
+
+.property-card p {
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.search-form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  gap: 8px;
+}
+
+.search-form input {
+  flex-grow: 1;
+}
