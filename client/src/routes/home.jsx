@@ -121,7 +121,7 @@ export const Home = () => {
 
             <div>
               <h4>Earliest available:</h4>
-              <label className="date-field">
+              <label className="filter-input">
                 Date:
                 <input
                   name="availableFrom"
