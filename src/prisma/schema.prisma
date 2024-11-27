@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Property {
+  id             Int      @id @default(autoincrement())
+  title          String   @db.Text()
+  description    String   @db.Text()
+  postcode       String
+  longitude      Float
+  latitude       Float
+  totalRent      Decimal
+  numberOfRooms  Int
+  petsAllowed    Boolean  @default(false)
+  smokingAllowed Boolean  @default(false)
+  availableFrom  DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  media          PropertyMedia[]
+}
+
+model PropertyMedia {
+  id        Int      @id @default(autoincrement())
+  property  Property @relation(fields: [propertyId], references: [id])
+  propertyId Int
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
