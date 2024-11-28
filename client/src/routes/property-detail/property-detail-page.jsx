@@ -1,16 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { useGetPropertyById } from "./property-detail-queries";
 
 export const PropertyDetail = () => {
   const { id } = useParams();
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["property", { id }],
-    queryFn: async () => {
-      const response = await fetch(`/api/property/${id}`);
-      const data = await response.json();
-      return data;
-    },
-  });
+  const { data, isLoading, error } = useGetPropertyById(id);
 
   return (
     <div>

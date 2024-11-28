@@ -3,10 +3,8 @@ const { prisma } = require("../prisma");
 
 const propertyRouter = Router();
 
-// Route to get property
+// Route to get multiple properties
 propertyRouter.post("/property/search", async (req, res) => {
-  console.log(req.body);
-
   const { title, pets, smoking, minPrice, maxPrice, availableFrom, page = 1 } = req.body;
   const limit = 50;
   const offset = (page - 1) * limit;
@@ -19,12 +17,12 @@ propertyRouter.post("/property/search", async (req, res) => {
     };
   }
 
-  if (pets !== undefined) {
-    where.petsAllowed = pets;
+  if (pets) {
+    where.petsAllowed = true;
   }
 
-  if (smoking !== undefined) {
-    where.smokingAllowed = smoking;
+  if (smoking) {
+    where.smokingAllowed = true;
   }
 
   if (minPrice || maxPrice) {
@@ -71,7 +69,7 @@ propertyRouter.post("/property/search", async (req, res) => {
       const featuredMedia = property.media[0];
       return {
         ...property,
-        media: featuredMedia ? featuredMedia.url : "https://via.placeholder.com/150?text=No+Image",
+        media: featuredMedia ? featuredMedia.url : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
       };
     })
   );
