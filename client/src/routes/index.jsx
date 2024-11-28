@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route, Outlet, Link } from "react-router-dom";
-import { Home } from "./home";
-import { PropertyDetail } from "./property-detail";
+import { Home } from "./home/home-page";
+import { PropertyDetail } from "./property-detail/property-detail-page";
 
 const AppLayout = () => {
   return (
     <>
       <div className="disclaimer">
-        Fulda University of Applied Sciences Software Engineering Project, Fall 2024. FOR DEMONSTRATION ONLY.
+        Fulda University of Applied Sciences Software Engineering Project, Fall 2024.
+        <strong>FOR DEMONSTRATION ONLY.</strong>
       </div>
       <div className="content">
         <header>

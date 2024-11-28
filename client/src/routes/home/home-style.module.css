@@ -1,0 +1,118 @@
+.container {
+  display: flex;
+  gap: 2rem;
+  margin-top: 12px;
+}
+
+.filtersSection {
+  width: 20%;
+  min-width: 250px;
+  max-width: 300px;
+  padding: 1rem;
+  border: 1px solid #e5e5e5;
+  height: fit-content;
+  position: sticky;
+  top: 60px;
+  background: #fff;
+}
+
+.filtersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.applyFiltersBtn {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+  flex: 1;
+}
+
+.toggleFiltersBtn {
+  background-color: #8f948c;
+  width: fit-content;
+  padding: 0.25rem;
+  font-size: 12px;
+}
+
+.filters {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterBtns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.checkBox {
+  margin-right: 0.5rem;
+}
+
+.resultsSection {
+  flex: 1;
+}
+
+.propertyCard {
+  display: flex;
+  border: 1px solid #e5e5e5;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 400px;
+  height: 120px;
+}
+
+.propertyCard img {
+  width: 120px;
+  min-width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.propertyCardContent {
+  padding: 8px;
+}
+
+.propertyCard p {
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.propertyCardTags {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.propertyCardTags span {
+  border: 1px solid #72bf44;
+  color: #72bf44;
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 100px;
+}
+
+.propertyCardTags span:first-of-type {
+  border: 1px solid #72bf44;
+  background: #72bf44;
+  color: white;
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 100px;
+}
+
+.propertyCard a {
+  width: fit-content;
+  display: block;
+  margin-left: auto;
+}
