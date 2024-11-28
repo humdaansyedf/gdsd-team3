@@ -83,11 +83,6 @@ button {
   flex: 1;
 }
 
-.date-field {
-  display: flex;
-  flex-direction: column;
-}
-
 .disclaimer {
   width: 100%;
   position: fixed;

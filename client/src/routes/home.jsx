@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
@@ -13,6 +13,10 @@ export const Home = () => {
     availableFrom: "",
   });
   const [showFilters, setShowFilters] = useState(true);
+
+  useEffect(() => {
+    mutation.mutate({ title: "" });
+  }, []);
 
   const handleFilterChange = (e) => {
     const { name, checked, value } = e.target;
@@ -56,7 +60,6 @@ export const Home = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Combine title with filters
     const filterData = {
       title,
       pets: filters.pets,
@@ -118,7 +121,7 @@ export const Home = () => {
 
             <div>
               <h4>Earliest available:</h4>
-              <label className="date-field">
+              <label className="filter-input">
                 Date:
                 <input
                   name="availableFrom"
@@ -182,7 +185,11 @@ export const Home = () => {
         {mutation.data &&
           mutation.data.map((property) => (
             <div key={property.id} className="property-card">
-              <img src={property.media} alt={property.title} />
+              {property.media ? (
+                <img src={property.media} alt={property.title} />
+              ) : (
+                <div>No Image Available</div>
+              )}
               <div>
                 <h4>{property.title}</h4>
                 <p>{property.description.slice(0, 50)}...</p>
