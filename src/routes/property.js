@@ -7,15 +7,7 @@ const propertyRouter = Router();
 propertyRouter.post("/property/search", async (req, res) => {
   console.log(req.body);
 
-  const {
-    title,
-    pets,
-    smoking,
-    minPrice,
-    maxPrice,
-    availableFrom,
-    page = 1,
-  } = req.body;
+  const { title, pets, smoking, minPrice, maxPrice, availableFrom, page = 1 } = req.body;
   const limit = 50;
   const offset = (page - 1) * limit;
 
@@ -51,7 +43,9 @@ propertyRouter.post("/property/search", async (req, res) => {
     }
   }
 
-  const properties = await prisma.property.findMany({
+  let properties = [];
+
+  properties = await prisma.property.findMany({
     take: limit,
     skip: offset,
     where: where,
@@ -60,15 +54,24 @@ propertyRouter.post("/property/search", async (req, res) => {
     },
   });
 
+  // If no properties are found, return all properties
+  if (properties.length === 0) {
+    properties = await prisma.property.findMany({
+      take: limit,
+      skip: offset,
+      include: {
+        media: true,
+      },
+    });
+  }
+
   res.json(
     properties.map((property) => {
       // Get the first media item as the featured image
       const featuredMedia = property.media[0];
       return {
         ...property,
-        media: featuredMedia
-          ? featuredMedia.url
-          : "https://via.placeholder.com/150?text=No+Image",
+        media: featuredMedia ? featuredMedia.url : "https://via.placeholder.com/150?text=No+Image",
       };
     })
   );
