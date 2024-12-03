@@ -27,7 +27,7 @@ jobs:
         run: npm install
 
       - name: Apply migrations
-        run: npm run db:migrate
+        run: npx prisma migrate reset --force
 
       - name: Build app
         run: npm run build
