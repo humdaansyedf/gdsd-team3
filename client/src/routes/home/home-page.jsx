@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Button, Checkbox, TextInput, NumberInput, SimpleGrid } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
+import { useForm } from "@mantine/form";
 import { usePropertySearch } from "./home-queries";
 import classes from "./home-style.module.css";
 
@@ -8,85 +11,102 @@ export const Home = () => {
     title: "",
     pets: false,
     smoking: false,
-    minPrice: "",
-    maxPrice: "",
+    minPrice: 0,
+    maxPrice: 5000,
     availableFrom: "",
   };
   const [showFilters, setShowFilters] = useState(true);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const searchQuery = usePropertySearch(filters);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      title: e.target.title.value,
-      minPrice: e.target.minPrice.value,
-      maxPrice: e.target.maxPrice.value,
-      availableFrom: e.target.availableFrom.value,
-      pets: e.target.pets.checked,
-      smoking: e.target.smoking.checked,
-    }));
-  };
+  const form = useForm({
+    mode: "uncontrolled",
+    initialValues: DEFAULT_FILTERS,
+  });
 
   return (
     <>
       <h1>Home</h1>
-
       <div className={classes.container}>
         <aside className={classes.filtersSection}>
           <div className={classes.filtersHeader}>
             <h2>Filters</h2>
-            <button className={classes.toggleFiltersBtn} type="button" onClick={() => setShowFilters((prev) => !prev)}>
+            <Button size="compact-xs" color="gray" type="button" onClick={() => setShowFilters((prev) => !prev)}>
               {showFilters ? "Hide Filters" : "Show Filters"}
-            </button>
+            </Button>
           </div>
 
           {showFilters && (
             <>
-              <form className={classes.filters} onSubmit={handleSubmit}>
+              <form className={classes.filters} onSubmit={form.onSubmit((values) => setFilters(values))}>
                 <div className={classes.filter}>
                   <h4>Title:</h4>
-                  <input name="title" placeholder="Enter query" />
+                  <TextInput placeholder="Enter query" key={form.key("title")} {...form.getInputProps("title")} />
                 </div>
 
                 <div className={classes.filter}>
                   <h4>Price Range:</h4>
-                  <input type="number" name="minPrice" min={0} max={99999} placeholder="Min Price" />
-                  <input type="number" name="maxPrice" min={0} max={99999} placeholder="Max Price" />
+                  <SimpleGrid cols={2} spacing="xs">
+                    <NumberInput
+                      placeholder="Min. Rent"
+                      min={0}
+                      max={5000}
+                      step={50}
+                      prefix="€"
+                      key={form.key("minPrice")}
+                      {...form.getInputProps("minPrice")}
+                    />
+                    <NumberInput
+                      placeholder="Max. Rent"
+                      min={0}
+                      max={5000}
+                      step={50}
+                      prefix="€"
+                      key={form.key("maxPrice")}
+                      {...form.getInputProps("maxPrice")}
+                    />
+                  </SimpleGrid>
                 </div>
 
                 <div className={classes.filter}>
                   <h4>Earliest available:</h4>
-                  <input name="availableFrom" type="date" />
+                  <DateInput
+                    minDate={new Date()}
+                    key={form.key("availableFrom")}
+                    {...form.getInputProps("availableFrom")}
+                  />
                 </div>
 
                 <div className={classes.filter}>
                   <h4>Additional:</h4>
-                  <label>
-                    <input type="checkbox" name="pets" className={classes.checkBox} />
-                    Pets Allowed
-                  </label>
-                  <label>
-                    <input type="checkbox" name="smoking" className={classes.checkBox} />
-                    Smoking Allowed
-                  </label>
+                  <Checkbox
+                    label="Pets Allowed"
+                    className={classes.checkBox}
+                    key={form.key("pets")}
+                    {...form.getInputProps("pets")}
+                  />
+                  <Checkbox
+                    label="Smoking Allowed"
+                    className={classes.checkBox}
+                    key={form.key("smoking")}
+                    {...form.getInputProps("smoking")}
+                  />
                 </div>
 
                 <div className={classes.filterBtns}>
-                  <button type="submit" className={classes.applyFiltersBtn}>
+                  <Button type="submit" className={classes.applyFiltersBtn}>
                     Search
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    color="gray"
                     type="button"
                     className={classes.resetFiltersBtn}
                     onClick={() => {
+                      form.reset();
                       setFilters(DEFAULT_FILTERS);
                     }}
                   >
                     Reset
-                  </button>
+                  </Button>
                 </div>
               </form>
             </>
