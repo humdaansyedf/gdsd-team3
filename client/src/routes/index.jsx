@@ -6,7 +6,7 @@ const AppLayout = () => {
   return (
     <>
       <div className="disclaimer">
-        Fulda University of Applied Sciences Software Engineering Project, Fall 2024.
+        Fulda University of Applied Sciences GDSD Project, Fall 2024.
         <strong>FOR DEMONSTRATION ONLY.</strong>
       </div>
       <div className="content">
