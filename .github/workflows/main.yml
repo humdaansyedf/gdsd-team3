@@ -1,0 +1,43 @@
+name: GDSD Staging Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to staging
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: Create .env file
+        run: |
+          echo "${{ vars.STAGING_ENV }}" > .env
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Apply migrations
+        run: npm run db:migrate
+
+      - name: Build app
+        run: npm run build
+
+      - name: Upload files
+        uses: easingthemes/ssh-deploy@v5.0.0
+        with:
+          ARGS: -avzr --delete
+          REMOTE_HOST: ${{ secrets.STAGING_REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.STAGING_REMOTE_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.STAGING_REMOTE_KEY }}
+          TARGET: ~/gdsd
+          SCRIPT_AFTER: pm2 restart gdsd
