@@ -2,6 +2,7 @@ require("dotenv").config();
 const path = require("node:path");
 const http = require("node:http");
 const express = require("express");
+const { isDev } = require("./src/lib/utils");
 const { propertyRouter } = require("./src/routes/property");
 
 const port = process.env.PORT || 3000;
@@ -34,7 +35,7 @@ app.use((err, _req, res, _next) => {
 });
 
 // Redirect to the client in development
-if (process.env.NODE_ENV === "development") {
+if (isDev) {
   app.get("/", (_req, res) => {
     res.redirect("http://localhost:5173");
   });
