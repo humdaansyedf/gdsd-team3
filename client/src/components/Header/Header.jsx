@@ -1,14 +1,12 @@
-import { Autocomplete, Burger, Group, Anchor } from "@mantine/core";
+import { Anchor, Autocomplete, Burger, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconSearch } from "@tabler/icons-react";
+import { IconSearch, IconUserCircle } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import classes from "./Header.module.css";
 
 const links = [
-  { link: "/about", label: "Features" },
-  { link: "/pricing", label: "Pricing" },
-  { link: "/learn", label: "Learn" },
-  { link: "/community", label: "Community" },
+  { link: "/login", label: "Login" },
+  { link: "/register", label: "Register" },
 ];
 
 export function Header() {
@@ -42,7 +40,10 @@ export function Header() {
 
         <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
           {items}
+          <IconUserCircle stroke={2} />
         </Group>
+
+
       </div>
     </header>
   );
