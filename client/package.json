@@ -1,0 +1,48 @@
+{
+  "name": "gdsd-client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mantine/carousel": "^7.14.3",
+    "@mantine/charts": "^7.14.3",
+    "@mantine/core": "^7.14.3",
+    "@mantine/dates": "^7.14.3",
+    "@mantine/dropzone": "^7.14.3",
+    "@mantine/form": "^7.14.3",
+    "@mantine/hooks": "^7.14.3",
+    "@mantine/modals": "^7.14.3",
+    "@mantine/notifications": "^7.14.3",
+    "@tanstack/react-query": "^5.61.0",
+    "@tanstack/react-query-devtools": "^5.61.0",
+    "dayjs": "^1.11.13",
+    "embla-carousel-react": "^7.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "recharts": "^2.14.1",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "eslint": "^9.13.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.11.0",
+    "postcss": "^8.4.49",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1",
+    "sass-embedded": "^1.82.0",
+    "vite": "^5.4.10"
+  }
+}
