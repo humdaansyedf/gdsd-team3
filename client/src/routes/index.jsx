@@ -1,22 +1,18 @@
-import { BrowserRouter, Routes, Route, Outlet, Link } from "react-router-dom";
+import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
+import { FooterLinks } from "../Components/Footer/FooterLinks";
+import { HeaderSearch } from "../Components/Header/HeaderSeach";
 import { Home } from "./home/home-page";
 import { PropertyDetail } from "./property-detail/property-detail-page";
 
 const AppLayout = () => {
   return (
     <>
-      <div className="disclaimer">
-        Fulda University of Applied Sciences Software Engineering Project, Fall 2024.
-        <strong>FOR DEMONSTRATION ONLY.</strong>
-      </div>
+      <HeaderSearch> </HeaderSearch> 
       <div className="content">
-        <header>
-          <Link to="/">NeuAnfang</Link>
-        </header>
         <main>
-          <Outlet />
+          <Outlet />                
         </main>
-        <footer>NeuAnfang</footer>
+        <FooterLinks></FooterLinks>
       </div>
     </>
   );

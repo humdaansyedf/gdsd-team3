@@ -1,7 +1,7 @@
 .container {
   display: flex;
   gap: 2rem;
-  margin-top: 12px;
+  margin-top: 5px;
 }
 
 .filtersSection {
