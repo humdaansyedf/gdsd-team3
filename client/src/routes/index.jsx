@@ -1,19 +1,18 @@
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
-import { FooterLinks } from "../Components/Footer/FooterLinks";
-import { HeaderSearch } from "../Components/Header/HeaderSeach";
+import { Container } from "@mantine/core";
+import { Header } from "../components/Header/Header";
+import { Footer } from "../components/Footer/Footer";
 import { Home } from "./home/home-page";
 import { PropertyDetail } from "./property-detail/property-detail-page";
 
 const AppLayout = () => {
   return (
     <>
-      <HeaderSearch> </HeaderSearch> 
-      <div className="content">
-        <main>
-          <Outlet />                
-        </main>
-        <FooterLinks></FooterLinks>
-      </div>
+      <Header />
+      <Container fluid>
+        <Outlet />
+      </Container>
+      <Footer />
     </>
   );
 };

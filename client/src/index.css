@@ -10,37 +10,6 @@ body {
   min-height: 100vh;
 }
 
-input {
-  padding: 8px;
-  border: 1px solid #e5e5e5;
-  outline: none;
-}
-
-input:focus {
-  border-color: #72bf44;
-}
-
-button {
-  background-color: #72bf44;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-a {
-  color: #72bf44;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-a:active {
-  color: #72bf44;
-}
-
 .disclaimer {
   width: 100%;
   position: fixed;
@@ -52,26 +21,4 @@ a:active {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.content {
-  padding-top: 5px;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.content header {
-  background-color: #e5e5e5;
-  padding: 20px;
-}
-
-.content main {
-  padding: 20px;
-  flex-grow: 1;
-}
-
-.content footer {
-  background-color: #e5e5e5;
-  padding: 20px;
 }

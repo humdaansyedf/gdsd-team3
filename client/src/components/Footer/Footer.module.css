@@ -1,22 +1,15 @@
 .footer {
-  --container-size-md: unset; /* Removes the variable locally */
-}
-
-.footer {
-  margin-top: 10px;
+  margin-top: 120px;
   padding-top: calc(var(--mantine-spacing-xl) * 2);
   padding-bottom: calc(var(--mantine-spacing-xl) * 2);
-  padding-left: 0; /* Remove left padding */
-  padding-right: 0; /* Remove right padding */
-  background-color: rgb(217, 242, 179);
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
   border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
 }
 
 .logo {
   max-width: 200px;
-}
-@media (max-width: 1300px) {
-  .logo {
+
+  @media (max-width: $mantine-breakpoint-sm) {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -25,9 +18,8 @@
 
 .description {
   margin-top: 5px;
-}
-@media (max-width: 1300px) {
-  .description {
+
+  @media (max-width: $mantine-breakpoint-sm) {
     margin-top: var(--mantine-spacing-xs);
     text-align: center;
   }
@@ -36,9 +28,8 @@
 .inner {
   display: flex;
   justify-content: space-between;
-}
-@media (max-width: 1300px) {
-  .inner {
+
+  @media (max-width: $mantine-breakpoint-sm) {
     flex-direction: column;
     align-items: center;
   }
@@ -47,9 +38,8 @@
 .groups {
   display: flex;
   flex-wrap: wrap;
-}
-@media (max-width: 1300px) {
-  .groups {
+
+  @media (max-width: $mantine-breakpoint-sm) {
     display: none;
   }
 }
@@ -64,9 +54,10 @@
   font-size: var(--mantine-font-size-sm);
   padding-top: 3px;
   padding-bottom: 3px;
-}
-.link:hover {
-  text-decoration: underline;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .title {
@@ -84,20 +75,15 @@
   margin-top: var(--mantine-spacing-xl);
   padding-top: var(--mantine-spacing-xl);
   padding-bottom: var(--mantine-spacing-xl);
-  padding-left: 0; /* Remove left padding */
-  padding-right: 0; /* Remove right padding */
   border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
-}
-@media (max-width: 1300px) {
-  .afterFooter {
+
+  @media (max-width: $mantine-breakpoint-sm) {
     flex-direction: column;
   }
 }
 
-@media (max-width: 1300px) {
-  .social {
+.social {
+  @media (max-width: $mantine-breakpoint-sm) {
     margin-top: var(--mantine-spacing-xs);
   }
 }
-
-/*# sourceMappingURL=FooterLinks.module.css.map */

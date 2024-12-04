@@ -1,46 +1,45 @@
-import { ActionIcon, Container, Group, Text } from '@mantine/core';
-import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons-react';
-import React from 'react';
+import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from "@tabler/icons-react";
+import { ActionIcon, Container, Group, Text } from "@mantine/core";
 import { Link } from "react-router-dom";
-import classes from './FooterLinks.module.css';
+import classes from "./Footer.module.css";
 
 const data = [
   {
-    title: 'About',
+    title: "About",
     links: [
-      { label: 'Features', link: '#' },
-      { label: 'Pricing', link: '#' },
-      { label: 'Support', link: '#' },
-      { label: 'Forums', link: '#' },
+      { label: "Features", link: "#" },
+      { label: "Pricing", link: "#" },
+      { label: "Support", link: "#" },
+      { label: "Forums", link: "#" },
     ],
   },
   {
-    title: 'Project',
+    title: "Project",
     links: [
-      { label: 'Contribute', link: '#' },
-      { label: 'Media assets', link: '#' },
-      { label: 'Changelog', link: '#' },
-      { label: 'Releases', link: '#' },
+      { label: "Contribute", link: "#" },
+      { label: "Media assets", link: "#" },
+      { label: "Changelog", link: "#" },
+      { label: "Releases", link: "#" },
     ],
   },
   {
-    title: 'Community',
+    title: "Community",
     links: [
-      { label: 'Join Discord', link: '#' },
-      { label: 'Follow on Twitter', link: '#' },
-      { label: 'Email newsletter', link: '#' },
-      { label: 'GitHub discussions', link: '#' },
+      { label: "Join Discord", link: "#" },
+      { label: "Follow on Twitter", link: "#" },
+      { label: "Email newsletter", link: "#" },
+      { label: "GitHub discussions", link: "#" },
     ],
   },
 ];
 
-export function FooterLinks() {
+export function Footer() {
   const groups = data.map((group) => {
     const links = group.links.map((link, index) => (
-      <Text<'a'>
+      <Text
         key={index}
         className={classes.link}
-        component="a"
+        component={Link}
         href={link.link}
         onClick={(event) => event.preventDefault()}
       >
@@ -58,16 +57,16 @@ export function FooterLinks() {
 
   return (
     <footer className={classes.footer}>
-      <Container className={classes.inner}>
+      <Container fluid className={classes.inner}>
         <div className={classes.logo}>
-            <Link to='\'>NeuAnfang</Link>
+          NueAnfang
           <Text size="xs" c="dimmed" className={classes.description}>
             A new beginning
           </Text>
         </div>
         <div className={classes.groups}>{groups}</div>
       </Container>
-      <Container className={classes.afterFooter}>
+      <Container fluid className={classes.afterFooter}>
         <Text c="dimmed" size="sm">
           © 2024 NeuAnfang. All rights reserved.
         </Text>
