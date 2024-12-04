@@ -1,7 +1,8 @@
-import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { Container } from "@mantine/core";
-import { Header } from "../components/Header/Header";
+import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { Footer } from "../components/Footer/Footer";
+import { Header } from "../components/Header/Header";
+import { CardsCarousel } from "../components/corousel/carousel";
 import { Home } from "./home/home-page";
 import { PropertyDetail } from "./property-detail/property-detail-page";
 
@@ -9,6 +10,7 @@ const AppLayout = () => {
   return (
     <>
       <Header />
+      <CardsCarousel />
       <Container fluid>
         <Outlet />
       </Container>
