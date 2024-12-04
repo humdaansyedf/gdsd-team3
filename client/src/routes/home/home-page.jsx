@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Checkbox, TextInput, NumberInput, SimpleGrid } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  TextInput,
+  NumberInput,
+  SimpleGrid,
+  Select,
+} from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { usePropertySearch } from "./home-queries";
@@ -13,6 +20,7 @@ export const Home = () => {
     smoking: false,
     minPrice: 0,
     maxPrice: 5000,
+    searchRadius: "whole area",
     availableFrom: "",
   };
   const [showFilters, setShowFilters] = useState(true);
@@ -30,17 +38,29 @@ export const Home = () => {
         <aside className={classes.filtersSection}>
           <div className={classes.filtersHeader}>
             <h2>Filters</h2>
-            <Button size="compact-xs" color="gray" type="button" onClick={() => setShowFilters((prev) => !prev)}>
+            <Button
+              size="compact-xs"
+              color="gray"
+              type="button"
+              onClick={() => setShowFilters((prev) => !prev)}
+            >
               {showFilters ? "Hide Filters" : "Show Filters"}
             </Button>
           </div>
 
           {showFilters && (
             <>
-              <form className={classes.filters} onSubmit={form.onSubmit((values) => setFilters(values))}>
+              <form
+                className={classes.filters}
+                onSubmit={form.onSubmit((values) => setFilters(values))}
+              >
                 <div className={classes.filter}>
                   <h4>Title:</h4>
-                  <TextInput placeholder="Enter query" key={form.key("title")} {...form.getInputProps("title")} />
+                  <TextInput
+                    placeholder="Enter query"
+                    key={form.key("title")}
+                    {...form.getInputProps("title")}
+                  />
                 </div>
 
                 <div className={classes.filter}>
@@ -73,6 +93,23 @@ export const Home = () => {
                     minDate={new Date()}
                     key={form.key("availableFrom")}
                     {...form.getInputProps("availableFrom")}
+                  />
+                </div>
+
+                <div className={classes.filter}>
+                  <h4>Search radius:</h4>
+                  <Select
+                    placeholder="Whole area"
+                    data={[
+                      "Whole area",
+                      "+5km",
+                      "+10km",
+                      "+20km",
+                      "+100km",
+                      "200km",
+                    ]}
+                    key={form.key("searchRadius")}
+                    {...form.getInputProps("searchRadius")}
                   />
                 </div>
 
@@ -116,11 +153,15 @@ export const Home = () => {
         <div className={classes.resultsSection}>
           {searchQuery.isLoading && <p>Loading...</p>}
           {searchQuery.error && <p>Error: {searchQuery.error.message}</p>}
-
+          {console.log(searchQuery.data)}
           {searchQuery.data &&
             searchQuery.data.map((property) => (
               <div key={property.id} className={classes.propertyCard}>
-                {property.media ? <img src={property.media} alt={property.title} /> : <div>No Image Available</div>}
+                {property.media ? (
+                  <img src={property.media} alt={property.title} />
+                ) : (
+                  <div>No Image Available</div>
+                )}
                 <div className={classes.propertyCardContent}>
                   <h4>{property.title}</h4>
                   <div className={classes.propertyCardTags}>

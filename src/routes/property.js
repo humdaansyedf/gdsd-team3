@@ -5,7 +5,16 @@ const propertyRouter = Router();
 
 // Route to get multiple properties
 propertyRouter.post("/property/search", async (req, res) => {
-  const { title, pets, smoking, minPrice, maxPrice, availableFrom, page = 1 } = req.body;
+  const {
+    title,
+    pets,
+    smoking,
+    minPrice,
+    maxPrice,
+    availableFrom,
+    searchRadius,
+    page = 1,
+  } = req.body;
   const limit = 50;
   const offset = (page - 1) * limit;
 
@@ -41,12 +50,37 @@ propertyRouter.post("/property/search", async (req, res) => {
     }
   }
 
+  var numberPattern = /\d+/g;
+  const radius = searchRadius.match(numberPattern);
+  console.log("searchRadius" + radius);
+
+  // Fulda's coordinates (center of the search area)
+  const fuldaLat = 50.5528;
+  const fuldaLon = 9.6753;
+
+  if (radius != null) {
+    // Convert radius to meters
+    const radiusInMeters = radius * 1000;
+    const query = await prisma.$queryRaw`
+      SELECT id
+      FROM property
+      WHERE ST_Distance_Sphere(
+        POINT(longitude, latitude),
+        POINT(${fuldaLon}, ${fuldaLat})
+      ) <= ${radiusInMeters}
+    `;
+
+    where.id = {
+      in: query.map(({ id }) => id), // Filter properties by the IDs returned
+    };
+  }
+
   let properties = [];
 
   properties = await prisma.property.findMany({
+    where: where,
     take: limit,
     skip: offset,
-    where: where,
     include: {
       media: true,
     },
@@ -67,9 +101,12 @@ propertyRouter.post("/property/search", async (req, res) => {
     properties.map((property) => {
       // Get the first media item as the featured image
       const featuredMedia = property.media[0];
+
       return {
         ...property,
-        media: featuredMedia ? featuredMedia.url : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+        media: featuredMedia
+          ? featuredMedia.url
+          : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
       };
     })
   );
