@@ -1,4 +1,4 @@
-import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from "@mantine/core";
+import { Button, Checkbox, NumberInput, Select, SimpleGrid, TextInput } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
@@ -14,6 +14,7 @@ export const Home = () => {
     smoking: false,
     minPrice: 0,
     maxPrice: 5000,
+    searchRadius: "whole area",
     availableFrom: "",
   };
   const [showFilters, setShowFilters] = useState(true);
@@ -75,6 +76,16 @@ export const Home = () => {
                     minDate={new Date()}
                     key={form.key("availableFrom")}
                     {...form.getInputProps("availableFrom")}
+                  />
+                </div>
+
+                <div className={classes.filter}>
+                  <h4>Search radius:</h4>
+                  <Select
+                    placeholder="Whole area"
+                    data={["Whole area", "+5km", "+10km", "+20km", "+100km", "200km"]}
+                    key={form.key("searchRadius")}
+                    {...form.getInputProps("searchRadius")}
                   />
                 </div>
 
