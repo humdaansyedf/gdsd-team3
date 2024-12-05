@@ -16,6 +16,7 @@ export const usePropertySearch = (filters) => {
           minPrice: filters.minPrice || 0,
           maxPrice: filters.maxPrice || 99999999,
           availableFrom: filters.availableFrom || "",
+          searchRadius: filters.searchRadius || "whole area",
           page: 1,
         }),
       });

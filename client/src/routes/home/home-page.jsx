@@ -1,4 +1,10 @@
-import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  NumberInput,
+  SimpleGrid,
+  TextInput,
+} from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
@@ -29,17 +35,29 @@ export const Home = () => {
         <aside className={classes.filtersSection}>
           <div className={classes.filtersHeader}>
             <h2>Filters</h2>
-            <Button size="compact-xs" color="gray" type="button" onClick={() => setShowFilters((prev) => !prev)}>
+            <Button
+              size="compact-xs"
+              color="gray"
+              type="button"
+              onClick={() => setShowFilters((prev) => !prev)}
+            >
               {showFilters ? "Hide Filters" : "Show Filters"}
             </Button>
           </div>
 
           {showFilters && (
             <>
-              <form className={classes.filters} onSubmit={form.onSubmit((values) => setFilters(values))}>
+              <form
+                className={classes.filters}
+                onSubmit={form.onSubmit((values) => setFilters(values))}
+              >
                 <div className={classes.filter}>
                   <h4>Title:</h4>
-                  <TextInput placeholder="Enter query" key={form.key("title")} {...form.getInputProps("title")} />
+                  <TextInput
+                    placeholder="Enter query"
+                    key={form.key("title")}
+                    {...form.getInputProps("title")}
+                  />
                 </div>
 
                 <div className={classes.filter}>
@@ -119,7 +137,11 @@ export const Home = () => {
           {searchQuery.data &&
             searchQuery.data.map((property) => (
               <div key={property.id} className={classes.propertyCard}>
-                {property.media ? <img src={property.media} alt={property.title} /> : <div>No Image Available</div>}
+                {property.media ? (
+                  <img src={property.media} alt={property.title} />
+                ) : (
+                  <div>No Image Available</div>
+                )}
                 <div className={classes.propertyCardContent}>
                   <h2>{property.title}</h2>
                   <div className={classes.propertyCardTags}>
@@ -131,27 +153,28 @@ export const Home = () => {
                   <Link
                     to={`/property/${property.id}`}
                     style={{
-                      display: 'inline-block',
-                      backgroundColor: '#d4f8d4',
-                      color: '#000000',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '10px',
-                      textDecoration: 'none',
-                      fontWeight: 'bold',
-                      transition: 'background-color 0.3s ease, color 0.3s ease',
+                      display: "inline-block",
+                      backgroundColor: "#d4f8d4",
+                      color: "#000000",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "10px",
+                      textDecoration: "none",
+                      fontWeight: "bold",
+                      transition: "background-color 0.3s ease, color 0.3s ease",
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#c2edc2'; /* Hover effect */
-                      e.target.style.color = '#ffffff';
+                      e.target.style.backgroundColor =
+                        "#c2edc2"; /* Hover effect */
+                      e.target.style.color = "#ffffff";
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = '#d4f8d4'; /* Reset to original */
-                      e.target.style.color = '#000000';
+                      e.target.style.backgroundColor =
+                        "#d4f8d4"; /* Reset to original */
+                      e.target.style.color = "#000000";
                     }}
                   >
                     View →
                   </Link>
-
                 </div>
               </div>
             ))}
