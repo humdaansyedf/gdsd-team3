@@ -3,8 +3,19 @@ import { Link } from "react-router-dom";
 import { Button, Select, NumberInput, SimpleGrid, Switch, Badge } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import classes from "./landlord-dashboard-style.module.css";
+import { CreateAdModal } from "../create-ad/create-ad-page.jsx";
 
 export const LandlordDashboardPage = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
     const hardcodedNewRequests = 3;
 
     const [hardcodedAds, setHardcodedAds] = useState([
@@ -167,7 +178,9 @@ export const LandlordDashboardPage = () => {
                             </div>
                         </div>
                         <div className={classes.actionButtons}>
-                            <button>Create New Listing</button>
+                            <button onClick={openModal}>
+                                Create New Listing
+                            </button>
                             <button>Documents</button>
                             <button>
                                 New Messages <span className={classes.badge}>6</span>
@@ -207,6 +220,7 @@ export const LandlordDashboardPage = () => {
                         )}
                     </div>
                 </div>
+                <CreateAdModal opened={isModalOpen} onClose={closeModal} />
             </div>
         </>
     );

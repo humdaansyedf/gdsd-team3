@@ -1,0 +1,85 @@
+/* General Container */
+
+/* Upload Photos Section */
+.uploadPhotos {
+    margin-bottom: 1rem;
+}
+
+.uploadPhotos h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+/* Property Details Section */
+.propertyDetails {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.propertyDetails input,
+.propertyDetails select {
+    width: 100%;
+}
+
+/* Map Location */
+.mapLocation {
+    text-align: center;
+}
+
+.mapPlaceholder {
+    border: 1px solid #e5e5e5;
+    background: #f0f0f0;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Textareas */
+textarea {
+    width: 100%;
+}
+
+/* Submit Section */
+.submitSection {
+    margin-top: 2rem;
+}
+
+/* Modal container */
+.container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    height: 100%; /* Take the full height of the modal */
+    overflow-y: auto; /* Enable scrolling for overflowing content */
+    box-sizing: border-box; /* Include padding and border in size calculations */
+    padding: 1.5rem; /* Ensure spacing inside the container */
+}
+
+/* Modal sections (e.g., upload photos, description, etc.) */
+.section {
+    margin-bottom: 1.5rem; /* Add spacing between sections */
+    flex-shrink: 0; /* Prevent sections from shrinking */
+}
+
+/* Ensure map or image placeholders have responsive height */
+.mapPlaceholder,
+.propertyDetails,
+.fileUploadSection {
+    min-height: 100px; /* Set a minimum height */
+    height: auto; /* Let the content adjust the height */
+    width: 100%; /* Full width */
+}
+
+/* Add vertical scroll for large content */
+.container::-webkit-scrollbar {
+    width: 8px; /* Custom scrollbar width */
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: #ccc; /* Scrollbar color */
+    border-radius: 4px;
+}
