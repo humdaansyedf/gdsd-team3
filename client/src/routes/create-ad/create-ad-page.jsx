@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button } from "@mantine/core"; // Modal library for popup functionality
 import { TextInput, Textarea, FileInput, NumberInput, Select } from "@mantine/core"; // Form components
 import classes from "./create-ad-style.module.css";
-import { DragDropImageUploader } from "../../components/ImageUploader/imageUploader";;
+import { DragDropImageUploader } from "../../components/ImageUploader/imageUploader";
 
 export const CreateAdModal = ({ opened, onClose }) => {
     return (
