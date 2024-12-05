@@ -13,7 +13,7 @@ export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
 
   const items = links.map((link) => (
-    <Link key={link.label} href={link.link} className={classes.link} onClick={(event) => event.preventDefault()}>
+    <Link key={link.label} to={link.link} className={classes.link}>
       {link.label}
     </Link>
   ));
@@ -42,8 +42,6 @@ export function Header() {
           {items}
           <IconUserCircle stroke={2} />
         </Group>
-
-
       </div>
     </header>
   );

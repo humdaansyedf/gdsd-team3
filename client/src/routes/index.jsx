@@ -5,6 +5,7 @@ import { Header } from "../components/Header/Header";
 import { Home } from "./home/home-page";
 import { PropertyDetail } from "./property-detail/property-detail-page";
 import { LandlordDashboardPage } from "./landlord-dashboard/landlord-dashboard-page";
+import { Login } from "./login/login-page";
 
 const AppLayout = () => {
   return (
@@ -36,6 +37,7 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
           <Route path="property/:id" element={<PropertyDetail />} />
           <Route path="landlord" element={<LandlordDashboardPage />} />
           <Route path="*" element={<NotFound />} />
