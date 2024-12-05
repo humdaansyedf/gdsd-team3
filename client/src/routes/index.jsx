@@ -5,12 +5,21 @@ import { Header } from "../components/Header/Header";
 import { CardsCarousel } from "../components/corousel/carousel";
 import { Home } from "./home/home-page";
 import { PropertyDetail } from "./property-detail/property-detail-page";
+import { useLocation } from "react-router-dom";
 
 const AppLayout = () => {
+  const location = useLocation();
+
+  console.log("Current Path:", location.pathname);
+
+  const showCarousel = location.pathname === "/";
+
+  console.log("showCarousel:", showCarousel);
+
   return (
     <>
       <Header />
-      <CardsCarousel />
+      {showCarousel && <CardsCarousel />}
       <Container fluid>
         <Outlet />
       </Container>

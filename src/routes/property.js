@@ -51,7 +51,7 @@ propertyRouter.post("/property/search", async (req, res) => {
   }
 
   var numberPattern = /\d+/g;
-  const radius = searchRadius.match(numberPattern);
+  const radius = searchRadius?.match(numberPattern);
   console.log("searchRadius" + radius);
 
   // Fulda's coordinates (center of the search area)

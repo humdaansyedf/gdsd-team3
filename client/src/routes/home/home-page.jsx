@@ -4,7 +4,6 @@ import {
   NumberInput,
   SimpleGrid,
   TextInput,
-  Select,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
@@ -20,7 +19,6 @@ export const Home = () => {
     smoking: false,
     minPrice: 0,
     maxPrice: 5000,
-    searchRadius: "whole area",
     availableFrom: "",
   };
   const [showFilters, setShowFilters] = useState(true);
@@ -96,23 +94,6 @@ export const Home = () => {
                 </div>
 
                 <div className={classes.filter}>
-                  <h4>Search radius:</h4>
-                  <Select
-                    placeholder="Whole area"
-                    data={[
-                      "Whole area",
-                      "+5km",
-                      "+10km",
-                      "+20km",
-                      "+100km",
-                      "200km",
-                    ]}
-                    key={form.key("searchRadius")}
-                    {...form.getInputProps("searchRadius")}
-                  />
-                </div>
-
-                <div className={classes.filter}>
                   <h4>Additional:</h4>
                   <Checkbox
                     label="Pets Allowed"
@@ -152,7 +133,7 @@ export const Home = () => {
         <div className={classes.resultsSection}>
           {searchQuery.isLoading && <p>Loading...</p>}
           {searchQuery.error && <p>Error: {searchQuery.error.message}</p>}
-          {console.log(searchQuery.data)}
+
           {searchQuery.data &&
             searchQuery.data.map((property) => (
               <div key={property.id} className={classes.propertyCard}>
