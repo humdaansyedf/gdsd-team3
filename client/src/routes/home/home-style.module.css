@@ -12,15 +12,50 @@
   border: 1px solid #e5e5e5;
   height: fit-content; /* Adjust height automatically based on content */
   position: sticky; /* Makes the filter section fixed while scrolling */
-  top: 60px; /* Adjusts the position from the top of the viewport */
+  top: 56px; /* Adjusts the position from the top of the viewport */
   background: #fff; /* Ensures the background stays consistent */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   z-index: 10; /* Ensures it stays above other elements */
 }
 
-.applyFiltersBtn{
-  margin:10px;
+.filtersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggleFiltersBtn {
+  background-color: #8f948c;
+  width: fit-content;
+  padding: 0.25rem;
+  font-size: 12px;
+}
+
+.filters {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterBtns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.checkBox {
+  margin-right: 0.5rem;
+}
+
+.applyFiltersBtn {
+  flex: 1;
 }
 
 .resultsSection {
@@ -128,7 +163,7 @@
     border-radius: 10px;
     object-fit: cover; /* Ensures images maintain their aspect ratio and fit within the allocated space */
   }
-  
+
   .propertyCardContent {
     flex: 1; /* Allows the content section to take the remaining space */
     padding: 0 1rem; /* Adds padding between the image and the text */
@@ -136,14 +171,14 @@
     flex-direction: column;
     justify-content: center; /* Centers content vertically */
   }
-  
+
   .propertyCardContent h3 {
     font-size: 20px;
     font-weight: bold;
     margin: 0;
     width: 100%; /* Ensures the title takes full width */
   }
-  
+
   .propertyCardContent p {
     font-size: 1rem;
     margin: 8px 0;
@@ -153,13 +188,13 @@
     text-overflow: ellipsis; /* Adds ellipsis if the text overflows */
     white-space: nowrap; /* Keeps text on a single line */
   }
-  
+
   .propertyCardTags {
     display: flex;
     gap: 8px;
     margin-top: 8px;
   }
-  
+
   .propertyCardTags span {
     border: 1px solid #72bf44;
     color: #72bf44;
@@ -168,12 +203,12 @@
     font-weight: bold;
     border-radius: 12px;
   }
-  
+
   .propertyCardTags span:first-of-type {
     background: #72bf44;
     color: white;
   }
-  
+
   .propertyCard a {
     align-self: flex-end;
     text-decoration: none;
@@ -182,30 +217,30 @@
     font-weight: bold;
     transition: color 0.2s;
   }
-  
+
   .propertyCard a:hover {
     color: #0056b3;
   }
-  
+
   @media (max-width: 768px) {
     .propertyCard {
       flex-direction: column; /* Stacks the image and content vertically on small screens */
       text-align: center;
     }
-  
+
     .propertyCard img {
       width: 100%; /* Full width for smaller screens */
       height: 100px; /* Keeps a fixed height */
     }
-  
+
     .propertyCardContent {
       padding: 1rem; /* Adds padding around the content */
     }
-  
+
     .propertyCardContent h2 {
       font-size: 1.2rem;
     }
-  
+
     .propertyCardContent p {
       font-size: 0.9rem;
     }
