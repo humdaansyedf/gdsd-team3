@@ -17,9 +17,12 @@ export const PropertyDetail = () => {
       {error && <p>Error: {error.message}</p>}
 
       {data && (
+        // Outermost container
         <div key={data.id} className={classes.container}>
           <div className={classes.boxContainer}>
+            {/* highlights container */}
             <div className={classes.titleSection}>
+              {/* Image section - a large image with small images beside  */}
               <div className={classes.imageSection}>
                 <div className={classes.largeImageBox}>
                   <img src={data.media[0]?.url} alt={data.title} />
@@ -35,6 +38,7 @@ export const PropertyDetail = () => {
                 </div>
               </div>
 
+              {/* Ad title, key info and buttons */}
               <div className={classes.infoContainer}>
                 <h4>{data.title}</h4>
                 <p>Total rent: {data.totalRent}€</p>
@@ -59,6 +63,7 @@ export const PropertyDetail = () => {
                 </div>
               </div>
 
+              {/* Map box */}
               <div className={classes.mapSection}>
                 <h4>Location Map</h4>
               </div>
@@ -66,6 +71,7 @@ export const PropertyDetail = () => {
           </div>
 
           <br></br>
+          {/* Container to hold description and amenities */}
           <div className={classes.contentSection}>
             <div className={classes.descriptionSection}>
               <h4>Description</h4>
