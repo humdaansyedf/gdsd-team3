@@ -131,4 +131,54 @@ propertyRouter.get("/property/:id", async (req, res) => {
   }
 });
 
+//API to update listing status
+//requires status field in post body
+//returns with message and property data
+propertyRouter.patch("/property/:id/status", async (req, res) => {
+  console.log("API hit");
+  const { id } = req.params; // Get property ID from the URL
+  const { status } = req.body; // Get the new status from the request body
+
+  // Validate the status
+  const validStatuses = ["PENDING", "ACTIVE", "RENTED", "ARCHIVED", "REJECTED"];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: "Invalid status value." });
+  }
+
+  // Update the status in the database
+  const updatedProperty = await prisma.property.update({
+    where: { id: parseInt(id, 10) },
+    data: { status },
+  });
+  res.json({
+    message: `Property status updated to ${status}`,
+    property: updatedProperty,
+  });
+});
+
+//API to get active listings
+propertyRouter.get("/properties/active", async (req, res) => {
+  properties = await prisma.property.findMany({
+    where: { status: "ACTIVE" },
+
+    include: {
+      media: true,
+    },
+  });
+
+  res.json(
+    properties.map((property) => {
+      // Get the first media item as the featured image
+      const featuredMedia = property.media[0];
+
+      return {
+        ...property,
+        media: featuredMedia
+          ? featuredMedia.url
+          : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+      };
+    })
+  );
+});
+
 module.exports = { propertyRouter };
