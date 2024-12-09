@@ -13,6 +13,16 @@ enum UserType {
   LANDLORD
 }
 
+enum PropertyStatus {
+  DRAFT
+  PENDING 
+  ACTIVE
+  RENTED
+  ARCHIVED 
+  REJECTED
+}
+
+
 model User {
   id       Int      @id @default(autoincrement())
   email    String   @unique
@@ -46,6 +56,7 @@ model Property {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   media          PropertyMedia[]
+  status         PropertyStatus  @default(PENDING)
 }
 
 model PropertyMedia {
@@ -56,3 +67,5 @@ model PropertyMedia {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
+
+
