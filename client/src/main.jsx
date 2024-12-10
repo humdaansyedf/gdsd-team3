@@ -13,6 +13,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./routes";
+import { AuthProvider } from "./lib/auth-provider";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +27,9 @@ createRoot(document.getElementById("root")).render(
         }}
       >
         <Notifications />
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </MantineProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

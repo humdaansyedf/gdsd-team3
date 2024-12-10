@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "./auth";
+import { useAuth } from "./auth-context";
 
 // Routes for public only pages like login, signup, etc.
 export const PublicRoute = ({ children }) => {

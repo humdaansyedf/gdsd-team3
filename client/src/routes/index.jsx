@@ -7,7 +7,7 @@ import { Register } from "./register/register-page";
 import { Home } from "./home/home-page";
 import { LandlordDashboardPage } from "./landlord-dashboard/landlord-dashboard-page";
 import { PropertyDetail } from "./property-detail/property-detail-page";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "../lib/auth-context";
 import { PrivateRoute, PublicRoute } from "../lib/auth-routes";
 import { Profile } from "./profile/profile-page";
 

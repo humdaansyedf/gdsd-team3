@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AuthContext } from "./auth-context";
 
-export const useAuth = () => {
+export const AuthProvider = ({ children }) => {
   const queryClient = useQueryClient();
   const meQuery = useQuery({
     queryKey: ["me"],
@@ -23,9 +24,15 @@ export const useAuth = () => {
     },
   });
 
-  return {
-    isLoading: meQuery.isLoading,
-    user: meQuery.data,
-    logout: logoutMutation.mutate,
-  };
+  return (
+    <AuthContext.Provider
+      value={{
+        isLoading: meQuery.isLoading,
+        user: meQuery.data,
+        logout: logoutMutation.mutate,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };

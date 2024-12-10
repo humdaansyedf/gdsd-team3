@@ -3,7 +3,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconSearch, IconUserCircle } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import classes from "./Header.module.css";
-import { useAuth } from "../../lib/auth";
+import { useAuth } from "../../lib/auth-context";
 
 const links = [
   { link: "/login", label: "Login" },

@@ -1,5 +1,5 @@
 import { Button, Title } from "@mantine/core";
-import { useAuth } from "../../lib/auth";
+import { useAuth } from "../../lib/auth-context";
 import { Navigate } from "react-router-dom";
 
 export function Profile() {
