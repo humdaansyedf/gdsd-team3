@@ -15,10 +15,10 @@ enum UserType {
 
 enum PropertyStatus {
   DRAFT
-  PENDING 
+  PENDING
   ACTIVE
   RENTED
-  ARCHIVED 
+  ARCHIVED
   REJECTED
 }
 
@@ -26,7 +26,7 @@ enum PropertyStatus {
 model User {
   id       Int      @id @default(autoincrement())
   email    String   @unique
-  password String
+  passwordHash String
   name     String
   type     UserType
 
