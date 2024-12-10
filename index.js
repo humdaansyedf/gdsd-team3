@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import { IS_DEV } from "./src/lib/utils.js";
 import { authRouter, authMiddleware } from "./src/routes/auth.js";
 import { propertyRouter } from "./src/routes/property.js";
+import { fileRouter } from "./src/routes/file.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,7 +41,7 @@ app.use("/api", authRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use("/api", propertyRouter);
+app.use("/api", propertyRouter, fileRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
