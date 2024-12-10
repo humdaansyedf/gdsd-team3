@@ -1,5 +1,1 @@
-const isDev = process.env.NODE_ENV === "development";
-
-module.exports = {
-  isDev,
-};
+export const IS_DEV = process.env.NODE_ENV === "development";

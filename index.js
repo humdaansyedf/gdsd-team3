@@ -1,21 +1,28 @@
-require("dotenv").config();
-const path = require("node:path");
-const http = require("node:http");
-const express = require("express");
-const { isDev } = require("./src/lib/utils");
-const { propertyRouter } = require("./src/routes/property");
+import "dotenv/config";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { createServer } from "node:http";
+import express from "express";
+import cookieParser from "cookie-parser";
+import { IS_DEV } from "./src/lib/utils.js";
+import { authRouter, authMiddleware } from "./src/routes/auth.js";
+import { propertyRouter } from "./src/routes/property.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const port = process.env.PORT || 3000;
 
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 
 // Disable some headers
 app.set("etag", false);
 app.set("x-powered-by", false);
 
-// Serve the static files from the React app
-app.use(express.static(path.join(__dirname, "client/dist")));
+if (!IS_DEV) {
+  // Serve the static files from the React app
+  app.use(express.static(join(__dirname, "client/dist")));
+}
 
 // Middleware for parsing JSON bodies
 app.use(express.json());
@@ -23,7 +30,16 @@ app.use(express.json());
 // Middleware for parsing URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Middleware for parsing cookie
+app.use(cookieParser());
+
+// Public routes
+app.use("/api", authRouter);
+
+// Middleware for authenticating users
+app.use("/api", authMiddleware);
+
+// Private routes
 app.use("/api", propertyRouter);
 
 // Error handling middleware
@@ -35,16 +51,18 @@ app.use((err, _req, res, _next) => {
 });
 
 // Redirect to the client in development
-if (isDev) {
+if (IS_DEV) {
   app.get("/", (_req, res) => {
     res.redirect("http://localhost:5173");
   });
 }
 
-// Handles any requests that don't match the ones above
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(__dirname + "/client/dist/index.html"));
-});
+if (!IS_DEV) {
+  // Handles any requests that don't match the ones above
+  app.get("*", (_req, res) => {
+    res.sendFile(join(__dirname + "/client/dist/index.html"));
+  });
+}
 
 // Start the server
 server.listen(port, () => {
