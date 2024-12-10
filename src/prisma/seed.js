@@ -1,24 +1,74 @@
 // prisma/seed.ts
 import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import { hash } from "@node-rs/argon2";
 
 const prisma = new PrismaClient();
 
 async function main() {
   // Clear the database
+  await prisma.user.deleteMany();
+  await prisma.session.deleteMany();
   await prisma.propertyMedia.deleteMany();
   await prisma.property.deleteMany();
+
+  // Seed users
+  const passwordHash = await hash("fulda123", {
+    memoryCost: 19456,
+    timeCost: 2,
+    outputLen: 32,
+    parallelism: 1,
+  });
+  const users = [
+    {
+      id: 1,
+      email: "landlord1@gdsd.com",
+      passwordHash: passwordHash,
+      type: "LANDLORD",
+      name: "Landlord 1",
+    },
+    {
+      id: 2,
+      email: "landlord2@gmail.com",
+      passwordHash: passwordHash,
+      type: "LANDLORD",
+      name: "Landlord 2",
+    },
+    {
+      id: 3,
+      email: "landlord3@gmail.com",
+      passwordHash: passwordHash,
+      type: "LANDLORD",
+      name: "Landlord 3",
+    },
+    {
+      id: 4,
+      email: "student1@hs-fulda.de",
+      passwordHash: passwordHash,
+      type: "STUDENT",
+      name: "Student 1",
+    },
+    {
+      id: 5,
+      email: "student2@hs-fulda.de",
+      passwordHash: passwordHash,
+      type: "STUDENT",
+      name: "Student 2",
+    },
+  ];
+  await prisma.user.createMany({ data: users });
 
   // Seed properties
   const properties = [
     {
       id: 1,
+      landlordId: 3,
       title: "2 room apartment in city center",
       description:
         "Modern 2-room apartment in prime city center location. Bright living room, separate bedroom, and updated kitchen. Walking distance to shops, restaurants, and public transport. Secure building with well-maintained facilities.",
       numberOfRooms: 2,
       petsAllowed: false,
-      smokingAllowed: false,
+      smokingAllowed: true,
       totalRent: 1800,
       longitude: 9.67,
       latitude: 50.52,
@@ -29,12 +79,13 @@ async function main() {
     },
     {
       id: 2,
+      landlordId: 2,
       title: "Cozy studio near university",
       description:
         "Efficient studio apartment steps from campus. Recently renovated with modern appliances. Perfect for students. Includes high-speed internet and utilities.",
       numberOfRooms: 1,
       petsAllowed: false,
-      smokingAllowed: false,
+      smokingAllowed: true,
       totalRent: 1200,
       longitude: 9.73,
       latitude: 50.58,
@@ -45,6 +96,7 @@ async function main() {
     },
     {
       id: 3,
+      landlordId: 1,
       title: "3 room apartment with balcony",
       description:
         "Spacious 3-room apartment featuring a sunny balcony. Updated kitchen, two bedrooms, and large living area. Quiet residential neighborhood with easy access to downtown.",
@@ -61,12 +113,13 @@ async function main() {
     },
     {
       id: 4,
+      landlordId: 2,
       title: "Luxury 1 bedroom with river view",
       description:
         "High-end apartment overlooking the river. Premium finishes, floor-to-ceiling windows, and modern amenities. 24/7 concierge and fitness center included.",
       numberOfRooms: 1,
       petsAllowed: true,
-      smokingAllowed: false,
+      smokingAllowed: true,
       totalRent: 2200,
       longitude: 9.62,
       latitude: 50.48,
@@ -77,12 +130,13 @@ async function main() {
     },
     {
       id: 5,
+      landlordId: 3,
       title: "Garden level 2 room flat",
       description:
         "Charming ground floor apartment with private garden access. Two bright rooms, updated bathroom, and practical layout. Close to parks and local shops.",
       numberOfRooms: 2,
       petsAllowed: true,
-      smokingAllowed: false,
+      smokingAllowed: true,
       totalRent: 1600,
       longitude: 9.78,
       latitude: 50.55,
@@ -93,6 +147,7 @@ async function main() {
     },
     {
       id: 6,
+      landlordId: 2,
       title: "Modern studio in business district",
       description:
         "Contemporary studio in the heart of the business district. Smart home features, built-in storage, and high-end appliances. Perfect for young professionals.",
@@ -109,6 +164,7 @@ async function main() {
     },
     {
       id: 7,
+      landlordId: 2,
       title: "4 room family apartment",
       description:
         "Generous family home with three bedrooms and spacious living room. Well-equipped kitchen, two bathrooms, and plenty of storage. Near schools and parks.",
@@ -125,6 +181,7 @@ async function main() {
     },
     {
       id: 8,
+      landlordId: 1,
       title: "Penthouse with city views",
       description:
         "Exclusive top floor apartment with panoramic city views. Two bedrooms, designer kitchen, and private roof terrace. Premium building with secure parking.",
@@ -141,6 +198,7 @@ async function main() {
     },
     {
       id: 9,
+      landlordId: 1,
       title: "Renovated 1 room near metro",
       description:
         "Fully renovated one-room apartment steps from metro station. Modern fixtures, efficient layout, and bright interiors. Ideal for city commuters.",
@@ -157,6 +215,7 @@ async function main() {
     },
     {
       id: 10,
+      landlordId: 1,
       title: "2 room eco-friendly apartment",
       description:
         "Sustainable living space with solar panels and energy-efficient design. Two rooms, recycled materials, and green roof access. Low utility costs.",
@@ -173,12 +232,13 @@ async function main() {
     },
     {
       id: 11,
+      landlordId: 3,
       title: "Bright 2 room apartment",
       description:
         "Sun-filled apartment with modern amenities. Open plan living area, updated kitchen, and quiet bedroom. Close to public transport and local amenities.",
       numberOfRooms: 2,
       petsAllowed: true,
-      smokingAllowed: false,
+      smokingAllowed: true,
       totalRent: 1750,
       longitude: 9.64,
       latitude: 50.53,
@@ -189,12 +249,13 @@ async function main() {
     },
     {
       id: 12,
+      landlordId: 2,
       title: "Studio with balcony view",
       description:
         "Compact studio featuring private balcony. Efficient layout, modern appliances, and great city views. Perfect for single professionals.",
       numberOfRooms: 1,
       petsAllowed: false,
-      smokingAllowed: false,
+      smokingAllowed: true,
       totalRent: 1300,
       longitude: 9.72,
       latitude: 50.61,
@@ -205,6 +266,7 @@ async function main() {
     },
     {
       id: 13,
+      landlordId: 2,
       title: "3 room family home",
       description:
         "Spacious family apartment in quiet neighborhood. Three well-proportioned rooms, modern bathroom, and fitted kitchen. Near schools and parks.",
@@ -221,6 +283,7 @@ async function main() {
     },
     {
       id: 14,
+      landlordId: 3,
       title: "Modern 1 room apartment",
       description:
         "Contemporary one-room living space. High-quality finishes, smart home features, and efficient design. Central location with easy access to amenities.",
@@ -237,6 +300,7 @@ async function main() {
     },
     {
       id: 15,
+      landlordId: 1,
       title: "4 room luxury flat",
       description:
         "Premium apartment with high-end features. Four spacious rooms, designer kitchen, and two modern bathrooms. Exclusive residential area.",
@@ -253,6 +317,7 @@ async function main() {
     },
     {
       id: 16,
+      landlordId: 1,
       title: "Cozy 2 room garden flat",
       description:
         "Ground floor apartment with garden access. Two comfortable rooms, updated features, and private outdoor space. Peaceful residential setting.",
@@ -269,12 +334,13 @@ async function main() {
     },
     {
       id: 17,
+      landlordId: 3,
       title: "Studio loft apartment",
       description:
         "Stylish loft-style studio with high ceilings. Modern design, open plan living, and excellent natural light. Trendy neighborhood location.",
       numberOfRooms: 1,
       petsAllowed: false,
-      smokingAllowed: false,
+      smokingAllowed: true,
       totalRent: 1450,
       longitude: 9.79,
       latitude: 50.47,
@@ -285,12 +351,13 @@ async function main() {
     },
     {
       id: 18,
+      landlordId: 2,
       title: "3 room corner unit",
       description:
         "Bright corner apartment with dual aspect windows. Three well-sized rooms, modern kitchen, and plenty of storage. Convenient urban location.",
       numberOfRooms: 3,
       petsAllowed: true,
-      smokingAllowed: false,
+      smokingAllowed: true,
       totalRent: 2600,
       longitude: 9.66,
       latitude: 50.69,
@@ -301,6 +368,7 @@ async function main() {
     },
     {
       id: 19,
+      landlordId: 2,
       title: "Compact 1 room flat",
       description:
         "Efficiently designed one-room apartment. Modern amenities, built-in storage, and smart layout. Great starter home in central area.",
@@ -317,6 +385,7 @@ async function main() {
     },
     {
       id: 20,
+      landlordId: 1,
       title: "2 room riverside apartment",
       description:
         "Beautiful apartment near the river. Two spacious rooms, contemporary design, and water views. Walking distance to waterfront amenities.",
@@ -334,6 +403,7 @@ async function main() {
   ];
   await prisma.property.createMany({ data: properties });
 
+  // Seed property media
   const images = [
     "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/building-1.jpg",
     "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/building-2.jpg",
@@ -343,8 +413,6 @@ async function main() {
     "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/interior-2.jpg",
     "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/interior-3.jpg",
   ];
-
-  // Seed property media
   const propertyMedia = [];
   for (let i = 0; i < 40; i++) {
     const media = {

@@ -1,6 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 
-export const usePropertySearch = (filters) => {
+export const usePropertySearch = () => {
+  let [searchParams] = useSearchParams();
+
+  const filters = {
+    title: searchParams.get("title") || "",
+    pets: searchParams.get("pets") || false,
+    smoking: searchParams.get("smoking") || false,
+    minPrice: searchParams.get("minPrice") || 0,
+    maxPrice: searchParams.get("maxPrice") || 99999999,
+    availableFrom: searchParams.get("availableFrom") || "",
+    searchRadius: searchParams.get("searchRadius") || "whole area",
+  };
+
   const query = useQuery({
     queryKey: ["property", { filters }],
     queryFn: async () => {
@@ -10,13 +23,7 @@ export const usePropertySearch = (filters) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title: filters.title || "",
-          pets: filters.pets || false,
-          smoking: filters.smoking || false,
-          minPrice: filters.minPrice || 0,
-          maxPrice: filters.maxPrice || 99999999,
-          availableFrom: filters.availableFrom || "",
-          searchRadius: filters.searchRadius || "whole area",
+          ...filters,
           page: 1,
         }),
       });
