@@ -6,6 +6,8 @@ import { Home } from "./home/home-page";
 import { PropertyDetail } from "./property-detail/property-detail-page";
 import { LandlordDashboardPage } from "./landlord-dashboard/landlord-dashboard-page";
 import { Login } from "./login/login-page";
+import express from 'express';
+import { fileRouter } from '../components/ImageUploader/imageUploaderQueries';
 
 const AppLayout = () => {
   return (
@@ -46,3 +48,12 @@ export const App = () => {
     </BrowserRouter>
   );
 };
+
+const expressApp = express();
+
+expressApp.use(express.json()); // Parse JSON request body
+expressApp.use('/api', fileRouter); // Mount the file router at '/api'
+
+expressApp.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
+});
