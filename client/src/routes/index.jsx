@@ -2,10 +2,11 @@ import { Container } from "@mantine/core";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { Footer } from "../components/Footer/Footer";
 import { Header } from "../components/Header/Header";
+import { Login } from "./login/login-page";
+import { Register } from "./register/register-page";
 import { Home } from "./home/home-page";
 import { PropertyDetail } from "./property-detail/property-detail-page";
 import { LandlordDashboardPage } from "./landlord-dashboard/landlord-dashboard-page";
-import { Login } from "./login/login-page";
 
 const AppLayout = () => {
   return (
@@ -38,6 +39,7 @@ export const App = () => {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
           <Route path="property/:id" element={<PropertyDetail />} />
           <Route path="landlord" element={<LandlordDashboardPage />} />
           <Route path="*" element={<NotFound />} />

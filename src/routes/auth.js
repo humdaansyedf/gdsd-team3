@@ -78,7 +78,7 @@ async function invalidateSession(sessionId) {
 export const authRouter = Router();
 
 const userType = z.enum(["STUDENT", "LANDLORD"]);
-const signupSchema = z.discriminatedUnion("type", [
+const registerSchema = z.discriminatedUnion("type", [
   z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
@@ -92,8 +92,8 @@ const signupSchema = z.discriminatedUnion("type", [
     type: userType.extract(["STUDENT"]),
   }),
 ]);
-authRouter.post("/signup", async (req, res) => {
-  const result = signupSchema.safeParse(req.body);
+authRouter.post("/register", async (req, res) => {
+  const result = registerSchema.safeParse(req.body);
   if (!result.success) {
     return res.status(400).json({
       message: "Invalid data",
