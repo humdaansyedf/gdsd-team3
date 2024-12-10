@@ -1,32 +1,26 @@
 import './imageUploader.css';
 import React, { useState, useRef } from 'react';
-import {Button} from "@mantine/core";
+import { Button } from "@mantine/core";
+import { useDropzone } from 'react-dropzone';
+import { usePublicFileUpload } from './fileUpload'; // Import the mutation
 
-export function DragDropImageUploader(){
-    const [images, setImages] = useState([]);
+export function DragDropImageUploader() {
+    const [images, setImages] = useState([]); // Store uploaded image URLs
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef(null);
+
+    // Use the mutation for uploading files
+    const fileUploadMutation = usePublicFileUpload();
 
     function selectFiles(){
         fileInputRef.current.click();
     }
-    function onFileSelect(event){
-        const files = event.target.files;
-        if (files.length === 0) return;
-        for (let i = 0; i < files.length; i++){
-            if (files[i].type.split('/')[0] !== 'image') continue;
-            if (!images.some((e) => e.name === files[i].name)) {
-                setImages((prevImages) => [
-                    ...prevImages,
-                    {
-                        name: files[i].name,
-                        url: URL.createObjectURL(files[i]),
 
-                    },
-                ]);
-            }
-        }
-    }
+    function onFileSelect(event) {
+        const files = Array.from(event.target.files);
+        uploadFiles(files);
+      }      
+
     function deleteImage(index) {
         setImages((prevImages) =>
             prevImages.filter((_, i) => i !== index)
@@ -39,10 +33,11 @@ export function DragDropImageUploader(){
         event.dataTransfer.dropEffect = 'copy';
     }
 
-    function onDrop(event){
+    function onDrop(event) {
         event.preventDefault();
         setIsDragging(false);
-        const files = event.dataTransfer.files;
+        const files = Array.from(event.dataTransfer.files);
+        uploadFiles(files);
     }
 
     function onDragLeave(event){
@@ -50,9 +45,28 @@ export function DragDropImageUploader(){
         setIsDragging(false);
     }
 
-    function uploadImages() {
-
+    function uploadFiles(files) {
+        files.forEach((file) => {
+          if (file.type.split('/')[0] === 'image') {
+            fileUploadMutation.mutate(
+              { file },
+              {
+                onSuccess: (uploadedUrl) => {
+                  // Add uploaded file URL to the state
+                  setImages((prevImages) => [
+                    ...prevImages,
+                    { name: file.name, url: uploadedUrl },
+                  ]);
+                },
+                onError: () => {
+                  console.error(`Failed to upload ${file.name}`);
+                },
+              }
+            );
+          }
+        });
     }
+
     return (
         <div className="card">
             <div className='drag-area' onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
@@ -62,7 +76,7 @@ export function DragDropImageUploader(){
                     <>
                     Drag & Drop images here or {" "}
                     <span className="select" role='button' onClick={selectFiles}>
-                    Browse
+                    "Browse"
                     </span>
                     </>
                 )}
@@ -78,7 +92,7 @@ export function DragDropImageUploader(){
                 ))}
             </div>
             <div>
-                <Button type='button' onClick={uploadImages}>
+                <Button type='button' onClick={() => console.log('Uploaded Images:', images)}>
                     Upload
                 </Button>
             </div>
