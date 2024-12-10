@@ -83,12 +83,16 @@ const registerSchema = z.discriminatedUnion("type", [
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     name: z.string().min(2, "Name must be at least 2 characters long"),
+    phone: z.string().optional(),
+    address: z.string().optional(),
     type: userType.extract(["LANDLORD"]),
   }),
   z.object({
     email: z.string().email("Invalid email address").endsWith("hs-fulda.de", "Email must be a HS-Fulda email"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     name: z.string().min(2, "Name must be at least 2 characters long"),
+    phone: z.string().optional(),
+    address: z.string().optional(),
     type: userType.extract(["STUDENT"]),
   }),
 ]);
@@ -101,7 +105,7 @@ authRouter.post("/register", async (req, res) => {
     });
   }
 
-  const { email, password, name, type } = result.data;
+  const { email, password, name, type, phone, address } = result.data;
 
   const user = await prisma.user.findFirst({
     where: {
@@ -127,6 +131,8 @@ authRouter.post("/register", async (req, res) => {
         passwordHash: passwordHash,
         name: name,
         type: type,
+        phone: phone,
+        address: address,
       },
     });
 

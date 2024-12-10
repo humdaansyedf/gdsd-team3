@@ -2,6 +2,7 @@ import {
   Anchor,
   Button,
   Container,
+  Group,
   Paper,
   PasswordInput,
   SegmentedControl,
@@ -25,6 +26,8 @@ export function Register() {
         body: JSON.stringify({
           name: values.name,
           email: values.email,
+          phone: values.phone,
+          address: values.address,
           password: values.password,
           type: values.type,
         }),
@@ -54,7 +57,10 @@ export function Register() {
     initialValues: {
       name: "",
       email: "",
+      phone: "",
+      address: "",
       password: "",
+      confirmPassword: "",
       type: "STUDENT",
     },
     validate: {
@@ -64,22 +70,33 @@ export function Register() {
         if (!isEmail) {
           return "Invalid email";
         }
-
         if (values.type === "STUDENT" && !value.endsWith(".hs-fulda.de")) {
           return "Please use your university email";
         }
+        return null;
+      },
+      phone: (value) => {
+        if (!value) {
+          return null;
+        }
+        const isGermanMobile = /^(\+49|0049|0)(15|16|17)\d{8,9}$/.test(value);
+        if (!isGermanMobile) {
+          return "Invalid phone number";
+        }
+        return null;
       },
       password: (value) => (value.length < 8 ? "Password must have at least 8 letters" : null),
+      confirmPassword: (value, values) => (value !== values.password ? "Passwords do not match" : null),
     },
   });
 
   return (
-    <Container size={420} my={40}>
+    <Container size={600} my={40}>
       <Title ta="center">Register</Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Already have an account?{" "}
         <Anchor component={Link} size="sm" to="/login">
-          Sign in
+          Login
         </Anchor>
       </Text>
 
@@ -107,28 +124,59 @@ export function Register() {
           fullWidth
           disabled={registerMutation.isPending}
         />
-        <TextInput
-          label="Name"
-          placeholder="Your name"
-          mt="md"
-          {...form.getInputProps("name")}
-          disabled={registerMutation.isPending}
-        />
-        <TextInput
-          label="Email"
-          placeholder="Your email"
-          mt="md"
-          type="email"
-          {...form.getInputProps("email")}
-          disabled={registerMutation.isPending}
-        />
-        <PasswordInput
-          label="Password"
-          placeholder="Your password"
-          mt="md"
-          {...form.getInputProps("password")}
-          disabled={registerMutation.isPending}
-        />
+        <Title order={5} mt="md">
+          Personal Details:
+        </Title>
+        <Group grow>
+          <TextInput
+            label="Name"
+            placeholder="Your name"
+            {...form.getInputProps("name")}
+            disabled={registerMutation.isPending}
+            withAsterisk
+          />
+          <TextInput
+            label="Email"
+            placeholder="Your email"
+            {...form.getInputProps("email")}
+            disabled={registerMutation.isPending}
+            withAsterisk
+          />
+        </Group>
+        <Group grow mt="md">
+          <TextInput
+            label="Phone"
+            placeholder="Your phone"
+            {...form.getInputProps("phone")}
+            disabled={registerMutation.isPending}
+          />
+          <TextInput
+            label="Address"
+            placeholder="Your address"
+            {...form.getInputProps("address")}
+            disabled={registerMutation.isPending}
+          />
+        </Group>
+        <Title order={5} mt="md">
+          Password
+        </Title>
+        <Group grow>
+          <PasswordInput
+            label="Password"
+            placeholder="Your password"
+            {...form.getInputProps("password")}
+            disabled={registerMutation.isPending}
+            withAsterisk
+          />
+          <PasswordInput
+            label="Confirm Password"
+            placeholder="Re-enter your password"
+            {...form.getInputProps("confirmPassword")}
+            disabled={registerMutation.isPending}
+            withAsterisk
+          />
+        </Group>
+
         <Button type="submit" fullWidth mt="xl" loading={registerMutation.isPending}>
           Create account
         </Button>
@@ -136,66 +184,3 @@ export function Register() {
     </Container>
   );
 }
-
-// export function Register() {
-//   return (
-//     <Container size={600} my={40}>
-//       <Title ta="center">Create an Account</Title>
-//       <Text c="dimmed" size="sm" ta="center" mt={5}>
-//         Already have an account?{" "}
-//         <Anchor size="sm" component="button">
-//           Login
-//         </Anchor>
-//       </Text>
-
-//       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-//         <Title order={4} mb="md">
-//           Personal Details:
-//         </Title>
-//         <Group grow>
-//           <TextInput label="First Name" placeholder="Your first name" required />
-//           <TextInput label="Surname" placeholder="Your surname" required />
-//         </Group>
-
-//         <Group grow mt="md">
-//           <TextInput
-//             label="HS-Fulda Email"
-//             placeholder="yourname@hs-fulda.de"
-//             required
-//           />
-//           <TextInput label="Phone Number" placeholder="Your phone number" required />
-//         </Group>
-
-//         <Title order={4} mt="lg" mb="md">
-//           Address:
-//         </Title>
-//         <Group grow>
-//           <TextInput label="Apartment" placeholder="Apartment/Unit" />
-//           <TextInput label="Pin-Code" placeholder="Your pin-code" required />
-//         </Group>
-
-//         <Group grow mt="md">
-//           <TextInput label="Street" placeholder="Street Address" required />
-//           <TextInput label="Phone Number" placeholder="Additional contact number" />
-//         </Group>
-
-//         <Group grow mt="lg">
-//           <PasswordInput
-//             label="Password"
-//             placeholder="Create your password"
-//             required
-//           />
-//           <PasswordInput
-//             label="Confirm Password"
-//             placeholder="Re-enter your password"
-//             required
-//           />
-//         </Group>
-
-//         <Button fullWidth mt="xl">
-//           Register
-//         </Button>
-//       </Paper>
-//     </Container>
-//   );
-// }
