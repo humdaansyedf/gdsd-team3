@@ -71,7 +71,7 @@ export const App = () => {
           <Route
             path="landlord"
             element={
-              <PrivateRoute userType="landlord">
+              <PrivateRoute userType="LANDLORD">
                 <LandlordDashboardPage />
               </PrivateRoute>
             }
