@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-   previewFeatures = ["omitApi"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -15,20 +15,21 @@ enum UserType {
 
 enum PropertyStatus {
   DRAFT
-  PENDING 
+  PENDING
   ACTIVE
   RENTED
-  ARCHIVED 
+  ARCHIVED
   REJECTED
 }
 
-
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  password String
-  name     String
-  type     UserType
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String
+  phone        String
+  address      String
+  type         UserType
 
   sessions Session[]
 }
@@ -67,5 +68,3 @@ model PropertyMedia {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
-
-

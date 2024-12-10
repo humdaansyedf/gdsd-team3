@@ -3,6 +3,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconSearch, IconUserCircle } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import classes from "./Header.module.css";
+import { useAuth } from "../../lib/auth-context";
 
 const links = [
   { link: "/login", label: "Login" },
@@ -11,6 +12,7 @@ const links = [
 
 export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
+  const { user } = useAuth();
 
   const items = links.map((link) => (
     <Link key={link.label} to={link.link} className={classes.link}>
@@ -39,8 +41,13 @@ export function Header() {
         </Group>
 
         <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
-          {items}
-          <IconUserCircle stroke={2} />
+          {user ? (
+            <Link to="/profile">
+              <IconUserCircle />
+            </Link>
+          ) : (
+            items
+          )}
         </Group>
       </div>
     </header>

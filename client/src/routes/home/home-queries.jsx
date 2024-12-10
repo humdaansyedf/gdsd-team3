@@ -20,6 +20,9 @@ export const usePropertySearch = (filters) => {
           page: 1,
         }),
       });
+      if (!response.ok) {
+        throw new Error("Failed to fetch properties");
+      }
       const data = await response.json();
       return data;
     },
