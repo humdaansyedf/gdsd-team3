@@ -27,11 +27,12 @@ model User {
   email        String   @unique
   passwordHash String
   name         String
-  phone        String
-  address      String
+  phone        String?
+  address      String?
   type         UserType
 
-  sessions Session[]
+  sessions   Session[]
+  properties Property[]
 }
 
 model Session {
@@ -58,6 +59,9 @@ model Property {
   updatedAt      DateTime        @updatedAt
   media          PropertyMedia[]
   status         PropertyStatus  @default(PENDING)
+
+  landlordId Int
+  landlord   User @relation(fields: [landlordId], references: [id])
 }
 
 model PropertyMedia {

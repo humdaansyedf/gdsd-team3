@@ -1,131 +1,18 @@
-import { Button, Checkbox, NumberInput, Select, SimpleGrid, TextInput } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
-import { useForm } from "@mantine/form";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { usePropertySearch } from "./home-queries";
 import classes from "./home-style.module.css";
 import { CardsCarousel } from "../../components/corousel/carousel";
+import FiltersSection from "./filters-section";
 
 export const Home = () => {
-  const DEFAULT_FILTERS = {
-    title: "",
-    pets: false,
-    smoking: false,
-    minPrice: 0,
-    maxPrice: 5000,
-    searchRadius: "whole area",
-    availableFrom: "",
-  };
-  const [showFilters, setShowFilters] = useState(true);
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
-  const searchQuery = usePropertySearch(filters);
-  const form = useForm({
-    mode: "uncontrolled",
-    initialValues: DEFAULT_FILTERS,
-  });
+  const searchQuery = usePropertySearch();
 
   return (
     <>
       <CardsCarousel />
 
       <div className={classes.container}>
-        <aside className={classes.filtersSection}>
-          <div className={classes.filtersHeader}>
-            <h2>Filters</h2>
-            <Button size="compact-xs" color="gray" type="button" onClick={() => setShowFilters((prev) => !prev)}>
-              {showFilters ? "Hide Filters" : "Show Filters"}
-            </Button>
-          </div>
-
-          {showFilters && (
-            <>
-              <form className={classes.filters} onSubmit={form.onSubmit((values) => setFilters(values))}>
-                <div className={classes.filter}>
-                  <h4>Title:</h4>
-                  <TextInput placeholder="Enter query" key={form.key("title")} {...form.getInputProps("title")} />
-                </div>
-
-                <div className={classes.filter}>
-                  <h4>Price Range:</h4>
-                  <SimpleGrid cols={2} spacing="xs">
-                    <NumberInput
-                      placeholder="Min. Rent"
-                      min={0}
-                      max={5000}
-                      step={50}
-                      prefix="€"
-                      key={form.key("minPrice")}
-                      {...form.getInputProps("minPrice")}
-                    />
-                    <NumberInput
-                      placeholder="Max. Rent"
-                      min={0}
-                      max={5000}
-                      step={50}
-                      prefix="€"
-                      key={form.key("maxPrice")}
-                      {...form.getInputProps("maxPrice")}
-                    />
-                  </SimpleGrid>
-                </div>
-
-                <div className={classes.filter}>
-                  <h4>Earliest available:</h4>
-                  <DateInput
-                    minDate={new Date()}
-                    key={form.key("availableFrom")}
-                    {...form.getInputProps("availableFrom")}
-                  />
-                </div>
-
-                <div className={classes.filter}>
-                  <h4>Search radius:</h4>
-                  <Select
-                    placeholder="Whole area"
-                    data={["Whole area", "+5km", "+10km", "+20km", "+100km", "200km"]}
-                    key={form.key("searchRadius")}
-                    {...form.getInputProps("searchRadius")}
-                  />
-                </div>
-
-                <div className={classes.filter}>
-                  <h4>Additional:</h4>
-                  <Checkbox
-                    label="Pets Allowed"
-                    className={classes.checkBox}
-                    key={form.key("pets")}
-                    {...form.getInputProps("pets")}
-                  />
-                  <Checkbox
-                    label="Smoking Allowed"
-                    className={classes.checkBox}
-                    key={form.key("smoking")}
-                    {...form.getInputProps("smoking")}
-                  />
-                </div>
-
-                <div className={classes.filterBtns}>
-                  <Button type="submit" className={classes.applyFiltersBtn}>
-                    Search
-                  </Button>
-                  <Button
-                    color="gray"
-                    type="button"
-                    className={classes.resetFiltersBtn}
-                    onClick={() => {
-                      form.reset();
-                      setFilters(DEFAULT_FILTERS);
-                    }}
-                  >
-                    Reset
-                  </Button>
-                </div>
-              </form>
-            </>
-          )}
-        </aside>
-
+        <FiltersSection />
         <div className={classes.resultsSection}>
           {searchQuery.isLoading && <p>Loading...</p>}
           {searchQuery.error && <p>Error: {searchQuery.error.message}</p>}
