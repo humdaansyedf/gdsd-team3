@@ -6,7 +6,6 @@ import { Login } from "./login/login-page";
 import { Register } from "./register/register-page";
 import { Home } from "./home/home-page";
 import { LandlordDashboardPage } from "./landlord-dashboard/landlord-dashboard-page";
-import { Login } from "./login/login-page";
 import express from 'express';
 import { fileRouter } from '../components/ImageUploader/imageUploaderQueries';
 import { PropertyDetail } from "./property-detail/property-detail-page";
