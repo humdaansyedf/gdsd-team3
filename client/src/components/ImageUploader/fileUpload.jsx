@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { toast } from 'sonner';
 import { z } from 'zod';
+import { notifications } from '@mantine/notifications';
 
 // Zod schema for validating the response
 const publicFileUploadSchema = z.object({
@@ -33,11 +33,11 @@ export const usePublicFileUpload = () => {
         throw error;
       }
     },
-    onSuccess: () => {
-      toast.success('File uploaded successfully!');
-    },
+
     onError: (error) => {
-      toast.error('File upload failed.');
+        notifications.show({message: "File Upload Error",
+          color: "red"
+        });
       console.error(error);
     },
   });
