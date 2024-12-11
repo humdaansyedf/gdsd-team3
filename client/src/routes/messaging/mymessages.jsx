@@ -1,20 +1,10 @@
-import {
-  ActionIcon,
-  Avatar,
-  Container,
-  Group,
-  Paper,
-  ScrollArea,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { ActionIcon, Avatar, Container, Group, Paper, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
 import { IconPlus, IconSend } from "@tabler/icons-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
 // Connect to the Socket.IO server
-const socket = io("http://localhost:3000");
+const socket = io();
 
 export function Mymessages() {
   const [messages, setMessages] = useState([]);
@@ -42,18 +32,11 @@ export function Mymessages() {
 
     socket.on("receive_message", (data) => {
       if (data.from !== socket.id) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: data.from, content: data.content, align: "left" },
-        ]);
+        setMessages((prevMessages) => [...prevMessages, { sender: data.from, content: data.content, align: "left" }]);
 
         // Update the last message preview for the sender
         setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.id === data.from
-              ? { ...user, lastMessage: data.content }
-              : user
-          )
+          prevUsers.map((user) => (user.id === data.from ? { ...user, lastMessage: data.content } : user))
         );
       }
     });
@@ -72,18 +55,11 @@ export function Mymessages() {
       socket.emit("send_message", messageData);
 
       // Add the message locally
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: "Me", content: newMessage, align: "right" },
-      ]);
+      setMessages((prevMessages) => [...prevMessages, { sender: "Me", content: newMessage, align: "right" }]);
 
       // Update the last message preview for the current user
       setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === currentUser
-            ? { ...user, lastMessage: newMessage }
-            : user
-        )
+        prevUsers.map((user) => (user.id === currentUser ? { ...user, lastMessage: newMessage } : user))
       );
 
       setNewMessage(""); // Clear the input field
@@ -93,13 +69,7 @@ export function Mymessages() {
   return (
     <Container fluid my={20} style={{ display: "flex", gap: "20px" }}>
       {/* Left User List Section */}
-      <Paper
-        withBorder
-        shadow="md"
-        p={10}
-        radius="md"
-        style={{ width: "22%", minWidth: "220px" }}
-      >
+      <Paper withBorder shadow="md" p={10} radius="md" style={{ width: "22%", minWidth: "220px" }}>
         <Stack spacing="sm">
           {users.map((user, index) => (
             <Paper
@@ -139,12 +109,7 @@ export function Mymessages() {
       </Paper>
 
       {/* Right Messaging Section */}
-      <Paper
-        withBorder
-        shadow="md"
-        radius="md"
-        style={{ flex: 1, display: "flex", flexDirection: "column" }}
-      >
+      <Paper withBorder shadow="md" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         {/* Messages */}
         <ScrollArea style={{ flex: 1, padding: "10px 20px" }}>
           <Stack>
@@ -153,8 +118,7 @@ export function Mymessages() {
                 key={index}
                 align={message.align === "right" ? "flex-end" : "flex-start"}
                 style={{
-                  justifyContent:
-                    message.align === "right" ? "flex-end" : "flex-start",
+                  justifyContent: message.align === "right" ? "flex-end" : "flex-start",
                 }}
               >
                 {message.align === "left" && <Avatar radius="xl" />}
@@ -163,8 +127,7 @@ export function Mymessages() {
                   p="md"
                   radius="md"
                   style={{
-                    backgroundColor:
-                      message.align === "right" ? "#d4f8d4" : "#f5f5f5",
+                    backgroundColor: message.align === "right" ? "#d4f8d4" : "#f5f5f5",
                     maxWidth: "70%",
                   }}
                 >
@@ -186,13 +149,7 @@ export function Mymessages() {
             onChange={(e) => setNewMessage(e.target.value)}
             style={{ flex: 1 }}
           />
-          <ActionIcon
-            variant="filled"
-            color="green"
-            size="lg"
-            radius="md"
-            onClick={handleSendMessage}
-          >
+          <ActionIcon variant="filled" color="green" size="lg" radius="md" onClick={handleSendMessage}>
             <IconSend />
           </ActionIcon>
         </Group>
