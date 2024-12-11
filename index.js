@@ -1,13 +1,13 @@
-import cookieParser from "cookie-parser";
 import "dotenv/config";
 import express from "express";
 import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import { IS_DEV } from "./src/lib/utils.js";
-import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { fileRouter } from "./src/routes/file.js";
+import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,7 +20,7 @@ const server = createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: IS_DEV ? "http://localhost:5173" : "https://gdsdteam3.live/", // Allow client origin in development
+    origin: IS_DEV ? ["http://localhost:5173"] : false, // Allow client origin in development
   },
 });
 
