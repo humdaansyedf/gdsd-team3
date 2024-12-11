@@ -55,7 +55,7 @@ fileRouter.post('/file', async (req, res) => {
       const url = await getSignedUrl(
         s3Client,
         new PutObjectCommand({
-          Bucket: process.env.APP_AWS_PUBLIC_BUCKET_NAME, // S3 bucket name
+          Bucket: process.env.APP_AWS_BUCKET_NAME, // S3 bucket name
           Key: key, // File key
         }),
         { expiresIn: 60 * 5 } // URL expiration time (5 minutes)
