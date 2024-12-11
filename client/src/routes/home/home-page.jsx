@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { usePropertySearch } from "./home-queries";
 import classes from "./home-style.module.css";
-import { CardsCarousel } from "../../components/corousel/carousel";
+import { FeaturedCarousel } from "../../components/Carousel/Carousel";
 import FiltersSection from "./filters-section";
 
 export const Home = () => {
@@ -9,8 +9,7 @@ export const Home = () => {
 
   return (
     <>
-      <CardsCarousel />
-
+      <FeaturedCarousel />
       <div className={classes.container}>
         <FiltersSection />
         <div className={classes.resultsSection}>

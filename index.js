@@ -35,13 +35,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Public routes
-app.use("/api", authRouter);
+app.use("/api", authRouter, authMiddleware, propertyRouter, fileRouter);
 
-// Middleware for authenticating users
-app.use("/api", authMiddleware);
+// // Middleware for authenticating users
+// app.use("/api", authMiddleware);
 
-// Private routes
-app.use("/api", propertyRouter, fileRouter);
+// // Private routes
+// app.use("/api",);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
