@@ -20,11 +20,6 @@ const server = createServer(app);
 app.set("etag", false);
 app.set("x-powered-by", false);
 
-if (!IS_DEV) {
-  // Serve the static files from the React app
-  app.use(express.static(join(__dirname, "client/dist")));
-}
-
 // Middleware for parsing JSON bodies
 app.use(express.json());
 
@@ -35,13 +30,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Public routes
-app.use("/api", authRouter, authMiddleware, propertyRouter, fileRouter);
+app.use("/api", authRouter);
 
-// // Middleware for authenticating users
-// app.use("/api", authMiddleware);
+// Middleware for authenticating users
+app.use("/api", authMiddleware);
 
-// // Private routes
-// app.use("/api",);
+// Private routes
+app.use("/api", propertyRouter, fileRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
@@ -56,9 +51,10 @@ if (IS_DEV) {
   app.get("/", (_req, res) => {
     res.redirect("http://localhost:5173");
   });
-}
+} else {
+  // Serve the static files from the React app
+  app.use(express.static(join(__dirname, "client/dist")));
 
-if (!IS_DEV) {
   // Handles any requests that don't match the ones above
   app.get("*", (_req, res) => {
     res.sendFile(join(__dirname + "/client/dist/index.html"));
