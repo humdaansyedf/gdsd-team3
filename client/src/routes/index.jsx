@@ -1,10 +1,11 @@
-import * as React from "react";
 import { Container, Loader } from "@mantine/core";
+import * as React from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { Footer } from "../components/Footer/Footer";
 import { Header } from "../components/Header/Header";
 import { useAuth } from "../lib/auth-context";
 import { PrivateRoute, PublicRoute } from "../lib/auth-routes";
+import { Mymessages } from "./messaging/mymessages";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
 const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
@@ -94,6 +95,14 @@ export const App = () => {
                 <PrivateRoute>
                   <Profile />
                 </PrivateRoute>
+              }
+            />
+            <Route
+              path="mymessages"
+              element={
+                <PublicRoute>
+                  <Mymessages />
+                </PublicRoute>
               }
             />
             <Route path="*" element={<NotFound />} />

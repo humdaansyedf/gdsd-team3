@@ -1,13 +1,14 @@
+import cookieParser from "cookie-parser";
 import "dotenv/config";
+import express from "express";
+import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createServer } from "node:http";
-import express from "express";
-import cookieParser from "cookie-parser";
+import { Server } from "socket.io";
 import { IS_DEV } from "./src/lib/utils.js";
-import { authRouter, authMiddleware } from "./src/routes/auth.js";
-import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
+import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { fileRouter } from "./src/routes/file.js";
+import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,6 +16,46 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 const server = createServer(app);
+
+// Initialize Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: IS_DEV ? "http://localhost:5173" : undefined, // Allow client origin in development
+  },
+});
+
+const ROOM_NAME = "global_room";
+
+// Socket.IO logic
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  // Add the user to the global room
+  socket.join(ROOM_NAME);
+  console.log(`User ${socket.id} joined ${ROOM_NAME}`);
+
+  // Broadcast to others in the room when a user joins
+  socket.to(ROOM_NAME).emit("user_joined", { userId: socket.id });
+
+  // Handle incoming messages
+  socket.on("send_message", (data) => {
+    console.log("Message received:", data);
+
+    // Emit the message to everyone in the room
+    io.to(ROOM_NAME).emit("receive_message", {
+      from: socket.id,
+      content: data.content,
+    });
+  });
+
+  // Handle disconnection
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
+
+    // Notify others in the room
+    socket.to(ROOM_NAME).emit("user_left", { userId: socket.id });
+  });
+});
 
 // Disable some headers
 app.set("etag", false);
@@ -26,7 +67,7 @@ app.use(express.json());
 // Middleware for parsing URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware for parsing cookie
+// Middleware for parsing cookies
 app.use(cookieParser());
 
 // Public routes
