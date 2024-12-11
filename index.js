@@ -6,7 +6,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { IS_DEV } from "./src/lib/utils.js";
 import { authRouter, authMiddleware } from "./src/routes/auth.js";
-import { propertyRouter } from "./src/routes/property.js";
+import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { fileRouter } from "./src/routes/file.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Public routes
-app.use("/api", authRouter);
+app.use("/api", authRouter, publicPropertyRouter);
 
 // Middleware for authenticating users
 app.use("/api", authMiddleware);

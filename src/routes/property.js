@@ -1,15 +1,18 @@
 import { Router } from "express";
 import { prisma } from "../prisma/index.js";
 
+export const publicPropertyRouter = Router();
 export const propertyRouter = Router();
 
 // Route to get multiple properties
-propertyRouter.post("/property/search", async (req, res) => {
+publicPropertyRouter.post("/property/search", async (req, res) => {
   const { title, pets, smoking, minPrice, maxPrice, availableFrom, searchRadius, page = 1 } = req.body;
   const limit = 50;
   const offset = (page - 1) * limit;
 
-  const where = {};
+  const where = {
+    status: "ACTIVE",
+  };
 
   if (title) {
     where.title = {
@@ -43,7 +46,6 @@ propertyRouter.post("/property/search", async (req, res) => {
 
   var numberPattern = /\d+/g;
   const radius = searchRadius?.match(numberPattern);
-  console.log("searchRadius" + radius);
 
   // Fulda's coordinates (center of the search area)
   const fuldaLat = 50.5528;
@@ -102,11 +104,12 @@ propertyRouter.post("/property/search", async (req, res) => {
 });
 
 // Route to get a single property
-propertyRouter.get("/property/:id", async (req, res) => {
+publicPropertyRouter.get("/property/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const property = await prisma.property.findUnique({
     where: {
       id,
+      status: "ACTIVE",
     },
     include: {
       media: true,
@@ -124,7 +127,6 @@ propertyRouter.get("/property/:id", async (req, res) => {
 //requires status field in post body
 //returns with message and property data
 propertyRouter.patch("/property/:id/status", async (req, res) => {
-  console.log("API hit");
   const { id } = req.params; // Get property ID from the URL
   const { status } = req.body; // Get the new status from the request body
 
