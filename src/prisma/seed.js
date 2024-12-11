@@ -22,7 +22,7 @@ async function main() {
   const users = [
     {
       id: 1,
-      email: "landlord1@gdsd.com",
+      email: "landlord1@gmail.com",
       passwordHash: passwordHash,
       type: "LANDLORD",
       name: "Landlord 1",
