@@ -6,7 +6,11 @@ export const AuthProvider = ({ children }) => {
   const meQuery = useQuery({
     queryKey: ["me"],
     queryFn: async () => {
-      const response = await fetch(`/api/me`);
+      const response = await fetch(`/api/me`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (!response.ok) {
         return null;
       }
@@ -17,7 +21,12 @@ export const AuthProvider = ({ children }) => {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await fetch(`/api/logout`, { method: "POST" });
+      await fetch(`/api/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       queryClient.refetchQueries({
         queryKey: ["me"],
       });
