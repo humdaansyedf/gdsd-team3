@@ -75,7 +75,7 @@ async function main() {
       availableFrom: "2024-11-28T00:00:00Z",
       createdAt: "2024-11-01T14:30:00Z",
       postcode: "36037",
-      status: "ACTIVE",
+      status: "DRAFT",
     },
     {
       id: 2,
@@ -109,7 +109,7 @@ async function main() {
       availableFrom: "2024-12-10T00:00:00Z",
       createdAt: "2024-11-05T16:20:00Z",
       postcode: "36041",
-      status: "ACTIVE",
+      status: "PENDING",
     },
     {
       id: 4,
@@ -126,7 +126,7 @@ async function main() {
       availableFrom: "2024-11-20T00:00:00Z",
       createdAt: "2024-10-25T11:15:00Z",
       postcode: "36043",
-      status: "ACTIVE",
+      status: "REJECTED",
     },
     {
       id: 5,
@@ -143,7 +143,7 @@ async function main() {
       availableFrom: "2024-12-05T00:00:00Z",
       createdAt: "2024-11-10T08:30:00Z",
       postcode: "36037",
-      status: "ACTIVE",
+      status: "DRAFT",
     },
     {
       id: 6,
@@ -160,7 +160,7 @@ async function main() {
       availableFrom: "2024-11-25T00:00:00Z",
       createdAt: "2024-10-30T13:45:00Z",
       postcode: "36039",
-      status: "ACTIVE",
+      status: "PENDING",
     },
     {
       id: 7,
@@ -194,7 +194,7 @@ async function main() {
       availableFrom: "2024-12-01T00:00:00Z",
       createdAt: "2024-10-20T10:30:00Z",
       postcode: "36043",
-      status: "ACTIVE",
+      status: "REJECTED",
     },
     {
       id: 9,
@@ -245,7 +245,7 @@ async function main() {
       availableFrom: "2024-11-25T00:00:00Z",
       createdAt: "2024-10-28T13:20:00Z",
       postcode: "36041",
-      status: "ACTIVE",
+      status: "PENDING",
     },
     {
       id: 12,
@@ -347,7 +347,7 @@ async function main() {
       availableFrom: "2024-12-15T00:00:00Z",
       createdAt: "2024-10-30T15:30:00Z",
       postcode: "36037",
-      status: "ACTIVE",
+      status: "PENDING",
     },
     {
       id: 18,
