@@ -20,7 +20,7 @@ const server = createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: IS_DEV ? "https://gdsdteam3.live/" : undefined, // Allow client origin in development
+    origin: IS_DEV ? "http://localhost:gdsd/" : undefined, // Allow client origin in development
   },
 });
 
