@@ -31,7 +31,7 @@ export function ImageUploader() {
           });
         }}
       >
-        <Text ta="center">Drop images here</Text>
+        <Text ta="center">Drop images here or click to Browse</Text>
       </Dropzone>
 
       <SimpleGrid cols={{ base: 1, sm: 4 }} mt={previews.length > 0 ? "xl" : 0}>
