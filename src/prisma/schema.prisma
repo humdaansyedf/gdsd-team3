@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  binaryTargets   = ["native", "debian-openssl-3.0.x"]
   previewFeatures = ["omitApi"]
 }
 
@@ -58,188 +58,172 @@ enum MessageType {
 }
 
 model User {
-  id              Int       @id @default(autoincrement())
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  type            UserType  @default(STUDENT)
-  email           String    @unique
-  username        String    @unique
-  passwordHash        String
+  type           UserType  @default(STUDENT)
+  email          String    @unique
+  passwordHash   String
   name           String
-  phone           String?    @unique
-  address         String?
-  profilePicture  String?
-  isVerified      Boolean   @default(true)
-  isOnline        Boolean   @default(false)
-  lastOnlineAt    DateTime?
-  lastLoginAt     DateTime?
+  phone          String?   @unique
+  address        String?
+  profilePicture String?
+  isVerified     Boolean   @default(true)
+  isOnline       Boolean   @default(false)
+  lastOnlineAt   DateTime?
+  lastLoginAt    DateTime?
 
   // Relations
-  sessions        Session[]
-  properties      Property[]    @relation("LandlordProperties")
+  sessions          Session[]
+  properties        Property[]        @relation("LandlordProperties")
   participatedChats ChatParticipant[]
-  messages        Message[]
-  messageStates   MessageState[]
+  messages          Message[]
 }
 
 model Session {
-  id          Int       @id @default(autoincrement())
-  userId      Int
-  createdAt   DateTime  @default(now())
-  expiresAt   DateTime?
-  ipAddress   String?
-  deviceInfo  String?
-  user        User      @relation(fields: [userId], references: [id])
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  ipAddress  String?
+  deviceInfo String?
+  user       User      @relation(fields: [userId], references: [id])
 }
 
 model Property {
-  id          Int           @id @default(autoincrement())
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // status and type
-  status      PropertyStatus @default(DRAFT)
-  propertyType PropertyType @default(APARTMENT)
-  title       String @db.Text()
-  description String @db.Text()
+  status       PropertyStatus @default(DRAFT)
+  propertyType PropertyType   @default(APARTMENT)
+  title        String         @db.Text()
+  description  String         @db.Text()
 
   // location and address
-  longitude   Float
-  latitude    Float
-  address1    String?
-  address2    String?
-  city        String?
-  postcode    String?
+  longitude Float
+  latitude  Float
+  address1  String?
+  address2  String?
+  city      String?
+  postcode  String?
 
   // price and costs
-  totalRent   Float
-  coldRent        Float
-  additionalCosts Float?
+  totalRent                        Float
+  coldRent                         Float
+  additionalCosts                  Float?
   heatingIncludedInAdditionalCosts Boolean @default(false)
-  caution     Float?
+  caution                          Float?
 
   // rooms and space
-  numberOfRooms Int
-  numberOfBeds Int?
-  numberOfBaths Int?
-  totalFloors Int?
-  floorNumber Int?
+  numberOfRooms  Int
+  numberOfBeds   Int?
+  numberOfBaths  Int?
+  totalFloors    Int?
+  floorNumber    Int?
   livingSpaceSqm Float?
-  yearBuilt   Int?
+  yearBuilt      Int?
 
   // availability and lease terms
-  availableFrom DateTime
+  availableFrom            DateTime
   minimumLeaseTermInMonths Int?
   maximumLeaseTermInMonths Int?
-  noticePeriodInMonths Int?
+  noticePeriodInMonths     Int?
 
   // amenities
-  pets Boolean @default(false)
-  smoking Boolean @default(false)
-  kitchen     Boolean @default(false)
-  furnished    Boolean @default(false)
-  balcony      Boolean @default(false)
-  cellar       Boolean @default(false)
+  pets           Boolean @default(false)
+  smoking        Boolean @default(false)
+  kitchen        Boolean @default(false)
+  furnished      Boolean @default(false)
+  balcony        Boolean @default(false)
+  cellar         Boolean @default(false)
   washingMachine Boolean @default(false)
-  elevator     Boolean @default(false)
-  garden       Boolean @default(false)
-  parking      Boolean @default(false)
-  internet     Boolean @default(false)
-  cableTv      Boolean @default(false)
+  elevator       Boolean @default(false)
+  garden         Boolean @default(false)
+  parking        Boolean @default(false)
+  internet       Boolean @default(false)
+  cableTv        Boolean @default(false)
 
   // Relations
-  landlordId  Int
-  landlord    User         @relation("LandlordProperties", fields: [landlordId], references: [id])
-  media       PropertyMedia[]
-  chats       Chat[]
+  landlordId Int
+  landlord   User            @relation("LandlordProperties", fields: [landlordId], references: [id])
+  media      PropertyMedia[]
+  chats      Chat[]
 }
 
 model PropertyMedia {
-  id          Int         @id @default(autoincrement())
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  status      MediaStatus
-  type        MediaType
-  url         String
-  name        String
-  thumbnail   String?
+  status    MediaStatus
+  type      MediaType
+  url       String
+  name      String
+  thumbnail String?
 
   // Relations
-  propertyId  Int
-  property    Property    @relation(fields: [propertyId], references: [id])
+  propertyId Int
+  property   Property @relation(fields: [propertyId], references: [id])
 }
 
 model Chat {
-  id            Int       @id @default(autoincrement())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   lastMessageAt DateTime?
 
   // Relations
-  propertyId    Int
-  property      Property  @relation(fields: [propertyId], references: [id])
-  participants  ChatParticipant[]
-  messages      Message[]
+  propertyId   Int
+  property     Property          @relation(fields: [propertyId], references: [id])
+  participants ChatParticipant[]
+  messages     Message[]
 }
 
 model ChatParticipant {
-  chatId      Int
-  chat        Chat      @relation(fields: [chatId], references: [id])
-  userId      Int
-  user        User      @relation(fields: [userId], references: [id])
+  chatId Int
+  chat   Chat @relation(fields: [chatId], references: [id])
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
 
   @@id([chatId, userId])
 }
 
 model Message {
-  id          Int         @id @default(autoincrement())
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  type        MessageType
-  content     String?
-  deletedAt   DateTime?
+  type      MessageType
+  content   String?
+  deletedAt DateTime?
 
   // Relations
-  chatId      Int
-  chat        Chat        @relation(fields: [chatId], references: [id])
-  userId      Int
-  user        User        @relation(fields: [userId], references: [id])
-  replyTo     Int?
-  repliedTo   Message?    @relation("ReplyToMessage", fields: [replyTo], references: [id])
-  replies     Message[]   @relation("ReplyToMessage")
-  messageStates MessageState[]
+  chatId Int
+  chat   Chat @relation(fields: [chatId], references: [id])
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
 }
 
-model MessageState {
-  id          Int       @id @default(autoincrement())
-  messageId   Int
-  userId      Int
-  deliveredAt DateTime  @default(now())
-  readAt      DateTime?
-
-  message     Message   @relation(fields: [messageId], references: [id])
-  user        User      @relation(fields: [userId], references: [id])
-}
-
+// Admin Models
 model Admin {
-  id          Int       @id @default(autoincrement())
-  email       String    @unique
-  password    String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  sessions    AdminSession[]
+  id        Int            @id @default(autoincrement())
+  email     String         @unique
+  password  String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  sessions  AdminSession[]
 }
 
 model AdminSession {
-  id          Int       @id @default(autoincrement())
-  userId      Int
-  createdAt   DateTime  @default(now())
-  expiresAt   DateTime?
-  ipAddress   String?
-  deviceInfo  String?
-  admin       Admin     @relation(fields: [userId], references: [id])
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  ipAddress  String?
+  deviceInfo String?
+  admin      Admin     @relation(fields: [userId], references: [id])
 }
