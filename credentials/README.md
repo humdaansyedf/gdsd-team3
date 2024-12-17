@@ -40,7 +40,7 @@ Some useful queries:
 2. See all columns in a table: `SHOW COLUMNS FROM table_name;`
 3. See all data in a table: `SELECT * FROM table_name;`
 
-### Creadetials:
+### Credentials:
 
 - **url:** `jdbc:mysql://gdsd.clau0k8881i1.eu-central-1.rds.amazonaws.com:3306/`
 - **username:** `admin`
