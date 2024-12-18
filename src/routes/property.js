@@ -21,11 +21,11 @@ publicPropertyRouter.post("/property/search", async (req, res) => {
   }
 
   if (pets) {
-    where.petsAllowed = true;
+    where.pets = true;
   }
 
   if (smoking) {
-    where.smokingAllowed = true;
+    where.smoking = true;
   }
 
   if (minPrice || maxPrice) {
