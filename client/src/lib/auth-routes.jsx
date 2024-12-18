@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "./auth-context";
 
 // Routes for public only pages like login, signup, etc.
-export const PublicRoute = ({ children }) => {
+export const PublicOnlyRoute = ({ children }) => {
   const { user, isLoading } = useAuth();
   if (isLoading) {
     return null;

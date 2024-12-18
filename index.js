@@ -82,7 +82,7 @@ app.use("/api", propertyRouter, fileRouter, landlordRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
-  console.error(err.message, err.stack);
+  console.error("ERROR", err.message, err.stack);
   res.status(500).json({
     message: "Internal Server Error",
   });
