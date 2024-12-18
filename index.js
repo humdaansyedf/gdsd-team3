@@ -9,6 +9,7 @@ import { IS_DEV } from "./src/lib/utils.js";
 import { fileRouter } from "./src/routes/file.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
+import { landlordRouter } from "./src/routes/landlord.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -77,7 +78,7 @@ app.use("/api", authRouter, publicPropertyRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use("/api", propertyRouter, fileRouter);
+app.use("/api", propertyRouter, fileRouter, landlordRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
