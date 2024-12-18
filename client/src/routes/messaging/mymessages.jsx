@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
 // Connect to the Socket.IO server
-const socket = io();
+const socket = io(window.location.origin, {
+  path: "/api",
+});
 
 export function Mymessages() {
   const [messages, setMessages] = useState([]);
@@ -28,6 +30,10 @@ export function Mymessages() {
     // Listen for incoming messages
     socket.on("connect", () => {
       setCurrentUser(socket.id);
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Connection error:", error);
     });
 
     socket.on("receive_message", (data) => {
@@ -140,6 +146,7 @@ export function Mymessages() {
 
         {/* Input Section */}
         <Group p="md" style={{ borderTop: "1px solid #e5e5e5" }}>
+          {currentUser}
           <ActionIcon variant="light" size="lg" radius="md">
             <IconPlus />
           </ActionIcon>
