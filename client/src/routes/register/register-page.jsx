@@ -70,7 +70,7 @@ export function Register() {
         if (!isEmail) {
           return "Invalid email";
         }
-        if (values.type === "STUDENT" && !value.endsWith(".hs-fulda.de")) {
+        if (values.type === "STUDENT" && !value.endsWith("hs-fulda.de")) {
           return "Please use your university email";
         }
         return null;

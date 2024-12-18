@@ -9,6 +9,7 @@ import { IS_DEV } from "./src/lib/utils.js";
 import { fileRouter } from "./src/routes/file.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
+import { landlordRouter } from "./src/routes/landlord.js";
 import {chatHandlers} from "./chatHandlers.js"
 import { prisma } from "./src/prisma/index.js";
 
@@ -61,11 +62,11 @@ app.use("/api", authRouter, publicPropertyRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use("/api", propertyRouter, fileRouter);
+app.use("/api", propertyRouter, fileRouter, landlordRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
-  console.error(err.message, err.stack);
+  console.error("ERROR", err.message, err.stack);
   res.status(500).json({
     message: "Internal Server Error",
   });

@@ -4,7 +4,7 @@ import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { Footer } from "../components/Footer/Footer";
 import { Header } from "../components/Header/Header";
 import { useAuth } from "../lib/auth-context";
-import { PrivateRoute, PublicRoute } from "../lib/auth-routes";
+import { PrivateRoute, PublicOnlyRoute } from "../lib/auth-routes";
 import { Mymessages } from "./messaging/mymessages";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
@@ -67,17 +67,17 @@ export const App = () => {
             <Route
               path="login"
               element={
-                <PublicRoute>
+                <PublicOnlyRoute>
                   <Login />
-                </PublicRoute>
+                </PublicOnlyRoute>
               }
             />
             <Route
               path="register"
               element={
-                <PublicRoute>
+                <PublicOnlyRoute>
                   <Register />
-                </PublicRoute>
+                </PublicOnlyRoute>
               }
             />
             <Route path="property/:id" element={<PropertyDetail />} />

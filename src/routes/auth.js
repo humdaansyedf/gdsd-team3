@@ -183,29 +183,36 @@ authRouter.post("/login", async (req, res) => {
     return res.status(400).json({ message: "Invalid email or password" });
   }
 
-  const token = generateSessionToken();
-  const session = createSession(token, user.id);
+  try {
+    const token = generateSessionToken();
+    const session = await createSession(token, user.id);
 
-  res.cookie("auth_session", token, {
-    httpOnly: true,
-    sameSite: "lax",
-    expires: session.expiresAt,
-    secure: !IS_DEV,
-  });
-
-  return res.json({ message: "Logged in" });
+    res.cookie("auth_session", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      expires: session.expiresAt,
+      secure: !IS_DEV,
+    });
+    return res.json({ message: "Logged in" });
+  } catch (e) {
+    return res.status(400).json({ message: "Failed to log in" });
+  }
 });
 
 authRouter.post("/logout", authMiddleware, async (req, res) => {
-  await invalidateSession(req.session.id);
+  try {
+    await invalidateSession(req.session.id);
 
-  res.clearCookie("auth_session", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: !IS_DEV,
-  });
+    res.clearCookie("auth_session", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: !IS_DEV,
+    });
 
-  return res.json({ message: "Logged out" });
+    return res.json({ message: "Logged out" });
+  } catch (e) {
+    return res.status(400).json({ message: "Failed to log out" });
+  }
 });
 
 authRouter.get("/me", authMiddleware, async (req, res) => {
