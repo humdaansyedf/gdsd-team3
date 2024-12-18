@@ -350,6 +350,7 @@ landlordRouter.delete("/landlord/property/:id/media/:mediaId", async (req, res) 
         id: mediaId,
       },
     });
+    // TODO: Delete media from S3 (i.e delete the file using DeleteObjectCommand)
     res.json({
       message: "Media deleted",
     });
