@@ -1,6 +1,6 @@
 import express from "express";
 import { z } from "zod";
-import { prisma } from "../prisma";
+import { prisma } from "../prisma/index.js";
 
 export const landlordRouter = express.Router();
 
@@ -43,7 +43,7 @@ const propertySchema = z.object({
   livingSpaceSqm: z.number().min(1).optional(),
   yearBuilt: z.string().length(4).optional(),
   // availability and lease terms
-  availableFrom: z.datetime(),
+  availableFrom: z.string().datetime(),
   minimumLeaseTermInMonths: z.number().min(1).optional(),
   maximumLeaseTermInMonths: z.number().min(1).optional(),
   noticePeriodInMonths: z.number().min(1).optional(),
