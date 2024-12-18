@@ -20,6 +20,7 @@ const server = createServer(app);
 
 // Initialize Socket.IO
 const io = new Server(server, {
+  path: "/api",
   cors: {
     origin: IS_DEV ? ["http://localhost:5173"] : false, // Allow client origin in development
   },
