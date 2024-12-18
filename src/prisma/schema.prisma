@@ -108,6 +108,7 @@ model Property {
   address1  String?
   address2  String?
   city      String?
+  state     String?
   postcode  String?
 
   // price and costs
@@ -115,7 +116,7 @@ model Property {
   coldRent                         Float
   additionalCosts                  Float?
   heatingIncludedInAdditionalCosts Boolean @default(false)
-  caution                          Float?
+  deposit                          Float?
 
   // rooms and space
   numberOfRooms  Int
@@ -124,7 +125,7 @@ model Property {
   totalFloors    Int?
   floorNumber    Int?
   livingSpaceSqm Float?
-  yearBuilt      Int?
+  yearBuilt      String?
 
   // availability and lease terms
   availableFrom            DateTime
