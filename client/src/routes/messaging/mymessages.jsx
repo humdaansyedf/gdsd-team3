@@ -11,29 +11,24 @@ const socket = io("http://localhost:3000");
 export function Mymessages() {
 
   const { state } = useLocation(); // Contains propertyId, otherUserId from propertyDetailsPage
-  const { propertyId, selectedUserId: initialSelectedUserId } = state;
+  const { propertyId, selectedUserId: initialSelectedUserId } = state || {}; // Ensure state is destructured safely
+  
+  const [selectedUserId, setSelectedUserId] = useState(initialSelectedUserId || null); // Initialize selectedUserId from state
+  const [activePropertyId, setActivePropertyId] = useState(propertyId || null); // Initialize activePropertyId from state
 
-  const [selectedUserId, setSelectedUserId] = useState(initialSelectedUserId); // Local state for selectedUserId
   
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [currentUser, setCurrentUser] = useState(); //check usage
   const [users, setUsers] = useState([]);
 
-  const [chatId, setChatId] = useState(null); //check usage
-  
-  const auth = useAuth(); // Get the logged-in user's details
+ 
+
+  const auth = useAuth(); // Logged-in user's details
   
   useEffect(() => {
     if (!auth?.user?.id) return;
   
     const currentUserId = auth.user.id;
-    setCurrentUser(currentUserId);
-  
-    if (currentUserId !== selectedUserId) {
-      socket.emit("join_room", { propertyId, currentUserId, selectedUserId });
-    }
-  
     socket.emit("get_users_chatted_with", { currentUserId });
   
     const handleUsersChattedWith = (data) => setUsers(data);
@@ -54,7 +49,13 @@ export function Mymessages() {
     };
   
     const fetchChatHistory = () => {
-      socket.emit("getChatHistory", { propertyId, currentUserId, selectedUserId });
+      if (selectedUserId) {
+         socket.emit("getChatHistory", {
+          propertyId: activePropertyId,
+          currentUserId,
+          selectedUserId,
+        });
+      }
     };
   
     const handleChatHistory = (chatHistory) => {
@@ -73,42 +74,53 @@ export function Mymessages() {
   
     fetchChatHistory();
   
+    //cleanup
     return () => {
       socket.off("usersChattedWith", handleUsersChattedWith);
       socket.off("receive_message", handleReceiveMessage);
       socket.off("chatHistory", handleChatHistory);
     };
-  }, [auth?.user?.id, propertyId, selectedUserId]);
-  
-  const joinRoomIfNotCurrentUser = (targetUserId) => {
-    if (auth.user.id !== targetUserId) {
-      socket.emit("join_room", {
-        propertyId,
-        currentUserId: auth.user.id,
-        selectedUserId: targetUserId,
-      });
-    } else {
-      console.log("User clicked themselves; skipping room join.");
-    }
-  };
+  }, [auth?.user?.id, activePropertyId, selectedUserId]);
 
   //check usage
-  const alignMessage = (message) => {
-    return message.userid === auth.user.id ? "right" : "left";
-  };
+  // const joinRoomIfNotCurrentUser = (selectedUserId, activePropertyId) => {
+  //   if (auth.user.id !== selectedUserId) {
+  //     socket.emit("join_room", {
+  //       propertyId: activePropertyId,
+  //       currentUserId: auth.user.id,
+  //       selectedUserId: selectedUserId,
+  //     });
+  //   } else {
+  //     console.log("User clicked themselves; skipping room join.");
+  //   }
+  // };
   
 
-  const handleUserClick = (userId) => {
-    setSelectedUserId(userId);
-    joinRoomIfNotCurrentUser(userId);
+  const handleUserClick = (user) => {
+   
+      console.log("handleUserClick: selected user", user);
+      
+        setSelectedUserId(user.id);
+        setMessages([]);
+        const updatedPropertyId = user.propertyId || activePropertyId;
+        setActivePropertyId(updatedPropertyId);
+    
+        socket.emit("getChatHistory", {
+          propertyId: updatedPropertyId,
+          currentUserId: auth.user.id,
+          selectedUserId: user.id,
+        });
+       
   };
+
+  
   
   const handleSendMessage = () => {
     const messageContent = newMessage.trim();
     if (!messageContent || !auth.user.id) return;
   
     const messageData = {
-      propertyId,
+      propertyId: activePropertyId,
       currentUserId: auth.user.id,
       selectedUserId,
       content: messageContent,
@@ -149,7 +161,7 @@ export function Mymessages() {
                 backgroundColor: "#e8f5e9", // Light green background
                 width: "100%", // Match the parent width
               }}
-              onClick={() => handleUserClick(user.id)} // Add click handler
+              onClick={() => handleUserClick(user)} // Add click handler
             >
               <Group spacing="sm" noWrap>
                 <Avatar radius="xl" />

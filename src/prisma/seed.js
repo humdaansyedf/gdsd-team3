@@ -581,7 +581,7 @@ async function createChats() {
 async function createChatParticipants() {
   const participants = [
     { chatid: 1, userid: 1 },
-    { chatid: 1, userid: 2 },
+    { chatid: 1, userid: 4 },
     { chatid: 2, userid: 2 },
     { chatid: 2, userid: 4 },
   ];

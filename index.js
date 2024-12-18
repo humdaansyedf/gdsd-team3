@@ -32,13 +32,13 @@ const io = new Server(server, {
 // Socket.IO logic
 // Socket.IO Connection
 io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+ // console.log('A user connected:', socket.id);
 
   // Handle chat-related events
   chatHandlers(io, socket, prisma);
 
   socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
+   // console.log('A user disconnected:', socket.id);
   });
 });
 
