@@ -99,7 +99,8 @@ export const App = () => {
             />
             <Route
               path="mymessages"
-              element={
+              element={  
+                // commented for testing
                 //<PublicRoute>
                   <Mymessages />
                // </PublicRoute>

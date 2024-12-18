@@ -10,131 +10,129 @@ const socket = io("http://localhost:3000");
 
 export function Mymessages() {
 
-  const { state } = useLocation(); // Contains propertyId, otherUserId
+  const { state } = useLocation(); // Contains propertyId, otherUserId from propertyDetailsPage
   const { propertyId, selectedUserId: initialSelectedUserId } = state;
 
   const [selectedUserId, setSelectedUserId] = useState(initialSelectedUserId); // Local state for selectedUserId
   
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState(); //check usage
   const [users, setUsers] = useState([]);
 
-  const [chatId, setChatId] = useState(null); //default to 1
+  const [chatId, setChatId] = useState(null); //check usage
   
   const auth = useAuth(); // Get the logged-in user's details
   
   useEffect(() => {
-    //console.log("authr", auth.user.id);
-    if (auth && auth.user.id) {
-      setCurrentUser(auth.user.id); //set current user id
-      console.log("setting current user", auth.user.id, "propertyId, selectedUserId, state", propertyId, selectedUserId, state);
-      
-      // Only emit join_room if the current user and selected user are different
-    if (auth.user.id !== selectedUserId) {
-      // Emit join_room when the socket is connected and user is authenticated
-      socket.emit("join_room", { propertyId, currentUserId: auth.user.id, selectedUserId: selectedUserId });
-    } else {
-      console.log("User is clicking on themselves, no need to join room.");
+    if (!auth?.user?.id) return;
+  
+    const currentUserId = auth.user.id;
+    setCurrentUser(currentUserId);
+  
+    if (currentUserId !== selectedUserId) {
+      socket.emit("join_room", { propertyId, currentUserId, selectedUserId });
     }
-
-      // Fetch users the current user has chatted with
-      socket.emit("get_users_chatted_with", { currentUserId: auth.user.id });
-
-      // Listen for the list of users and their last messages
-      const handleUsersChattedWith = (data) => {
-        console.log("Users list received in frontend:", data);
-        setUsers(data);
-      };
-
-      socket.on("usersChattedWith", handleUsersChattedWith);
-
-      // Fetch the chat history when the component mounts
-      const fetchChatHistory = () => {
-        socket.emit("getChatHistory", { propertyId, currentUserId: auth.user.id, selectedUserId });
-      };
-
-      socket.on("chatHistory", (chatHistory) => {
-        console.log("Chat history received:", chatHistory);
-        setMessages(chatHistory.map((msg) => ({
-          sender: msg.userid === auth.user.id ? "Me" : msg.userid, // Set sender name based on user id
+  
+    socket.emit("get_users_chatted_with", { currentUserId });
+  
+    const handleUsersChattedWith = (data) => setUsers(data);
+    const handleReceiveMessage = (data) => {
+      if (data.from !== currentUserId) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: data.from, content: data.content, align: "left" },
+        ]);
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === data.from
+              ? { ...user, lastMessage: data.content }
+              : user
+          )
+        );
+      }
+    };
+  
+    const fetchChatHistory = () => {
+      socket.emit("getChatHistory", { propertyId, currentUserId, selectedUserId });
+    };
+  
+    const handleChatHistory = (chatHistory) => {
+      setMessages(
+        chatHistory.map((msg) => ({
+          sender: msg.userid === currentUserId ? "Me" : msg.userid,
           content: msg.content,
-          align: msg.userid === auth.user.id ? "right" : "left", // Align the message based on the sender
-        })));
+          align: msg.userid === currentUserId ? "right" : "left",
+        }))
+      );
+    };
+  
+    socket.on("usersChattedWith", handleUsersChattedWith);
+    socket.on("receive_message", handleReceiveMessage);
+    socket.on("chatHistory", handleChatHistory);
+  
+    fetchChatHistory();
+  
+    return () => {
+      socket.off("usersChattedWith", handleUsersChattedWith);
+      socket.off("receive_message", handleReceiveMessage);
+      socket.off("chatHistory", handleChatHistory);
+    };
+  }, [auth?.user?.id, propertyId, selectedUserId]);
+  
+  const joinRoomIfNotCurrentUser = (targetUserId) => {
+    if (auth.user.id !== targetUserId) {
+      socket.emit("join_room", {
+        propertyId,
+        currentUserId: auth.user.id,
+        selectedUserId: targetUserId,
       });
-
-      // Trigger fetch chat history when users are loaded
-      fetchChatHistory();
-
-      // Listen for incoming messages
-      const handleReceiveMessage = (data) => {
-        console.log("Message received:", data);
-
-        if (data.from !== auth.user.id) {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { sender: data.from, content: data.content, align: "left" },
-          ]);
-
-          // Update the last message preview for the sender
-          setUsers((prevUsers) =>
-            prevUsers.map((user) =>
-              user.id === data.from
-                ? { ...user, lastMessage: data.content }
-                : user
-            )
-          );
-        }
-      };
-
-      socket.on("receive_message", handleReceiveMessage);
-
-      // Cleanup listeners on unmount
-      return () => {
-        socket.off("usersChattedWith", handleUsersChattedWith);
-        socket.off("receive_message", handleReceiveMessage);
-      };
+    } else {
+      console.log("User clicked themselves; skipping room join.");
     }
-  }, [auth, propertyId, selectedUserId]);
+  };
+
+  //check usage
+  const alignMessage = (message) => {
+    return message.userid === auth.user.id ? "right" : "left";
+  };
+  
 
   const handleUserClick = (userId) => {
-    
-    // Emit join_room if the selected user is not the current user
-    if (auth.user.id !== userId) {
-      setSelectedUserId(userId);
-      socket.emit("join_room", { propertyId, currentUserId: auth.user.id, selectedUserId: userId });
-    } else {
-      console.log("User is clicking on themselves, no need to join room. userId cuserId", userId, auth.user.id );
-    }
+    setSelectedUserId(userId);
+    joinRoomIfNotCurrentUser(userId);
   };
-
+  
   const handleSendMessage = () => {
-    if (newMessage.trim() && auth.user.id) {
-      const messageData = { propertyId, currentUserId: auth.user.id, selectedUserId, content: newMessage };
-
-      console.log("Sending message:", messageData);
-
-      // Emit the message to the server
-      socket.emit("send_message", messageData);
-
-      // Add the message locally
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: "Me", content: newMessage, align: "right" },
-      ]);
-
-      // Update the last message preview for the current user
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === auth.user.id
-            ? { ...user, lastMessage: newMessage }
-            : user
-        )
-      );
-
-      setNewMessage(""); // Clear the input field
-    }
+    const messageContent = newMessage.trim();
+    if (!messageContent || !auth.user.id) return;
+  
+    const messageData = {
+      propertyId,
+      currentUserId: auth.user.id,
+      selectedUserId,
+      content: messageContent,
+    };
+  
+    console.log("Sending message:", messageData);
+    socket.emit("send_message", messageData);
+  
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: "Me", content: messageContent, align: "right" },
+    ]);
+  
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === auth.user.id
+          ? { ...user, lastMessage: messageContent }
+          : user
+      )
+    );
+  
+    setNewMessage("");
   };
+  
   return (
     <Container fluid my={20} style={{ display: "flex", gap: "20px" }}>
       {/* Left User List Section */}
@@ -156,8 +154,9 @@ export function Mymessages() {
               <Group spacing="sm" noWrap>
                 <Avatar radius="xl" />
                 <Stack spacing={0} style={{ flex: 1 }}>
-                  <Text size="sm" weight={500}>
-                    {user.name}
+              
+                  <Text size="sm" weight={500}>  
+                    {user.name}    {/* updated with username */}
                   </Text>
                   <Text
                     size="xs"
