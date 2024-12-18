@@ -1,5 +1,5 @@
 export const chatHandlers = (io, socket, prisma) => {
-    // Join a chat room
+    // Join a chat room //check need?
     //find existing chatrooms for given property and user ids
     socket.on('join_room', async ({ propertyId, currentUserId, selectedUserId }) => {
       try {
