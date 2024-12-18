@@ -1,4 +1,7 @@
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 import { useGetPropertyById } from "./property-detail-queries";
 
 import { Button } from "@mantine/core";
@@ -7,9 +10,21 @@ import classes from "./property-detail-style.module.css";
 
 export const PropertyDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate(); // Navigation hook
   const { data, isLoading, error } = useGetPropertyById(id);
-
   console.log(data);
+  const handleMessageClick = () => {
+    if (data && data.landlordId) {
+      console.log(data.landlordId);
+      console.log("Navigating to /mymessages with state:", { propertyId: data.id, selectedUserId: data.landlordId });
+
+      navigate(`/mymessages`, { state: { propertyId: data.id, selectedUserId: data.landlordId } });
+    } else {
+      alert("Unable to retrieve owner information.");
+    }
+  };
+
+  
 
   return (
     <>
@@ -56,7 +71,7 @@ export const PropertyDetail = () => {
                 </p>
                 <div className={classes.buttonGroup}>
                   <Button.Group>
-                    <Button variant="filled">Message</Button>
+                    <Button variant="filled" onClick={handleMessageClick}>Message</Button>
                     <Button variant="filled">Report</Button>
                     <Button variant="filled">Share</Button>
                   </Button.Group>

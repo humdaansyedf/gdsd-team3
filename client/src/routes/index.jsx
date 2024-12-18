@@ -100,9 +100,9 @@ export const App = () => {
             <Route
               path="mymessages"
               element={
-                <PublicRoute>
+                //<PublicRoute>
                   <Mymessages />
-                </PublicRoute>
+               // </PublicRoute>
               }
             />
             <Route path="*" element={<NotFound />} />
