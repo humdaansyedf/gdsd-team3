@@ -228,3 +228,9 @@ model AdminSession {
   deviceInfo String?
   admin      Admin     @relation(fields: [userId], references: [id])
 }
+
+model DummyTable {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
