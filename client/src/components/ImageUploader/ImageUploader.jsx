@@ -4,6 +4,7 @@ import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { usePublicFileUpload } from "./fileUpload";
 import { notifications } from "@mantine/notifications";
 
+
 export const ImageUploader = ({ onUpload }) => {
     const [images, setImages] = useState([]); // State to hold uploaded images
     const fileUploadMutation = usePublicFileUpload(); // Mutation hook for uploading images

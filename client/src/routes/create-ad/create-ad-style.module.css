@@ -74,7 +74,6 @@ textarea {
     width: 100%; /* Full width */
 }
 
-/* Add vertical scroll for large content */
 .container::-webkit-scrollbar {
     width: 8px; /* Custom scrollbar width */
 }

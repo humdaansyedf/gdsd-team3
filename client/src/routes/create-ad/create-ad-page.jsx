@@ -8,7 +8,7 @@ import {
   Select,
   Checkbox, Group,
 } from "@mantine/core";
-import { GoogleMap, LoadScript, Autocomplete } from "@react-google-maps/api";
+import { LoadScript, Autocomplete } from "@react-google-maps/api";
 import classes from "./create-ad-style.module.css";
 import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
 import axios from "axios";
