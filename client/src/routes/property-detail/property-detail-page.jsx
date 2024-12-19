@@ -58,17 +58,18 @@ export const PropertyDetail = () => {
                 <h4>{data.title}</h4>
                 <p>Total rent: {data.totalRent}€</p>
                 <p>
+                  Cold rent:
+                  {data.coldRent}€
+                </p>
+                <p>
+                  Additional costs:
+                  {data.additionalCosts}€
+                </p>
+                <p>
                   Available From:
                   {new Date(data.availableFrom).toLocaleDateString("en-GB")}
                 </p>
-                <p>
-                  Last Updated:
-                  {new Date(data.updatedAt).toLocaleDateString("en-GB")}
-                </p>
-                <p>
-                  Available From:
-                  {new Date(data.availableFrom).toLocaleDateString("en-GB")}
-                </p>
+                
                 <div className={classes.buttonGroup}>
                   <Button.Group>
                     <Button variant="filled" onClick={handleMessageClick}>Message</Button>
@@ -98,6 +99,8 @@ export const PropertyDetail = () => {
               <h4>Amenities</h4>
               <ul>
                 <li>Number of Rooms: {data.numberOfRooms}</li>
+                <li>Number of Baths: {data.numberOfBaths}</li>
+                <li>Heating included: {data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}</li>
                 <li>Pets Allowed: {data.petsAllowed ? "Yes" : "No"}</li>
                 <li>Smoking Allowed: {data.smokingAllowed ? "Yes" : "No"}</li>
               </ul>
