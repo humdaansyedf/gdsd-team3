@@ -143,3 +143,57 @@
   align-items: center;
   gap: 10px;
 }
+
+@media (max-width: 768px) {
+  .titleSection {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .imageSection {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .smallImageBoxes {
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .contentSection {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .mapSection {
+    max-width: 100%;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .titleSection {
+    gap: 10px;
+  }
+
+  .largeImageBox {
+    height: 200px;
+  }
+
+  .smallImageBox {
+    height: 60px;
+  }
+
+  .infoContainer h4 {
+    font-size: medium;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+  }
+}
