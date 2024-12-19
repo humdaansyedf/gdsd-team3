@@ -24,6 +24,7 @@
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
     "@prisma/client": "^6.1.0",
+    "@react-google-maps/api": "^2.20.3",
     "cookie-parser": "^1.4.7",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",

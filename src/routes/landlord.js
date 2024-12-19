@@ -44,7 +44,7 @@ const propertySchema = z.object({
   livingSpaceSqm: z.number().min(1).optional(),
   yearBuilt: z.string().length(4).optional(),
   // availability and lease terms
-  availableFrom: z.string().datetime(),
+  availableFrom: z.string().date(),
   minimumLeaseTermInMonths: z.number().min(1).optional(),
   maximumLeaseTermInMonths: z.number().min(1).optional(),
   noticePeriodInMonths: z.number().min(1).optional(),
