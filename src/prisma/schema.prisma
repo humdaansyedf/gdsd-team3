@@ -247,5 +247,4 @@ model DummyTable {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
->>>>>>> c96cf00987f0836f5d8e79df7c35d120bf7a42d0
 }
