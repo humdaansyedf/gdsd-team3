@@ -208,6 +208,16 @@ model Message {
   user           User            @relation(fields: [userid], references: [id])
 }
 
+model AdminSession {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  ipAddress  String?
+  deviceInfo String?
+  admin      Admin     @relation(fields: [userId], references: [id])
+}
+
 model DummyTable {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
