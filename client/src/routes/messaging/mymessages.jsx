@@ -48,15 +48,16 @@ export function Mymessages() {
       }
     };
   
-    const fetchChatHistory = () => {
-      if (selectedUserId) {
-         socket.emit("getChatHistory", {
-          propertyId: activePropertyId,
-          currentUserId,
-          selectedUserId,
-        });
-      }
-    };
+      // Automatically fetch chat history if `selectedUserId` and `activePropertyId` are set
+  if (selectedUserId && activePropertyId) {
+    joinRoomIfNotCurrentUser(selectedUserId, activePropertyId);
+    socket.emit("getChatHistory", {
+      propertyId: activePropertyId,
+      currentUserId,
+      selectedUserId,
+    });
+  }
+
   
     const handleChatHistory = (chatHistory) => {
       setMessages(
@@ -72,28 +73,26 @@ export function Mymessages() {
     socket.on("receive_message", handleReceiveMessage);
     socket.on("chatHistory", handleChatHistory);
   
-    fetchChatHistory();
-  
     //cleanup
     return () => {
       socket.off("usersChattedWith", handleUsersChattedWith);
       socket.off("receive_message", handleReceiveMessage);
       socket.off("chatHistory", handleChatHistory);
     };
-  }, [auth?.user?.id, activePropertyId, selectedUserId]);
+  }, [auth?.user?.id, activePropertyId, selectedUserId, socket]);
 
   //check usage
-  // const joinRoomIfNotCurrentUser = (selectedUserId, activePropertyId) => {
-  //   if (auth.user.id !== selectedUserId) {
-  //     socket.emit("join_room", {
-  //       propertyId: activePropertyId,
-  //       currentUserId: auth.user.id,
-  //       selectedUserId: selectedUserId,
-  //     });
-  //   } else {
-  //     console.log("User clicked themselves; skipping room join.");
-  //   }
-  // };
+  const joinRoomIfNotCurrentUser = (selectedUserId, activePropertyId) => {
+    if (auth.user.id !== selectedUserId) {
+      socket.emit("join_room", {
+        propertyId: activePropertyId,
+        currentUserId: auth.user.id,
+        selectedUserId: selectedUserId,
+      });
+    } else {
+      console.log("User clicked themselves; skipping room join.");
+    }
+  };
   
 
   const handleUserClick = (user) => {
@@ -136,7 +135,7 @@ export function Mymessages() {
   
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === auth.user.id
+        user.id === selectedUserId  //auth.user.id
           ? { ...user, lastMessage: messageContent }
           : user
       )
