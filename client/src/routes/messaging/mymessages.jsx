@@ -135,7 +135,7 @@ export function Mymessages() {
   
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === selectedUserId  //auth.user.id
+        user.id === auth.user.id
           ? { ...user, lastMessage: messageContent }
           : user
       )
