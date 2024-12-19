@@ -2,6 +2,7 @@ import { z } from "zod";
 import express from "express";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { deleteImageFromS3 } from "../lib/s3.js";
 
 // Initialize S3 Client
 const s3Client = new S3Client({
@@ -70,5 +71,21 @@ fileRouter.post("/file", async (req, res) => {
     res.status(500).json({
       message: "Failed to generate upload URL",
     });
+  }
+});
+
+fileRouter.delete("/file", async (req, res) => {
+  const { key } = req.body; // Get the S3 key from request body
+
+  if (!key) {
+    return res.status(400).json({ message: "S3 key is required" });
+  }
+
+  try {
+    await deleteImageFromS3(key); // Call S3 deletion function
+    res.json({ message: "File deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting file:", error);
+    res.status(500).json({ message: "Failed to delete file" });
   }
 });

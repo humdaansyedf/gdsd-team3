@@ -1,6 +1,7 @@
 import express from "express";
 import { z } from "zod";
 import { prisma } from "../prisma/index.js";
+import { deleteImageFromS3 } from "../lib/s3.js";
 
 export const landlordRouter = express.Router();
 
@@ -43,7 +44,7 @@ const propertySchema = z.object({
   livingSpaceSqm: z.number().min(1).optional(),
   yearBuilt: z.string().length(4).optional(),
   // availability and lease terms
-  availableFrom: z.string().datetime(),
+  availableFrom: z.string().date(),
   minimumLeaseTermInMonths: z.number().min(1).optional(),
   maximumLeaseTermInMonths: z.number().min(1).optional(),
   noticePeriodInMonths: z.number().min(1).optional(),
@@ -88,11 +89,15 @@ landlordRouter.post("/landlord/property", async (req, res) => {
 
   try {
     const { media, ...propertyData } = result.data;
+    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const availableFrom = new Date(propertyData.availableFrom);
 
     const property = await prisma.$transaction(async (tx) => {
       const property = await tx.property.create({
         data: {
           ...propertyData,
+          availableFrom,
+          totalRent,
           landlordId: landlord.id,
         },
       });
@@ -102,6 +107,7 @@ landlordRouter.post("/landlord/property", async (req, res) => {
         return {
           propertyId: property.id,
           status: "PENDING",
+          type: "IMAGE",
           url,
           name,
         };
@@ -118,7 +124,14 @@ landlordRouter.post("/landlord/property", async (req, res) => {
       data: { id: property.id },
     });
   } catch (error) {
-    // TODO: Rollback Media from S3 (i.e delete all files in the media array using DeleteObjectCommand)
+    //Rollback Media from S3 (i.e delete all files in the media array using DeleteObjectCommand)
+    console.error("Property creation failed:", error);
+    if (data.media) {
+      for (const { url } of data.media) {
+        const key = url.split("amazonaws.com/")[1];
+        await deleteImageFromS3(key);
+      }
+    }
     res.status(500).json({
       message: "Failed to create property",
     });
@@ -327,34 +340,54 @@ landlordRouter.post("/landlord/property/:id/media", async (req, res) => {
 });
 
 // Delete a media from a property
-landlordRouter.delete("/landlord/property/:id/media/:mediaId", async (req, res) => {
+landlordRouter.delete("/landlord/property/:propertyId/media/:id", async (req, res) => {
   const id = req.params.id;
-  const mediaId = req.params.mediaId;
   const landlord = req.user;
 
-  const property = await prisma.property.findFirst({
-    where: {
-      id,
-      landlordId: landlord.id,
-    },
-  });
-
-  if (!property) {
-    return res.status(404).json({
-      message: "Property not found",
-    });
-  }
   try {
-    await prisma.propertyMedia.delete({
+    // Verify the property exists and belongs to the landlord
+    const property = await prisma.property.findFirst({
       where: {
-        id: mediaId,
+        id,
+        landlordId: landlord.id,
       },
     });
-    // TODO: Delete media from S3 (i.e delete the file using DeleteObjectCommand)
+
+    if (!property) {
+      return res.status(404).json({
+        message: "Property not found",
+      });
+    }
+
+    // Retrieve the media to get the S3 key (file URL)
+    const media = await prisma.propertyMedia.findUnique({
+      where: { id: id },
+    });
+
+    if (!media) {
+      return res.status(404).json({
+        message: "Media not found",
+      });
+    }
+
+    // Extract file key from the S3 URL
+    const key = media.url.split("amazonaws.com/")[1];
+
+    // Step 1: Delete media from S3
+    await deleteImageFromS3(key);
+
+    // Step 2: Delete the database entry
+    await prisma.propertyMedia.delete({
+      where: {
+        id: id,
+      },
+    });
+
     res.json({
-      message: "Media deleted",
+      message: "Media deleted successfully",
     });
   } catch (error) {
+    console.error("Failed to delete media:", error);
     res.status(500).json({
       message: "Failed to delete media",
     });

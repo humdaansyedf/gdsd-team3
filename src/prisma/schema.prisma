@@ -198,6 +198,7 @@ model ChatParticipant {
 }
 
 model Message {
+<<<<<<< HEAD
   id             Int             @id @default(autoincrement())
   chatid         Int
   userid         Int
@@ -206,4 +207,45 @@ model Message {
   
   chat           Chat            @relation(fields: [chatid], references: [id])
   user           User            @relation(fields: [userid], references: [id])
+=======
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type      MessageType
+  content   String?
+  deletedAt DateTime?
+
+  // Relations
+  chatId Int
+  chat   Chat @relation(fields: [chatId], references: [id])
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+
+// Admin Models
+model Admin {
+  id        Int            @id @default(autoincrement())
+  email     String         @unique
+  password  String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  sessions  AdminSession[]
+}
+
+model AdminSession {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  ipAddress  String?
+  deviceInfo String?
+  admin      Admin     @relation(fields: [userId], references: [id])
+}
+
+model DummyTable {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+>>>>>>> c96cf00987f0836f5d8e79df7c35d120bf7a42d0
 }
