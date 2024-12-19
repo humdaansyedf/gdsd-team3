@@ -83,3 +83,8 @@ textarea {
     background: #ccc; /* Scrollbar color */
     border-radius: 4px;
 }
+.error {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
