@@ -21,7 +21,13 @@ export function Mymessages() {
   const [newMessage, setNewMessage] = useState("");
   const [users, setUsers] = useState([]);
 
- 
+    socket.on("connect_error", (error) => {
+      console.error("Connection error:", error);
+    });
+
+    socket.on("receive_message", (data) => {
+      if (data.from !== socket.id) {
+        setMessages((prevMessages) => [...prevMessages, { sender: data.from, content: data.content, align: "left" }]);
 
   const auth = useAuth(); // Logged-in user's details
   
@@ -220,6 +226,7 @@ export function Mymessages() {
 
         {/* Input Section */}
         <Group p="md" style={{ borderTop: "1px solid #e5e5e5" }}>
+          {currentUser}
           <ActionIcon variant="light" size="lg" radius="md">
             <IconPlus />
           </ActionIcon>
