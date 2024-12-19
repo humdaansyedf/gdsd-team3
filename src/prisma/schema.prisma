@@ -167,13 +167,10 @@ model PropertyMedia {
 
   // Relations
   propertyId Int
-  property   Property @relation(fields: [propertyId], references: [id])
-  
-  
- 
+  property   Property @relation(fields: [propertyId], references: [id]) 
 }
 
-
+//Chat models
 model Chat {
   id             Int             @id @default(autoincrement())
   propertyId     Int
@@ -206,6 +203,27 @@ model Message {
   
   chat           Chat            @relation(fields: [chatid], references: [id])
   user           User            @relation(fields: [userid], references: [id])
+}
+
+
+// Admin Models
+model Admin {
+  id        Int            @id @default(autoincrement())
+  email     String         @unique
+  password  String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  sessions  AdminSession[]
+}
+
+model AdminSession {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  ipAddress  String?
+  deviceInfo String?
+  admin      Admin     @relation(fields: [userId], references: [id])
 }
 
 model DummyTable {
