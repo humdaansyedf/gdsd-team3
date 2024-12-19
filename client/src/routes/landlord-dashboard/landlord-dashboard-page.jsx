@@ -4,6 +4,7 @@ import { useForm } from "@mantine/form";
 import classes from "./landlord-dashboard-style.module.css";
 import { CreateAdModal } from "../create-ad/create-ad-page.jsx";
 import { useLandlordAds } from "./landlord-dashboard-queries.jsx";
+import {useNavigate} from "react-router-dom";
 
 export const LandlordDashboardPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,6 +13,11 @@ export const LandlordDashboardPage = () => {
   const openModal = () => {
     setIsModalOpen(true);
   };
+
+  const navigate = useNavigate();
+  const handleNewMessagesClick = () => {
+        navigate("/mymessages");
+    };
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -177,8 +183,8 @@ export const LandlordDashboardPage = () => {
             <div className={classes.actionButtons}>
               <button onClick={openModal}>Create New Listing</button>
               <button>Documents</button>
-              <button>
-                New Messages <span className={classes.badge}>6</span>
+              <button onClick={handleNewMessagesClick}>
+                New Messages {/*<span className={classes.badge}>6</span>*/}
               </button>
             </div>
           </div>
