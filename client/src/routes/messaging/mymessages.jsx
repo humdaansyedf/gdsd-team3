@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
 // Connect to the Socket.IO server
-const socket = io(window.location.origin, {
-  path: "/api",
-});
+const socket = io();
 
 export function Mymessages() {
   const [messages, setMessages] = useState([]);
