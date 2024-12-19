@@ -18,7 +18,7 @@ export const CreateAdModal = ({ opened, onClose }) => {
     additionalCosts: 0,
     heatingIncludedInAdditionalCosts: false,
     deposit: 0,
-    numberOfRooms: 0,
+    numberOfRooms: 1,
     numberOfBeds: 0,
     numberOfBaths: 0,
     availableFrom: "",
@@ -92,7 +92,7 @@ export const CreateAdModal = ({ opened, onClose }) => {
       newErrors.title = "Title must be between 5 and 100 characters.";
     }
     if (!formData.propertyType) newErrors.propertyType = "Property Type is required";
-    if (!formData.availableFrom.trim()) newErrors.availableFrom = "Available From is required";
+    if (!formData.availableFrom) newErrors.availableFrom = "Available From is required";
     if (!address.trim()) newErrors.address = "Address is required";
     if (!formData.description.trim() || formData.description.length < 10 || formData.description.length > 2000) {
       newErrors.description = "Description must be between 10 and 2000 characters.";
@@ -172,7 +172,7 @@ export const CreateAdModal = ({ opened, onClose }) => {
                 onChange={(value) => handleInputChange("propertyType", value)}
             />
             <Group grow>
-              <NumberInput min={0} label="Rooms" onChange={(value) => handleInputChange("numberOfRooms", value)}/>
+              <NumberInput min={1} label="Rooms" onChange={(value) => handleInputChange("numberOfRooms", value)}/>
               <NumberInput min={0} label="Beds" onChange={(value) => handleInputChange("numberOfBeds", value)}/>
               <NumberInput min={0} label="Baths" onChange={(value) => handleInputChange("numberOfBaths", value)}/>
             </Group>
@@ -182,7 +182,7 @@ export const CreateAdModal = ({ opened, onClose }) => {
                 valueFormat="YYYY-MM-DD"
                 placeholder="YYYY-MM-DD"
                 error={errors.availableFrom}
-                key={(e) => handleInputChange("availableFrom", e.target.value)}
+                onChange={(value) => handleInputChange("availableFrom", value ? value.toISOString().substring(0, 10) : "")}
             />
           </div>
 
