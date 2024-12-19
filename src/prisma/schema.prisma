@@ -198,7 +198,6 @@ model ChatParticipant {
 }
 
 model Message {
-<<<<<<< HEAD
   id             Int             @id @default(autoincrement())
   chatid         Int
   userid         Int
@@ -207,20 +206,6 @@ model Message {
   
   chat           Chat            @relation(fields: [chatid], references: [id])
   user           User            @relation(fields: [userid], references: [id])
-=======
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  type      MessageType
-  content   String?
-  deletedAt DateTime?
-
-  // Relations
-  chatId Int
-  chat   Chat @relation(fields: [chatId], references: [id])
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
 }
 
 // Admin Models
