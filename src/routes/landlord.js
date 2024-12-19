@@ -89,11 +89,15 @@ landlordRouter.post("/landlord/property", async (req, res) => {
 
   try {
     const { media, ...propertyData } = result.data;
+    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const availableFrom = new Date(propertyData.availableFrom);
 
     const property = await prisma.$transaction(async (tx) => {
       const property = await tx.property.create({
         data: {
           ...propertyData,
+          availableFrom,
+          totalRent,
           landlordId: landlord.id,
         },
       });
@@ -103,6 +107,7 @@ landlordRouter.post("/landlord/property", async (req, res) => {
         return {
           propertyId: property.id,
           status: "PENDING",
+          type: "IMAGE",
           url,
           name,
         };
