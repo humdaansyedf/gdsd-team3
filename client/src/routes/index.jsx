@@ -5,7 +5,6 @@ import { Footer } from "../components/Footer/Footer";
 import { Header } from "../components/Header/Header";
 import { useAuth } from "../lib/auth-context";
 import { PrivateRoute, PublicOnlyRoute } from "../lib/auth-routes";
-import { Mymessages } from "./messaging/mymessages";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
 const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
@@ -17,6 +16,7 @@ const PropertyDetail = React.lazy(() =>
   import("./property-detail/property-detail-page").then((mod) => ({ default: mod.PropertyDetail }))
 );
 const Profile = React.lazy(() => import("./profile/profile-page").then((mod) => ({ default: mod.Profile })));
+const Mymessages = React.lazy(() => import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages })));
 
 const AppLoader = () => {
   return (
@@ -99,11 +99,11 @@ export const App = () => {
             />
             <Route
               path="mymessages"
-              element={  
+              element={
                 // commented for testing
                 //<PublicRoute>
-                  <Mymessages />
-               // </PublicRoute>
+                <Mymessages />
+                // </PublicRoute>
               }
             />
             <Route path="*" element={<NotFound />} />

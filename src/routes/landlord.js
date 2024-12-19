@@ -146,7 +146,9 @@ landlordRouter.get("/landlord/property", async (req, res) => {
     where: {
       landlordId: landlord.id,
     },
-    include: ["media"],
+    include: {
+      media: true,
+    },
   });
 
   res.json(
@@ -171,6 +173,9 @@ landlordRouter.get("/landlord/property/:id", async (req, res) => {
     where: {
       id,
       landlordId: landlord.id,
+    },
+    include: {
+      media: true,
     },
   });
 
