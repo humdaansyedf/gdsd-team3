@@ -27,7 +27,10 @@ export function Mymessages() {
 
     socket.on("receive_message", (data) => {
       if (data.from !== socket.id) {
-        setMessages((prevMessages) => [...prevMessages, { sender: data.from, content: data.content, align: "left" }]);
+        setMessages((prevMessages) => [...prevMessages, { sender: data.from, content: data.content, align: "left" }
+        ]);
+      }
+    });
 
   const auth = useAuth(); // Logged-in user's details
   
