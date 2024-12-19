@@ -10,6 +10,9 @@ import { fileRouter } from "./src/routes/file.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { landlordRouter } from "./src/routes/landlord.js";
+import {chatHandlers} from "./chatHandlers.js"
+import { prisma } from "./src/prisma/index.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -25,36 +28,17 @@ const io = new Server(server, {
   },
 });
 
-const ROOM_NAME = "global_room";
 
 // Socket.IO logic
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+// Socket.IO Connection
+io.on('connection', (socket) => {
+ // console.log('A user connected:', socket.id);
 
-  // Add the user to the global room
-  socket.join(ROOM_NAME);
-  console.log(`User ${socket.id} joined ${ROOM_NAME}`);
+  // Handle chat-related events
+  chatHandlers(io, socket, prisma);
 
-  // Broadcast to others in the room when a user joins
-  socket.to(ROOM_NAME).emit("user_joined", { userId: socket.id });
-
-  // Handle incoming messages
-  socket.on("send_message", (data) => {
-    console.log("Message received:", data);
-
-    // Emit the message to everyone in the room
-    io.to(ROOM_NAME).emit("receive_message", {
-      from: socket.id,
-      content: data.content,
-    });
-  });
-
-  // Handle disconnection
-  socket.on("disconnect", () => {
-    console.log("A user disconnected:", socket.id);
-
-    // Notify others in the room
-    socket.to(ROOM_NAME).emit("user_left", { userId: socket.id });
+  socket.on('disconnect', () => {
+   // console.log('A user disconnected:', socket.id);
   });
 });
 

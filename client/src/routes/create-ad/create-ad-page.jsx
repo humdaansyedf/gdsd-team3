@@ -4,7 +4,6 @@ import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import classes from "./create-ad-style.module.css";
 import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
 import axios from "axios";
-import {DateInput} from "@mantine/dates";
 const libraries = ["places"];
 //const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 

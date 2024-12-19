@@ -1,34 +1,25 @@
 import { ActionIcon, Avatar, Container, Group, Paper, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
 import { IconPlus, IconSend } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import io from "socket.io-client";
+import { useAuth } from "../../lib/auth-context";
 
 // Connect to the Socket.IO server
-const socket = io();
+const socket = io("http://localhost:3000");
 
 export function Mymessages() {
+
+  const { state } = useLocation(); // Contains propertyId, otherUserId from propertyDetailsPage
+  const { propertyId, selectedUserId: initialSelectedUserId } = state || {}; // Ensure state is destructured safely
+  
+  const [selectedUserId, setSelectedUserId] = useState(initialSelectedUserId || null); // Initialize selectedUserId from state
+  const [activePropertyId, setActivePropertyId] = useState(propertyId || null); // Initialize activePropertyId from state
+
+  
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [currentUser, setCurrentUser] = useState("");
-  const [users, setUsers] = useState([
-    {
-      id: "User 1",
-      lastMessage: "Hello there! I've been waiting.",
-    },
-    { id: "User 2", lastMessage: "How are you?" },
-    {
-      id: "User 3",
-      lastMessage: "Are you coming?",
-    },
-    { id: "User 4", lastMessage: "Good morning!" },
-    { id: "User 5", lastMessage: "I'm interested." },
-  ]);
-
-  useEffect(() => {
-    // Listen for incoming messages
-    socket.on("connect", () => {
-      setCurrentUser(socket.id);
-    });
+  const [users, setUsers] = useState([]);
 
     socket.on("connect_error", (error) => {
       console.error("Connection error:", error);
@@ -36,40 +27,132 @@ export function Mymessages() {
 
     socket.on("receive_message", (data) => {
       if (data.from !== socket.id) {
-        setMessages((prevMessages) => [...prevMessages, { sender: data.from, content: data.content, align: "left" }]);
-
-        // Update the last message preview for the sender
-        setUsers((prevUsers) =>
-          prevUsers.map((user) => (user.id === data.from ? { ...user, lastMessage: data.content } : user))
-        );
+        setMessages((prevMessages) => [...prevMessages, { sender: data.from, content: data.content, align: "left" }
+        ]);
       }
     });
 
-    return () => {
-      socket.off("receive_message");
-      socket.off("connect");
+  const auth = useAuth(); // Logged-in user's details
+  
+  useEffect(() => {
+    if (!auth?.user?.id) return;
+  
+    const currentUserId = auth.user.id;
+    socket.emit("get_users_chatted_with", { currentUserId });
+  
+    const handleUsersChattedWith = (data) => setUsers(data);
+    const handleReceiveMessage = (data) => {
+      if (data.from !== currentUserId) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: data.from, content: data.content, align: "left" },
+        ]);
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === data.from
+              ? { ...user, lastMessage: data.content }
+              : user
+          )
+        );
+      }
     };
-  }, []);
+  
+      // Automatically fetch chat history if `selectedUserId` and `activePropertyId` are set
+  if (selectedUserId && activePropertyId) {
+    joinRoomIfNotCurrentUser(selectedUserId, activePropertyId);
+    socket.emit("getChatHistory", {
+      propertyId: activePropertyId,
+      currentUserId,
+      selectedUserId,
+    });
+  }
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const messageData = { content: newMessage };
-
-      // Emit the message to the server
-      socket.emit("send_message", messageData);
-
-      // Add the message locally
-      setMessages((prevMessages) => [...prevMessages, { sender: "Me", content: newMessage, align: "right" }]);
-
-      // Update the last message preview for the current user
-      setUsers((prevUsers) =>
-        prevUsers.map((user) => (user.id === currentUser ? { ...user, lastMessage: newMessage } : user))
+  
+    const handleChatHistory = (chatHistory) => {
+      setMessages(
+        chatHistory.map((msg) => ({
+          sender: msg.userid === currentUserId ? "Me" : msg.userid,
+          content: msg.content,
+          align: msg.userid === currentUserId ? "right" : "left",
+        }))
       );
+    };
+  
+    socket.on("usersChattedWith", handleUsersChattedWith);
+    socket.on("receive_message", handleReceiveMessage);
+    socket.on("chatHistory", handleChatHistory);
+  
+    //cleanup
+    return () => {
+      socket.off("usersChattedWith", handleUsersChattedWith);
+      socket.off("receive_message", handleReceiveMessage);
+      socket.off("chatHistory", handleChatHistory);
+    };
+  }, [auth?.user?.id, activePropertyId, selectedUserId, socket]);
 
-      setNewMessage(""); // Clear the input field
+  //check usage
+  const joinRoomIfNotCurrentUser = (selectedUserId, activePropertyId) => {
+    if (auth.user.id !== selectedUserId) {
+      socket.emit("join_room", {
+        propertyId: activePropertyId,
+        currentUserId: auth.user.id,
+        selectedUserId: selectedUserId,
+      });
+    } else {
+      console.log("User clicked themselves; skipping room join.");
     }
   };
+  
 
+  const handleUserClick = (user) => {
+   
+      console.log("handleUserClick: selected user", user);
+      
+        setSelectedUserId(user.id);
+        setMessages([]);
+        const updatedPropertyId = user.propertyId || activePropertyId;
+        setActivePropertyId(updatedPropertyId);
+    
+        socket.emit("getChatHistory", {
+          propertyId: updatedPropertyId,
+          currentUserId: auth.user.id,
+          selectedUserId: user.id,
+        });
+       
+  };
+
+  
+  
+  const handleSendMessage = () => {
+    const messageContent = newMessage.trim();
+    if (!messageContent || !auth.user.id) return;
+  
+    const messageData = {
+      propertyId: activePropertyId,
+      currentUserId: auth.user.id,
+      selectedUserId,
+      content: messageContent,
+    };
+  
+    console.log("Sending message:", messageData);
+    socket.emit("send_message", messageData);
+  
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: "Me", content: messageContent, align: "right" },
+    ]);
+  
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === auth.user.id
+          ? { ...user, lastMessage: messageContent }
+          : user
+      )
+    );
+  
+    setNewMessage("");
+  };
+  
   return (
     <Container fluid my={20} style={{ display: "flex", gap: "20px" }}>
       {/* Left User List Section */}
@@ -86,12 +169,14 @@ export function Mymessages() {
                 backgroundColor: "#e8f5e9", // Light green background
                 width: "100%", // Match the parent width
               }}
+              onClick={() => handleUserClick(user)} // Add click handler
             >
               <Group spacing="sm" noWrap>
                 <Avatar radius="xl" />
                 <Stack spacing={0} style={{ flex: 1 }}>
-                  <Text size="sm" weight={500}>
-                    {user.id}
+              
+                  <Text size="sm" weight={500}>  
+                    {user.name}    {/* updated with username */}
                   </Text>
                   <Text
                     size="xs"

@@ -167,47 +167,44 @@ model PropertyMedia {
 
   // Relations
   propertyId Int
-  property   Property @relation(fields: [propertyId], references: [id])
+  property   Property @relation(fields: [propertyId], references: [id]) 
 }
 
+//Chat models
 model Chat {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int             @id @default(autoincrement())
+  propertyId     Int
+  lastMessageAt  DateTime
 
-  lastMessageAt DateTime?
+  property       Property        @relation(fields: [propertyId], references: [id])
 
-  // Relations
-  propertyId   Int
-  property     Property          @relation(fields: [propertyId], references: [id])
-  participants ChatParticipant[]
-  messages     Message[]
+  participants   ChatParticipant[] 
+  messages       Message[]
+
 }
+
 
 model ChatParticipant {
-  chatId Int
-  chat   Chat @relation(fields: [chatId], references: [id])
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  chatid         Int
+  userid         Int
 
-  @@id([chatId, userId])
+  chat           Chat            @relation(fields: [chatid], references: [id])
+  user           User            @relation(fields: [userid], references: [id])
+
+  @@unique([chatid, userid]) 
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  type      MessageType
-  content   String?
-  deletedAt DateTime?
-
-  // Relations
-  chatId Int
-  chat   Chat @relation(fields: [chatId], references: [id])
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  id             Int             @id @default(autoincrement())
+  chatid         Int
+  userid         Int
+  content        String          
+  createdAt      DateTime        @default(now())
+  
+  chat           Chat            @relation(fields: [chatid], references: [id])
+  user           User            @relation(fields: [userid], references: [id])
 }
+
 
 // Admin Models
 model Admin {

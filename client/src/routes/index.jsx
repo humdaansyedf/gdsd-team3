@@ -97,7 +97,15 @@ export const App = () => {
                 </PrivateRoute>
               }
             />
-            <Route path="mymessages" element={<Mymessages />} />
+            <Route
+              path="mymessages"
+              element={  
+                // commented for testing
+                //<PublicRoute>
+                  <Mymessages />
+               // </PublicRoute>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

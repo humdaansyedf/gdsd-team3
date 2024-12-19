@@ -6,10 +6,17 @@ import { hash } from "@node-rs/argon2";
 const prisma = new PrismaClient();
 
 async function clearDatabase() {
-  await prisma.user.deleteMany();
+  //order matters!
+  await prisma.message.deleteMany();
+  await prisma.chatParticipant.deleteMany();
+  await prisma.chat.deleteMany();
+  
   await prisma.session.deleteMany();
   await prisma.propertyMedia.deleteMany();
   await prisma.property.deleteMany();
+  await prisma.user.deleteMany();
+  
+  
 }
 
 async function createUsers() {
@@ -562,10 +569,69 @@ async function createProperties() {
   await prisma.propertyMedia.createMany({ data: propertyMedia });
 }
 
+async function createChats() {
+  const chats = [
+    { id: 1, propertyId: 1, lastMessageAt: "2024-12-01T12:00:00Z" },
+    { id: 2, propertyId: 4, lastMessageAt: "2024-12-03T15:30:00Z" },
+  ];
+
+  await prisma.chat.createMany({ data: chats });
+}
+
+async function createChatParticipants() {
+  const participants = [
+    { chatid: 1, userid: 1 },
+    { chatid: 1, userid: 4 },
+    { chatid: 2, userid: 2 },
+    { chatid: 2, userid: 4 },
+  ];
+
+  await prisma.chatParticipant.createMany({ data: participants });
+}
+
+async function createMessages() {
+  const messages = [
+    {
+      id: 1,
+      chatid: 1,
+      userid: 4,
+      content: "Hello! Is the apartment still available?",
+      createdAt: "2024-12-01T12:00:00Z",
+    },
+    {
+      id: 2,
+      chatid: 1,
+      userid: 1,
+      content: "Yes, it is. When would you like to visit?",
+      createdAt: "2024-12-01T12:05:00Z",
+    },
+    {
+      id: 3,
+      chatid: 2,
+      userid: 4,
+      content: "Can I get more details about the property?",
+      createdAt: "2024-12-03T15:30:00Z",
+    },
+    {
+      id: 4,
+      chatid: 2,
+      userid: 2,
+      content: "Sure, I'll send you the brochure shortly.",
+      createdAt: "2024-12-03T15:35:00Z",
+    },
+  ];
+
+  await prisma.message.createMany({ data: messages });
+}
+
+
 async function main() {
   await clearDatabase();
   await createUsers();
   await createProperties();
+  await createChats();
+  await createChatParticipants();
+  await createMessages();
 }
 
 main()
