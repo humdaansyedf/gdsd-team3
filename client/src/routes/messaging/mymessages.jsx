@@ -6,7 +6,7 @@ import io from "socket.io-client";
 import { useAuth } from "../../lib/auth-context";
 
 // Connect to the Socket.IO server
-const socket = io("http://localhost:3000");
+const socket = io();
 
 export function Mymessages() {
 
