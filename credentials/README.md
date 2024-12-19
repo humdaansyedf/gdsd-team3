@@ -32,7 +32,7 @@
 
 1. Connect to the EC2 instance using the above credentials.
 2. Connect to the database using the following command:
-   `mysql -u admin -p’gdsd_3_smhaz' -h gdsd.clau0k8881i1.eu-central-1.rds.amazonaws.com -D gdsd`
+   `mysql -u admin -p'gdsd_3_smhaz' -h gdsd.clau0k8881i1.eu-central-1.rds.amazonaws.com -D gdsd`
 
 Some useful queries:
 
