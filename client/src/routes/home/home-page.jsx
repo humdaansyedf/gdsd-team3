@@ -33,7 +33,9 @@ export const Home = () => {
 
           {searchQuery.data &&
             (isMapView ? (
-              <MapView properties={searchQuery.data} />
+              <div style={{ height: "500px", width: "100%" }}>
+                <MapView properties={searchQuery.data} />
+              </div>
             ) : (
               searchQuery.data.map((property) => (
                 <div key={property.id} className={classes.propertyCard}>
