@@ -35,7 +35,7 @@ const MapView = ({ properties }) => {
             <h4>{selectedProperty.title}</h4>
             <p>{selectedProperty.description.slice(0, 50)}...</p>
             <p>
-              <strong>Rent: €{selectedProperty.rent}</strong>
+              <strong>Rent: €{selectedProperty.totalRent}</strong> {/* displaying total rent here */}
             </p>
           </div>
         </InfoWindow>

@@ -7,6 +7,7 @@ import { useGetPropertyById } from "./property-detail-queries";
 import { Button } from "@mantine/core";
 
 import classes from "./property-detail-style.module.css";
+import PropertyMap from "./property-map-view";
 
 export const PropertyDetail = () => {
   const { id } = useParams();
@@ -82,6 +83,7 @@ export const PropertyDetail = () => {
               {/* Map box */}
               <div className={classes.mapSection}>
                 <h4>Location Map</h4>
+                <PropertyMap data={data} />
               </div>
             </div>
           </div>
