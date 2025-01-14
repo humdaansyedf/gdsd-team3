@@ -5,7 +5,7 @@ const MapView = ({ properties }) => {
   const [selectedProperty, setSelectedProperty] = useState(null); // State for the selected property
 
   return (
-    <APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY}>
+    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
     <Map
       style={{width: '100%', height: '500px'}}
       defaultCenter={{lat: 50.52, lng: 9.67 }}
