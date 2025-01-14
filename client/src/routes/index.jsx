@@ -4,7 +4,8 @@ import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { Footer } from "../components/Footer/Footer";
 import { Header } from "../components/Header/Header";
 import { useAuth } from "../lib/auth-context";
-import { PrivateRoute, PublicOnlyRoute } from "../lib/auth-routes";
+import { PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
+import { AdminAuthProvider } from "../lib/admin-auth-provider";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
 const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
@@ -25,6 +26,7 @@ const AppLoader = () => {
     </div>
   );
 };
+
 const AppLayout = () => {
   const { isLoading } = useAuth();
 
@@ -54,6 +56,21 @@ const NotFound = () => {
       <h1>404 | Not Found</h1>
       <Link to="/">Go back home</Link>
     </div>
+  );
+};
+
+const AdminLayout = () => {
+  return (
+    <>
+      <div className="disclaimer">
+        Fulda University of Applied Sciences Software Engineering Project, Fall 2024. FOR DEMONSTRATION ONLY.
+      </div>
+      <AdminAuthProvider>
+        <Container fluid>
+          <Outlet />
+        </Container>
+      </AdminAuthProvider>
+    </>
   );
 };
 
@@ -107,6 +124,9 @@ export const App = () => {
               }
             />
             <Route path="*" element={<NotFound />} />
+          </Route>
+          <Route path="admin" element={<AdminLayout />}>
+            <Route index element={<div>ADMIN</div>} />
           </Route>
         </Routes>
       </BrowserRouter>
