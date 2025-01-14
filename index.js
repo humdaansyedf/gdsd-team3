@@ -10,9 +10,9 @@ import { fileRouter } from "./src/routes/file.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { landlordRouter } from "./src/routes/landlord.js";
-import {chatHandlers} from "./chatHandlers.js"
+import { chatHandlers } from "./chatHandlers.js";
 import { prisma } from "./src/prisma/index.js";
-
+import { adminAuthMiddleware, adminRouter } from "./src/routes/admin.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,17 +28,16 @@ const io = new Server(server, {
   },
 });
 
-
 // Socket.IO logic
 // Socket.IO Connection
-io.on('connection', (socket) => {
- // console.log('A user connected:', socket.id);
+io.on("connection", (socket) => {
+  // console.log('A user connected:', socket.id);
 
   // Handle chat-related events
   chatHandlers(io, socket, prisma);
 
-  socket.on('disconnect', () => {
-   // console.log('A user disconnected:', socket.id);
+  socket.on("disconnect", () => {
+    // console.log('A user disconnected:', socket.id);
   });
 });
 
@@ -63,6 +62,9 @@ app.use("/api", authMiddleware);
 
 // Private routes
 app.use("/api", propertyRouter, fileRouter, landlordRouter);
+
+// Admin routes
+app.use("/api/admin", adminRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
