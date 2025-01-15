@@ -54,6 +54,9 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware for parsing cookies
 app.use(cookieParser());
 
+// Admin routes
+app.use("/api/admin", adminRouter);
+
 // Public routes
 app.use("/api", authRouter, publicPropertyRouter);
 
@@ -62,9 +65,6 @@ app.use("/api", authMiddleware);
 
 // Private routes
 app.use("/api", propertyRouter, fileRouter, landlordRouter);
-
-// Admin routes
-app.use("/api/admin", adminRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {

@@ -8,7 +8,7 @@ function AdminLogin() {
   const queryClient = useQueryClient();
   const loginMutation = useMutation({
     mutationFn: async (values) => {
-      const response = await fetch(`/api/login`, {
+      const response = await fetch(`/api/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -20,7 +20,7 @@ function AdminLogin() {
       });
       const data = await response.json();
       queryClient.refetchQueries({
-        queryKey: ["me"],
+        queryKey: ["admin/me"],
       });
 
       if (response.ok) {
@@ -118,6 +118,8 @@ export const AdminAuthProvider = ({ children }) => {
       });
     },
   });
+
+  console.log(adminQuery);
 
   // If the query is still loading, return null
   if (adminQuery.isLoading) {

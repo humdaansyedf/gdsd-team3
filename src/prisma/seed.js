@@ -10,13 +10,12 @@ async function clearDatabase() {
   await prisma.message.deleteMany();
   await prisma.chatParticipant.deleteMany();
   await prisma.chat.deleteMany();
-  
   await prisma.session.deleteMany();
   await prisma.propertyMedia.deleteMany();
   await prisma.property.deleteMany();
   await prisma.user.deleteMany();
-  
-  
+  await prisma.adminSession.deleteMany();
+  await prisma.admin.deleteMany();
 }
 
 async function createUsers() {
@@ -624,6 +623,21 @@ async function createMessages() {
   await prisma.message.createMany({ data: messages });
 }
 
+async function createAdmin() {
+  const passwordHash = await hash("gryffindor", {
+    memoryCost: 19456,
+    timeCost: 2,
+    outputLen: 32,
+    parallelism: 1,
+  });
+
+  await prisma.admin.create({
+    data: {
+      email: "ron.weasly@hogwarts.de",
+      passwordHash: passwordHash,
+    },
+  });
+}
 
 async function main() {
   await clearDatabase();
@@ -632,6 +646,7 @@ async function main() {
   await createChats();
   await createChatParticipants();
   await createMessages();
+  await createAdmin();
 }
 
 main()

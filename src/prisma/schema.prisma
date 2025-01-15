@@ -214,7 +214,7 @@ model Admin {
 }
 
 model AdminSession {
-  id         Int       @id @default(autoincrement())
+  id         String    @id
   adminId    Int
   createdAt  DateTime  @default(now())
   expiresAt  DateTime?
