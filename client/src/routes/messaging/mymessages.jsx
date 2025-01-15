@@ -1,5 +1,5 @@
 import { ActionIcon, Avatar, Container, Group, Paper, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
-import { IconPlus, IconSend } from "@tabler/icons-react";
+import { IconSend } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import io from "socket.io-client";
@@ -151,39 +151,48 @@ export function Mymessages() {
         <Stack spacing="sm">
           {users.map((user, index) => (
             <Paper
-              key={index}
-              withBorder
-              p="sm"
-              radius={20}
-              shadow="xs"
-              style={{
-                backgroundColor: "#e8f5e9", // Light green background
-                width: "100%", // Match the parent width
-              }}
-              onClick={() => handleUserClick(user)} // Add click handler
-            >
-              <Group spacing="sm" noWrap>
-                <Avatar radius="xl" />
-                <Stack spacing={0} style={{ flex: 1 }}>
-              
-                  <Text size="sm" weight={500}>  
-                    {user.name}    {/* updated with username */}
-                  </Text>
-                  <Text
-                    size="xs"
-                    color="dimmed"
-                    style={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                    title={user.lastMessage} // Tooltip to show the full message
-                  >
-                    {user.lastMessage}
-                  </Text>
-                </Stack>
-              </Group>
-            </Paper>
+            key={index}
+            withBorder
+            p="sm"
+            radius={20}
+            shadow="xs"
+            style={{
+              backgroundColor: "#e8f5e9",
+              width: "100%",
+              cursor: "pointer", // Change cursor to pointer
+              transition: "transform 0.3s ease, background-color 0.3s ease", // Smooth animation for scaling and background
+            }}
+            onClick={() => handleUserClick(user)}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#c8e6c9"; // Hover background color
+              e.currentTarget.style.transform = "scale(1.05)"; // Slightly enlarge the card
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#e8f5e9"; // Revert to original background color
+              e.currentTarget.style.transform = "scale(1)"; // Reset size
+            }}
+          >
+            <Group spacing="sm" noWrap>
+              <Avatar radius="xl" />
+              <Stack spacing={0} style={{ flex: 1 }}>
+                <Text size="sm" weight={500}>
+                  {user.name} {/* Updated with username */}
+                </Text>
+                <Text
+                  size="xs"
+                  color="dimmed"
+                  style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={user.lastMessage} // Tooltip to show the full message
+                >
+                  {user.lastMessage}
+                </Text>
+              </Stack>
+            </Group>
+          </Paper>
           ))}
         </Stack>
       </Paper>
@@ -220,13 +229,15 @@ export function Mymessages() {
 
         {/* Input Section */}
         <Group p="md" style={{ borderTop: "1px solid #e5e5e5" }}>
-          <ActionIcon variant="light" size="lg" radius="md">
-            <IconPlus />
-          </ActionIcon>
           <TextInput
             placeholder="Type your message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                handleSendMessage(); 
+              }
+            }}
             style={{ flex: 1 }}
           />
           <ActionIcon variant="filled" color="green" size="lg" radius="md" onClick={handleSendMessage}>
