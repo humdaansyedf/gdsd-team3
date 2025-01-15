@@ -23,11 +23,12 @@ jobs:
         run: |
           echo "${{ vars.STAGING_ENV }}" > .env
 
+      - name: Create .env file for frontend
+        run: |
+          echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" > ./client/.env
+
       - name: Install dependencies
         run: npm install
-
-      - name: Apply migrations
-        run: npx prisma migrate reset --force
 
       - name: Build app
         run: npm run build
@@ -40,4 +41,8 @@ jobs:
           REMOTE_USER: ${{ secrets.STAGING_REMOTE_USER }}
           SSH_PRIVATE_KEY: ${{ secrets.STAGING_REMOTE_KEY }}
           TARGET: ~/gdsd
-          SCRIPT_AFTER: pm2 restart gdsd
+          SCRIPT_AFTER: |
+            source ~/.bashrc
+            cd ~/gdsd
+            npx prisma migrate reset --force
+            pm2 restart gdsd

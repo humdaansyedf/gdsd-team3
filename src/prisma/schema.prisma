@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-   previewFeatures = ["omitApi"]
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "debian-openssl-3.0.x"]
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -13,46 +14,222 @@ enum UserType {
   LANDLORD
 }
 
-model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  password String
-  name     String
-  type     UserType
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
 
-  sessions Session[]
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  ROOM
+  STUDIO
+  SHARED_ROOM
+}
+
+enum PropertyStatus {
+  DRAFT
+  PENDING
+  ACTIVE
+  RENTED
+  ARCHIVED
+  REJECTED
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
+enum MediaStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+}
+
+enum MessageType {
+  TEXT
+  FILE
+  IMAGE
+  VIDEO
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type           UserType  @default(STUDENT)
+  email          String    @unique
+  passwordHash   String
+  name           String
+  phone          String?   @unique
+  address        String?
+  profilePicture String?
+  isVerified     Boolean   @default(true)
+  isOnline       Boolean   @default(false)
+  lastOnlineAt   DateTime?
+  lastLoginAt    DateTime?
+
+  // Relations
+  sessions          Session[]
+  properties        Property[]        @relation("LandlordProperties")
+  participatedChats ChatParticipant[]
+  messages          Message[]
 }
 
 model Session {
-  id        String   @id
-  expiresAt DateTime
-
-  user   User @relation(references: [id], fields: [userId], onDelete: Cascade)
-  userId Int
+  id         String    @id
+  userId     Int
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  ipAddress  String?
+  deviceInfo String?
+  user       User      @relation(fields: [userId], references: [id])
 }
 
 model Property {
-  id             Int             @id @default(autoincrement())
-  title          String          @db.Text()
-  description    String          @db.Text()
-  postcode       String
-  longitude      Float
-  latitude       Float
-  totalRent      Decimal
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // status and type
+  status       PropertyStatus @default(DRAFT)
+  propertyType PropertyType   @default(APARTMENT)
+  title        String         @db.Text()
+  description  String         @db.Text()
+
+  // location and address
+  longitude Float
+  latitude  Float
+  address1  String?
+  address2  String?
+  city      String?
+  state     String?
+  postcode  String?
+
+  // price and costs
+  totalRent                        Float
+  coldRent                         Float
+  additionalCosts                  Float?
+  heatingIncludedInAdditionalCosts Boolean @default(false)
+  deposit                          Float?
+
+  // rooms and space
   numberOfRooms  Int
-  petsAllowed    Boolean         @default(false)
-  smokingAllowed Boolean         @default(false)
-  availableFrom  DateTime
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  media          PropertyMedia[]
+  numberOfBeds   Int?
+  numberOfBaths  Int?
+  totalFloors    Int?
+  floorNumber    Int?
+  livingSpaceSqm Float?
+  yearBuilt      String?
+
+  // availability and lease terms
+  availableFrom            DateTime
+  minimumLeaseTermInMonths Int?
+  maximumLeaseTermInMonths Int?
+  noticePeriodInMonths     Int?
+
+  // amenities
+  pets           Boolean @default(false)
+  smoking        Boolean @default(false)
+  kitchen        Boolean @default(false)
+  furnished      Boolean @default(false)
+  balcony        Boolean @default(false)
+  cellar         Boolean @default(false)
+  washingMachine Boolean @default(false)
+  elevator       Boolean @default(false)
+  garden         Boolean @default(false)
+  parking        Boolean @default(false)
+  internet       Boolean @default(false)
+  cableTv        Boolean @default(false)
+
+  // Relations
+  creatorId Int
+  user       User      @relation("LandlordProperties", fields: [creatorId], references: [id])
+  //new for all users
+  
+  media      PropertyMedia[]
+  chats      Chat[]
 }
 
 model PropertyMedia {
-  id         Int      @id @default(autoincrement())
-  property   Property @relation(fields: [propertyId], references: [id])
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status    MediaStatus
+  type      MediaType
+  url       String
+  name      String
+  thumbnail String?
+
+  // Relations
   propertyId Int
-  url        String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  property   Property @relation(fields: [propertyId], references: [id]) 
+}
+
+//Chat models
+model Chat {
+  id             Int             @id @default(autoincrement())
+  propertyId     Int
+  lastMessageAt  DateTime
+
+  property       Property        @relation(fields: [propertyId], references: [id])
+
+  participants   ChatParticipant[] 
+  messages       Message[]
+
+}
+
+
+model ChatParticipant {
+  chatid         Int
+  userid         Int
+
+  chat           Chat            @relation(fields: [chatid], references: [id])
+  user           User            @relation(fields: [userid], references: [id])
+
+  @@unique([chatid, userid]) 
+}
+
+model Message {
+  id             Int             @id @default(autoincrement())
+  chatid         Int
+  userid         Int
+  content        String          
+  createdAt      DateTime        @default(now())
+  
+  chat           Chat            @relation(fields: [chatid], references: [id])
+  user           User            @relation(fields: [userid], references: [id])
+}
+
+
+// Admin Models
+model Admin {
+  id        Int            @id @default(autoincrement())
+  email     String         @unique
+  password  String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  sessions  AdminSession[]
+}
+
+model AdminSession {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  ipAddress  String?
+  deviceInfo String?
+  admin      Admin     @relation(fields: [userId], references: [id])
+}
+
+model DummyTable {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

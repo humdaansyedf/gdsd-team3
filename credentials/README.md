@@ -26,13 +26,26 @@
 
 ## Database
 
-**url:** `jdbc:mysql://gdsd.clau0k8881i1.eu-central-1.rds.amazonaws.com:3306/`
+> [!IMPORTANT] The database is not accessible to the public. To connect you must first connect to the EC2 instance.
 
-**username:** `admin`
+### Steps:
 
-**password:** `gdsd_3_smhaz`
+1. Connect to the EC2 instance using the above credentials.
+2. Connect to the database using the following command:
+   `mysql -u admin -p'gdsd_3_smhaz' -h gdsd.clau0k8881i1.eu-central-1.rds.amazonaws.com -D gdsd`
 
-**database:** `gdsd`
+Some useful queries:
+
+1. See all tables: `SHOW TABLES;`
+2. See all columns in a table: `SHOW COLUMNS FROM table_name;`
+3. See all data in a table: `SELECT * FROM table_name;`
+
+### Credentials:
+
+- **url:** `jdbc:mysql://gdsd.clau0k8881i1.eu-central-1.rds.amazonaws.com:3306/`
+- **username:** `admin`
+- **password:** `gdsd_3_smhaz`
+- **database:** `gdsd`
 
 ## Manual deployment
 
@@ -46,6 +59,8 @@ Steps to deploy manually:
 6. `npm run build`
 7. `npm run db:migrate`
 8. `pm2 restart gdsd`
+
+---
 
 # Project Setup
 
@@ -68,6 +83,10 @@ Steps to run the project on your local machine:
 PORT=3000
 NODE_ENV=development
 DATABASE_URL="mysql://root:@localhost:3306/gdsd"
+⁠APP_AWS_REGION=eu-central-1
+APP_AWS_ACCESS_KEY_ID=AKIAX3DNHE265HDXWDEN
+APP_AWS_SECRET_ACCESS_KEY=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
+APP_AWS_BUCKET_NAME=gdsd ⁠
 ```
 
 **Note:** The database URL should be in the format `mysql://username:password@host:port/database`. Modify the values
