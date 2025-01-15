@@ -94,6 +94,10 @@ export const PropertyDetail = () => {
                   {data.additionalCosts}€
                 </p>
                 <p>
+                  Deposit:
+                  {data.deposit}€
+                </p>
+                <p>
                   Available From:
                   {new Date(data.availableFrom).toLocaleDateString("en-GB")}
                 </p>
@@ -104,7 +108,9 @@ export const PropertyDetail = () => {
                       Message
                     </Button>
                     <Button variant="filled">Report</Button>
-                    <Button variant="filled" onClick={handleShareClick}>Share</Button>
+                    <Button variant="filled" onClick={handleShareClick}>
+                      Share
+                    </Button>
                   </Button.Group>
                 </div>
               </div>
@@ -123,6 +129,7 @@ export const PropertyDetail = () => {
             <div className={classes.descriptionSection}>
               <h4>Description</h4>
               <p>{data.description}</p>
+              <br></br>
               <h4>More Details:</h4>
               <p>{data.description}</p>
             </div>
@@ -135,8 +142,10 @@ export const PropertyDetail = () => {
                   Heating included:{" "}
                   {data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}
                 </li>
-                <li>Pets Allowed: {data.petsAllowed ? "Yes" : "No"}</li>
-                <li>Smoking Allowed: {data.smokingAllowed ? "Yes" : "No"}</li>
+                <li>Furnished: {data.furnished ? "Yes" : "No"}</li>
+                <li>Internet: {data.internet ? "Yes" : "No"}</li>
+                <li>Parking: {data.parking ? "Yes" : "No"}</li>
+                <li>Cellar: {data.cellar ? "Yes" : "No"}</li>
               </ul>
             </div>
           </div>

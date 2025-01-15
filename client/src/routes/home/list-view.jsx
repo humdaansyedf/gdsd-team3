@@ -16,6 +16,7 @@ export const ListView = ({ properties }) => {
             <h2>{property.title}</h2>
             <div className={classes.propertyCardTags}>
               <span>€ {property.totalRent}</span>
+              {property.isSublet && <span>Sublet</span>}
               {property.petsAllowed && <span>Pets Allowed</span>}
               {property.smokingAllowed && <span>Smoking Allowed</span>}
             </div>
@@ -37,7 +38,8 @@ export const ListView = ({ properties }) => {
                 e.target.style.color = "#ffffff";
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = "#d4f8d4"; /* Reset to original */
+                e.target.style.backgroundColor =
+                  "#d4f8d4"; /* Reset to original */
                 e.target.style.color = "#000000";
               }}
             >

@@ -101,6 +101,7 @@ model Property {
   propertyType PropertyType   @default(APARTMENT)
   title        String         @db.Text()
   description  String         @db.Text()
+  isSublet       Boolean   @default(false)
 
   // location and address
   longitude Float
