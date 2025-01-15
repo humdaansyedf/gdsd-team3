@@ -3,19 +3,7 @@ import { Link } from "react-router-dom";
 import { IconArrowRight } from "@tabler/icons-react";
 import { Badge, Box, Button, Card, Group, Image, SegmentedControl, SimpleGrid, Text, Title } from "@mantine/core";
 import { useAdminProperties } from "./admin-queries";
-
-const getBadgeColor = (status) => {
-  if (status === "ACTIVE") {
-    return "green";
-  }
-  if (status === "REJECTED") {
-    return "red";
-  }
-  if (status === "PENDING") {
-    return "yellow";
-  }
-  return "gray";
-};
+import { getBadgeColor } from "./admin-utils";
 
 const AdminProperties = ({ properties }) => {
   const [filteredProperties, setFilteredProperties] = React.useState(() => properties);

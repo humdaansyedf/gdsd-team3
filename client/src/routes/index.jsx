@@ -22,6 +22,9 @@ const Mymessages = React.lazy(() => import("./messaging/mymessages").then((mod) 
 const AdminDashboard = React.lazy(() =>
   import("./admin/admin-dashboard-page").then((mod) => ({ default: mod.AdminDashboard }))
 );
+const AdminProperty = React.lazy(() =>
+  import("./admin/admin-property-page").then((mod) => ({ default: mod.AdminProperty }))
+);
 
 const AppLoader = () => {
   return (
@@ -143,6 +146,7 @@ export const App = () => {
             }
           >
             <Route index element={<AdminDashboard />} />
+            <Route path="property/:id" element={<AdminProperty />} />
           </Route>
         </Routes>
       </BrowserRouter>

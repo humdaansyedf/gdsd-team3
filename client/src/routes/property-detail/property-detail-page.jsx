@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 
 import { useGetPropertyById } from "./property-detail-queries";
 
@@ -23,8 +22,6 @@ export const PropertyDetail = () => {
       alert("Unable to retrieve owner information.");
     }
   };
-
-  
 
   return (
     <>
@@ -69,10 +66,12 @@ export const PropertyDetail = () => {
                   Available From:
                   {new Date(data.availableFrom).toLocaleDateString("en-GB")}
                 </p>
-                
+
                 <div className={classes.buttonGroup}>
                   <Button.Group>
-                    <Button variant="filled" onClick={handleMessageClick}>Message</Button>
+                    <Button variant="filled" onClick={handleMessageClick}>
+                      Message
+                    </Button>
                     <Button variant="filled">Report</Button>
                     <Button variant="filled">Share</Button>
                   </Button.Group>
