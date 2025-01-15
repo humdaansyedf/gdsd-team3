@@ -196,14 +196,20 @@ adminRouter.get("/me", adminAuthMiddleware, async (req, res) => {
 adminRouter.get("/property", adminAuthMiddleware, async (req, res) => {
   try {
     const properties = await prisma.property.findMany({
-      where: where,
-      take: limit,
-      skip: offset,
       include: {
         media: true,
       },
     });
-    res.json(properties);
+    res.json(
+      properties.map((property) => {
+        // Get the first media item as the featured image
+        const featuredMedia = property.media[0];
+        return {
+          ...property,
+          media: featuredMedia ? featuredMedia.url : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+        };
+      })
+    );
     return;
   } catch (e) {
     console.log(e);

@@ -19,6 +19,10 @@ const PropertyDetail = React.lazy(() =>
 const Profile = React.lazy(() => import("./profile/profile-page").then((mod) => ({ default: mod.Profile })));
 const Mymessages = React.lazy(() => import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages })));
 
+const AdminDashboard = React.lazy(() =>
+  import("./admin/admin-dashboard-page").then((mod) => ({ default: mod.AdminDashboard }))
+);
+
 const AppLoader = () => {
   return (
     <div className="app-loader">
@@ -138,7 +142,7 @@ export const App = () => {
               </AdminAuthProvider>
             }
           >
-            <Route index element={<div>ADMIN</div>} />
+            <Route index element={<AdminDashboard />} />
           </Route>
         </Routes>
       </BrowserRouter>
