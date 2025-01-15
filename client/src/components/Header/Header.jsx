@@ -1,9 +1,10 @@
 import { Anchor, Autocomplete, Burger, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconSearch, IconUserCircle } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
-import classes from "./Header.module.css";
+import { IconMail, IconSearch, IconUserCircle } from "@tabler/icons-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/auth-context";
+import classes from "./Header.module.css";
 
 const links = [
   { link: "/login", label: "Login" },
@@ -13,12 +14,30 @@ const links = [
 export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [searchData, setSearchData] = useState([]); 
 
   const items = links.map((link) => (
     <Link key={link.label} to={link.link} className={classes.link}>
       {link.label}
     </Link>
   ));
+
+  const handleSearch = (value) => {
+    if (value.trim() !== "") {
+      const query = value.trim().replace(/\s+/g, "+");
+
+      setSearchData((prevSearchData) => {
+        const updatedSearchData = [...prevSearchData];
+        if (!updatedSearchData.includes(value)) {
+          updatedSearchData.push(value);
+        }
+        return updatedSearchData;
+      });
+
+      navigate(`/?title=${query}`); 
+    }
+  };
 
   return (
     <header className={classes.header}>
@@ -35,16 +54,29 @@ export function Header() {
             style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}
             placeholder="Search"
             leftSection={<IconSearch size={16} stroke={1.5} />}
-            data={["React", "Angular", "Vue", "Next.js", "Riot.js", "Svelte", "Blitz.js"]}
+            data={searchData} 
             visibleFrom="xs"
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                handleSearch(event.target.value);
+              }
+            }}
           />
         </Group>
 
-        <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">
+        <Group ml={50} gap={10} className={classes.links} visibleFrom="sm">
           {user ? (
-            <Link to="/profile">
-              <IconUserCircle />
-            </Link>
+            <>
+              {/* Messages Button */}
+              <Link to="/mymessages">
+                <IconMail />
+              </Link>
+
+              {/* Profile Link */}
+              <Link to="/profile">
+                <IconUserCircle />
+              </Link>
+            </>
           ) : (
             items
           )}
