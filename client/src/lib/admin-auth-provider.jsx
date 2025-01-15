@@ -119,8 +119,6 @@ export const AdminAuthProvider = ({ children }) => {
     },
   });
 
-  console.log(adminQuery);
-
   // If the query is still loading, return null
   if (adminQuery.isLoading) {
     return null;

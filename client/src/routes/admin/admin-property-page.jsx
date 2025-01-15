@@ -1,8 +1,40 @@
 import { useParams } from "react-router-dom";
-import { useAdminProperty } from "./admin-queries";
-import { Box, Group, Paper, Text, Title, Image, SimpleGrid, Badge, Divider, List } from "@mantine/core";
+import { useAdminProperty, useAdminPropertyUpdateStatus } from "./admin-queries";
+import { Box, Group, Paper, Text, Title, Image, SimpleGrid, Badge, Divider, List, Button } from "@mantine/core";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { Carousel } from "@mantine/carousel";
 import { getBadgeColor } from "./admin-utils";
+
+const AdminUpdateStatus = ({ id, status }) => {
+  const updateStatusMutation = useAdminPropertyUpdateStatus(id);
+
+  return (
+    <Group>
+      {status !== "ACTIVE" && (
+        <Button
+          size="xl"
+          color="green"
+          loading={updateStatusMutation.isPending}
+          onClick={() => updateStatusMutation.mutate("ACTIVE")}
+          leftSection={<IconCheck />}
+        >
+          APPROVE
+        </Button>
+      )}
+      {status !== "REJECTED" && (
+        <Button
+          size="xl"
+          color="red"
+          loading={updateStatusMutation.isPending}
+          onClick={() => updateStatusMutation.mutate("REJECTED")}
+          leftSection={<IconX />}
+        >
+          REJECT
+        </Button>
+      )}
+    </Group>
+  );
+};
 
 export const AdminProperty = () => {
   const { id } = useParams();
@@ -23,10 +55,9 @@ export const AdminProperty = () => {
 
   return (
     <Box py="lg">
-      <Group>
-        <Title order={1} mb="md">
-          Admin Dashboard
-        </Title>
+      <Group justify="space-between" align="start" mb="md">
+        <Title order={1}>Admin Dashboard</Title>
+        <AdminUpdateStatus id={id} status={propertyQuery.data.status} />
       </Group>
       <Box>
         <Paper withBorder p="sm">

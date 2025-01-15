@@ -241,7 +241,7 @@ adminRouter.get("/property/:id", async (req, res) => {
 
 // Update property status
 const propertyStatusSchema = z.object({
-  status: z.enum(["ACTIVE", "REJECTED"]),
+  status: z.enum(["PENDING", "ACTIVE", "REJECTED"]),
 });
 
 adminRouter.patch("/property/:id/status", adminAuthMiddleware, async (req, res) => {
@@ -255,7 +255,7 @@ adminRouter.patch("/property/:id/status", adminAuthMiddleware, async (req, res) 
     });
   }
 
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
 
   try {
     const property = await prisma.property.update({
