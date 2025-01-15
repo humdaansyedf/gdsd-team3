@@ -1,6 +1,6 @@
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useClipboard } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 
 import { useGetPropertyById } from "./property-detail-queries";
 
@@ -13,7 +13,10 @@ export const PropertyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate(); // Navigation hook
   const { data, isLoading, error } = useGetPropertyById(id);
+  const clipboard = useClipboard();
+
   console.log(data);
+
   const handleMessageClick = () => {
     if (data && data.creatorId) {
       console.log(data.creatorId);
@@ -27,6 +30,27 @@ export const PropertyDetail = () => {
       });
     } else {
       alert("Unable to retrieve owner information.");
+    }
+  };
+
+  const handleShareClick = () => {
+    try {
+      const propertyUrl = `${window.location.origin}/property/${id}`;
+      clipboard.copy(propertyUrl);
+
+      // Show success notification
+      notifications.show({
+        title: "Link Copied!",
+        message: "The property link has been copied to your clipboard.",
+        color: "green",
+      });
+    } catch (err) {
+      // Show error notification
+      notifications.show({
+        title: "Copy Failed",
+        message: "Failed to copy the property link.",
+        color: "red",
+      });
     }
   };
 
@@ -80,7 +104,7 @@ export const PropertyDetail = () => {
                       Message
                     </Button>
                     <Button variant="filled">Report</Button>
-                    <Button variant="filled">Share</Button>
+                    <Button variant="filled" onClick={handleShareClick}>Share</Button>
                   </Button.Group>
                 </div>
               </div>
