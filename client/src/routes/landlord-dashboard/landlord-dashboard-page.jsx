@@ -1,165 +1,30 @@
-import { useState } from "react";
-import { Button, Select, NumberInput, SimpleGrid, Switch, Badge } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { Badge, Loader } from "@mantine/core";
 import classes from "./landlord-dashboard-style.module.css";
-import { CreateAdModal } from "../create-ad/create-ad-page.jsx";
-import { useLandlordAds } from "./landlord-dashboard-queries.jsx";
-import {useNavigate} from "react-router-dom";
+import {useAdStats, useLandlordAds} from "./landlord-dashboard-queries.jsx";
+import { Link, useNavigate } from "react-router-dom";
+import DashboardFiltersSection from "./landlord-dashboard-filters-section.jsx";
 
 export const LandlordDashboardPage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  useLandlordAds();
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
 
   const navigate = useNavigate();
   const handleNewMessagesClick = () => {
-        navigate("/mymessages");
-    };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
+    navigate("/mymessages");
   };
 
-  const hardcodedNewRequests = 3;
+  const handleCreateAdClick = () => {
+    navigate("/property/new");
+  }
 
-  const [hardcodedAds, setHardcodedAds] = useState([
-    {
-      id: 1,
-      title: "Spacious Apartment in Downtown",
-      status: "Active",
-      description: "A beautiful apartment in the heart of the city. Close to everything.",
-      image: "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/building-1.jpg",
-      rent: 1500,
-    },
-    {
-      id: 2,
-      title: "Cozy Studio Near University",
-      status: "Pending Approval",
-      description: "Perfect for students. Affordable and walking distance to campus.",
-      image: "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/building-2.jpg",
-      rent: 800,
-    },
-    {
-      id: 3,
-      title: "Luxury Villa with Pool",
-      status: "Disabled",
-      description: "A luxurious villa with a private pool and garden.",
-      image: "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/building-3.jpg",
-      rent: 5000,
-    },
-  ]);
 
-  const DEFAULT_FILTERS = {
-    status: "All",
-    minPrice: 0,
-    maxPrice: 5000,
-  };
 
-  const [showFilters, setShowFilters] = useState(true);
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
-  const form = useForm({
-    mode: "uncontrolled",
-    initialValues: DEFAULT_FILTERS,
-  });
+  const { data: adStats, isLoading, error, refetch } = useAdStats();
+  const searchQuery = useLandlordAds();
 
-  // Count active and disabled ads dynamically
-  const activeAdsCount = hardcodedAds.filter((ad) => ad.status === "Active").length;
-  const disabledAdsCount = hardcodedAds.filter((ad) => ad.status === "Disabled").length;
 
-  // Filtered ads based on filters state
-  const filteredAds = hardcodedAds.filter((ad) => {
-    if (filters.status !== "All" && ad.status !== filters.status) {
-      return false;
-    }
-    if (ad.rent < filters.minPrice || ad.rent > filters.maxPrice) {
-      return false;
-    }
-    return true;
-  });
-
-  // Function to toggle property status
-  const handleToggleStatus = (id) => {
-    setHardcodedAds((prevAds) =>
-      prevAds.map((ad) => (ad.id === id ? { ...ad, status: ad.status === "Active" ? "Disabled" : "Active" } : ad))
-    );
-  };
-
-  return (
+    return (
     <>
-      <h1>Landlord Dashboard</h1>
       <div className={classes.container}>
-        <aside className={classes.filtersSection}>
-          <div className={classes.filtersHeader}>
-            <h2>Filters</h2>
-            <Button size="compact-xs" color="gray" type="button" onClick={() => setShowFilters((prev) => !prev)}>
-              {showFilters ? "Hide Filters" : "Show Filters"}
-            </Button>
-          </div>
-
-          {showFilters && (
-            <form className={classes.filters} onSubmit={form.onSubmit((values) => setFilters(values))}>
-              <div className={classes.filter}>
-                <h4>Status:</h4>
-                <Select
-                  placeholder="Select Status"
-                  data={[
-                    { value: "All", label: "All" },
-                    { value: "Active", label: "Active" },
-                    { value: "Pending Approval", label: "Pending Approval" },
-                    { value: "Disabled", label: "Disabled" },
-                  ]}
-                  key={form.key("status")}
-                  {...form.getInputProps("status")}
-                />
-              </div>
-
-              <div className={classes.filter}>
-                <h4>Price Range:</h4>
-                <SimpleGrid cols={2} spacing="xs">
-                  <NumberInput
-                    placeholder="Min. Rent"
-                    min={0}
-                    max={5000}
-                    step={50}
-                    prefix="€"
-                    key={form.key("minPrice")}
-                    {...form.getInputProps("minPrice")}
-                  />
-                  <NumberInput
-                    placeholder="Max. Rent"
-                    min={0}
-                    max={5000}
-                    step={50}
-                    prefix="€"
-                    key={form.key("maxPrice")}
-                    {...form.getInputProps("maxPrice")}
-                  />
-                </SimpleGrid>
-              </div>
-
-              <div className={classes.filterBtns}>
-                <Button type="submit" className={classes.applyFiltersBtn}>
-                  Apply Filters
-                </Button>
-                <Button
-                  color="gray"
-                  type="button"
-                  className={classes.resetFiltersBtn}
-                  onClick={() => {
-                    form.reset();
-                    setFilters(DEFAULT_FILTERS);
-                  }}
-                >
-                  Reset
-                </Button>
-              </div>
-            </form>
-          )}
-        </aside>
-
+        <DashboardFiltersSection/>
         <div className={classes.mainContent}>
           <div className={classes.dashboardSummary}>
             <div className={classes.summaryHeader}>
@@ -168,20 +33,20 @@ export const LandlordDashboardPage = () => {
             </div>
             <div className={classes.metricsGrid}>
               <div className={classes.metricCard}>
-                <h4>Ads Active</h4>
-                <p>{activeAdsCount}</p>
+                <h4>Ads Created</h4>
+                <p>{isLoading ? <Loader size="sm" color="blue"/> : adStats?.allAds || 0}</p>
               </div>
               <div className={classes.metricCard}>
-                <h4>Ads Disabled</h4>
-                <p>{disabledAdsCount}</p>
+                <h4>Ads Active</h4>
+                <p>{isLoading ? <Loader size="sm" color="blue"/> : adStats?.activeAds || 0}</p>
               </div>
               <div className={classes.metricCard}>
                 <h4>New Requests</h4>
-                <p>{hardcodedNewRequests}</p>
+                <p>0</p>
               </div>
             </div>
             <div className={classes.actionButtons}>
-              <button onClick={openModal}>Create New Listing</button>
+              <button onClick={handleCreateAdClick}>Create New Listing</button>
               <button>Documents</button>
               <button onClick={handleNewMessagesClick}>
                 New Messages {/*<span className={classes.badge}>6</span>*/}
@@ -189,40 +54,74 @@ export const LandlordDashboardPage = () => {
             </div>
           </div>
 
-          <div className={classes.resultsSection}>
-            {filteredAds.map((ad) => (
-              <div key={ad.id} className={classes.propertyCard}>
-                <img src={ad.image} alt={ad.title} className={classes.propertyImage} />
-                <div className={classes.propertyCardContent}>
-                  <div className={classes.propertyCardHeader}>
-                    <h4>{ad.title}</h4>
-                    {ad.status === "Pending Approval" ? (
-                      <Badge color="yellow">Pending Approval</Badge>
-                    ) : (
-                      <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                        <Switch
-                          label={ad.status}
-                          checked={ad.status === "Active"}
-                          onChange={() => handleToggleStatus(ad.id)}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <p className={classes.propertyCardDescription}>{ad.description}</p>
-                  <div className={classes.propertyCardFooter}>
-                    <Button className={classes.propertyActionButton}>Action</Button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className={classes.container}>
+            <div className={classes.resultsSection}>
+              {searchQuery.isLoading && <p>Loading...</p>}
+              {searchQuery.error && <p>Error: {searchQuery.error.message}</p>}
 
-            {filteredAds.length === 0 && (
-              <p className={classes.noResults}>No ads match your filters. Try adjusting the filters.</p>
-            )}
+              {searchQuery.data &&
+                  searchQuery.data.map((property) => {
+                    if (!property) return null;
+                    return (
+                        <div key={property.id} className={classes.propertyCard}>
+                          {property.media ? <img src={property.media} alt={property.title}/> :
+                              <div>No Image Available</div>}
+
+                          <div className={classes.propertyCardContent}>
+                            <div className={classes.cardHeader}>
+                              <h2>{property.title}</h2>
+                              <Badge
+                                  color={
+                                    property.status === "ACTIVE"
+                                        ? "green"
+                                        : property.status === "PENDING"
+                                            ? "yellow"
+                                            : property.status === "DRAFT"
+                                                ? "gray"
+                                                : "red" /* For REJECTED */
+                                  }
+                                  className={classes.statusBadge}
+                              >
+                                {property.status}
+                              </Badge>
+                            </div>
+                            <div className={classes.propertyCardTags}>
+                              <span>€ {property.totalRent}</span>
+                              {property.petsAllowed && <span>Pets Allowed</span>}
+                              {property.smokingAllowed && <span>Smoking Allowed</span>}
+                            </div>
+                            <p>{property.description.slice(0, 50)}...</p>
+                            <Link
+                                to={`/property/${property.id}`}
+                                style={{
+                                  display: "inline-block",
+                                  backgroundColor: "#d4f8d4",
+                                  color: "#000000",
+                                  padding: "0.5rem 1rem",
+                                  borderRadius: "10px",
+                                  textDecoration: "none",
+                                  fontWeight: "bold",
+                                  transition: "background-color 0.3s ease, color 0.3s ease",
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.target.style.backgroundColor = "#c2edc2"; /* Hover effect */
+                                  e.target.style.color = "#ffffff";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.target.style.backgroundColor = "#d4f8d4"; /* Reset to original */
+                                  e.target.style.color = "#000000";
+                                }}
+                            >
+                              Edit →
+                            </Link>
+                          </div>
+                        </div>
+                    );
+                  })}
+            </div>
           </div>
         </div>
-        <CreateAdModal opened={isModalOpen} onClose={closeModal} />
       </div>
     </>
-  );
+    );
 };

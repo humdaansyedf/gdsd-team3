@@ -5,11 +5,10 @@ import { deleteImageFromS3 } from "../lib/s3.js";
 
 export const creatorRouter = express.Router();
 
-//should be user on our pf
 creatorRouter.use((req, res, next) => {
   // Check if the user is a landlord
-  if (req.user.type !== "LANDLORD" && req.user.type !== "STUDENT") {
-    return res.status(403).json({
+    if (req.user.type !== "LANDLORD" && req.user.type !== "STUDENT") {
+        return res.status(403).json({
       message: "Forbidden",
     });
   }
@@ -74,7 +73,7 @@ const createPropertySchema = propertySchema.extend({
     .max(15),
 });
 
-// Create a new property - by any user
+// Create a new property
 creatorRouter.post("/property", async (req, res) => {
   const data = req.body; // Parse request body
   const result = createPropertySchema.safeParse(data); // Validate request using Zod schema
@@ -86,12 +85,11 @@ creatorRouter.post("/property", async (req, res) => {
     });
   }
 
-  const user = req.user; //renaming landlord to user
+    const user = req.user;
 
   try {
     const { media, ...propertyData } = result.data;
-    const totalRent =
-      propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
     const availableFrom = new Date(propertyData.availableFrom);
 
     const property = await prisma.$transaction(async (tx) => {
@@ -140,35 +138,80 @@ creatorRouter.post("/property", async (req, res) => {
   }
 });
 
-// Get all properties ads created by this user
-creatorRouter.get("/property", async (req, res) => {
-  const user = req.user;
+// Get all properties of the landlord
+creatorRouter.post("/property/search", async (req, res) => {
+    const user = req.user; // Ensure this contains the landlord's ID
+    const { title, status, minPrice, maxPrice } = req.body;
 
-  const properties = await prisma.property.findMany({
-    where: {
-      creatorId: user.id,
-    },
-    include: {
-      media: true,
-    },
-  });
+    const where = {
+        creatorId: user.id, // Ensure only properties belonging to the landlord are returned
+    };
 
-  res.json(
-    properties.map((property) => {
-      // Get the first media item as the featured image
-      const featuredMedia = property.media[0];
+    if (title) {
+        where.title = {
+            contains: title,
+        };
+    }
 
-      return {
-        ...property,
-        media: featuredMedia
-          ? featuredMedia.url
-          : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
-      };
-    })
-  );
+    if (status && status !== "All") {
+        where.status = status;
+    }
+
+    if (minPrice || maxPrice) {
+        where.totalRent = {
+            gte: parseInt(minPrice) || 0,
+            lte: parseInt(maxPrice) || 99999999,
+        };
+    }
+
+    try {
+        const properties = await prisma.property.findMany({
+            where,
+            include: {
+                media: true,
+            },
+        });
+
+        res.json(
+            properties.map((property) => ({
+                ...property,
+                media: property.media.length > 0
+                    ? property.media[0].url
+                    : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+            }))
+        );
+    } catch (error) {
+        console.error("Error fetching properties:", error);
+        res.status(500).json({ message: "Failed to fetch properties" });
+    }
 });
 
-// Get a single property
+// Get stats
+creatorRouter.get("/dashboard/stats", async (req, res) => {
+    const user = req.user;
+
+    const allAdsCount = await prisma.property.count({
+        where: {
+            creatorId: user.id,
+        },
+    });
+
+    const activeAdsCount = await prisma.property.count({
+        where: {
+            creatorId: user.id,
+            status: "ACTIVE",
+        },
+    });
+
+
+    res.json({
+        allAds: allAdsCount,
+        activeAds: activeAdsCount,
+    });
+});
+
+
+// Get a single property of the landlord
 creatorRouter.get("/property/:id", async (req, res) => {
   const user = req.user;
   const id = req.params.id;
@@ -194,7 +237,7 @@ creatorRouter.get("/property/:id", async (req, res) => {
   });
 });
 
-// Update a property of the user
+// Update a property of the landlord
 creatorRouter.put("/property/:id", async (req, res) => {
   const data = req.body; // Parse request body
   const result = propertySchema.safeParse(data); // Validate request using Zod schema
@@ -231,7 +274,7 @@ creatorRouter.put("/property/:id", async (req, res) => {
   }
 });
 
-// Delete a property of the user
+// Delete a property of the landlord
 creatorRouter.delete("/property/:id", async (req, res) => {
   const id = req.params.id;
   const user = req.user;
@@ -401,33 +444,4 @@ creatorRouter.delete("/property/:propertyId/media/:id", async (req, res) => {
       message: "Failed to delete media",
     });
   }
-});
-
-//API to get active listings
-creatorRouter.get("/property/status/active", async (req, res) => {
-  const user = req.user;
-
-  const properties = await prisma.property.findMany({
-    where: {
-      creatorId: user.id,
-      status: "ACTIVE",
-    },
-    include: {
-      media: true,
-    },
-  });
-
-  res.json(
-    properties.map((property) => {
-      // Get the first media item as the featured image
-      const featuredMedia = property.media[0];
-
-      return {
-        ...property,
-        media: featuredMedia
-          ? featuredMedia.url
-          : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
-      };
-    })
-  );
 });
