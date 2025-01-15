@@ -7,6 +7,7 @@ import { useGetPropertyById } from "./property-detail-queries";
 import { Button } from "@mantine/core";
 
 import classes from "./property-detail-style.module.css";
+import PropertyMap from "./property-map-view";
 
 export const PropertyDetail = () => {
   const { id } = useParams();
@@ -14,17 +15,20 @@ export const PropertyDetail = () => {
   const { data, isLoading, error } = useGetPropertyById(id);
   console.log(data);
   const handleMessageClick = () => {
-    if (data && data.landlordId) {
-      console.log(data.landlordId);
-      console.log("Navigating to /mymessages with state:", { propertyId: data.id, selectedUserId: data.landlordId });
+    if (data && data.creatorId) {
+      console.log(data.creatorId);
+      console.log("Navigating to /mymessages with state:", {
+        propertyId: data.id,
+        selectedUserId: data.creatorId,
+      });
 
-      navigate(`/mymessages`, { state: { propertyId: data.id, selectedUserId: data.landlordId } });
+      navigate(`/mymessages`, {
+        state: { propertyId: data.id, selectedUserId: data.creatorId },
+      });
     } else {
       alert("Unable to retrieve owner information.");
     }
   };
-
-  
 
   return (
     <>
@@ -69,10 +73,12 @@ export const PropertyDetail = () => {
                   Available From:
                   {new Date(data.availableFrom).toLocaleDateString("en-GB")}
                 </p>
-                
+
                 <div className={classes.buttonGroup}>
                   <Button.Group>
-                    <Button variant="filled" onClick={handleMessageClick}>Message</Button>
+                    <Button variant="filled" onClick={handleMessageClick}>
+                      Message
+                    </Button>
                     <Button variant="filled">Report</Button>
                     <Button variant="filled">Share</Button>
                   </Button.Group>
@@ -82,6 +88,7 @@ export const PropertyDetail = () => {
               {/* Map box */}
               <div className={classes.mapSection}>
                 <h4>Location Map</h4>
+                <PropertyMap data={data} />
               </div>
             </div>
           </div>
@@ -100,7 +107,10 @@ export const PropertyDetail = () => {
               <ul>
                 <li>Number of Rooms: {data.numberOfRooms}</li>
                 <li>Number of Baths: {data.numberOfBaths}</li>
-                <li>Heating included: {data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}</li>
+                <li>
+                  Heating included:{" "}
+                  {data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}
+                </li>
                 <li>Pets Allowed: {data.petsAllowed ? "Yes" : "No"}</li>
                 <li>Smoking Allowed: {data.smokingAllowed ? "Yes" : "No"}</li>
               </ul>

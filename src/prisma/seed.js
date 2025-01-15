@@ -10,13 +10,11 @@ async function clearDatabase() {
   await prisma.message.deleteMany();
   await prisma.chatParticipant.deleteMany();
   await prisma.chat.deleteMany();
-  
+
   await prisma.session.deleteMany();
   await prisma.propertyMedia.deleteMany();
   await prisma.property.deleteMany();
   await prisma.user.deleteMany();
-  
-  
 }
 
 async function createUsers() {
@@ -97,11 +95,11 @@ async function createProperties() {
       availableFrom: "2024-12-15T00:00:00Z",
       pets: false,
       smoking: true,
-      landlordId: 1,
+      creatorId: 1,
     },
     {
       id: 2,
-      landlordId: 1,
+      creatorId: 1,
       title: "Cozy studio near university",
       description:
         "Efficient studio apartment steps from campus. Recently renovated with modern appliances. Perfect for students. Includes high-speed internet and utilities.",
@@ -124,7 +122,7 @@ async function createProperties() {
     },
     {
       id: 3,
-      landlordId: 1,
+      creatorId: 1,
       title: "3 room apartment with balcony",
       description:
         "Spacious 3-room apartment featuring a sunny balcony. Updated kitchen, two bedrooms, and large living area. Quiet residential neighborhood with easy access to downtown.",
@@ -147,7 +145,7 @@ async function createProperties() {
     },
     {
       id: 4,
-      landlordId: 2,
+      creatorId: 2,
       title: "Luxury 1 bedroom with river view",
       description:
         "High-end apartment overlooking the river. Premium finishes, floor-to-ceiling windows, and modern amenities. 24/7 concierge and fitness center included.",
@@ -170,7 +168,7 @@ async function createProperties() {
     },
     {
       id: 5,
-      landlordId: 2,
+      creatorId: 2,
       title: "Garden level 2 room flat",
       description:
         "Charming ground floor apartment with private garden access. Two bright rooms, updated bathroom, and practical layout. Close to parks and local shops.",
@@ -193,7 +191,7 @@ async function createProperties() {
     },
     {
       id: 6,
-      landlordId: 2,
+      creatorId: 2,
       title: "Modern studio in business district",
       description:
         "Contemporary studio in the heart of the business district. Smart home features, built-in storage, and high-end appliances. Perfect for young professionals.",
@@ -216,7 +214,7 @@ async function createProperties() {
     },
     {
       id: 7,
-      landlordId: 3,
+      creatorId: 3,
       title: "4 room family apartment",
       description:
         "Generous family home with three bedrooms and spacious living room. Well-equipped kitchen, two bathrooms, and plenty of storage. Near schools and parks.",
@@ -239,7 +237,7 @@ async function createProperties() {
     },
     {
       id: 8,
-      landlordId: 3,
+      creatorId: 3,
       title: "Penthouse with city views",
       description:
         "Exclusive top floor apartment with panoramic city views. Two bedrooms, designer kitchen, and private roof terrace. Premium building with secure parking.",
@@ -262,7 +260,7 @@ async function createProperties() {
     },
     {
       id: 9,
-      landlordId: 3,
+      creatorId: 3,
       title: "Renovated 1 room near metro",
       description:
         "Fully renovated one-room apartment steps from metro station. Modern fixtures, efficient layout, and bright interiors. Ideal for city commuters.",
@@ -285,7 +283,7 @@ async function createProperties() {
     },
     {
       id: 10,
-      landlordId: 3,
+      creatorId: 3,
       title: "2 room eco-friendly apartment",
       description:
         "Sustainable living space with solar panels and energy-efficient design. Two rooms, recycled materials, and green roof access. Low utility costs.",
@@ -308,7 +306,7 @@ async function createProperties() {
     },
     {
       id: 11,
-      landlordId: 3,
+      creatorId: 3,
       title: "Bright 2 room apartment",
       description:
         "Sun-filled apartment with modern amenities. Open plan living area, updated kitchen, and quiet bedroom. Close to public transport and local amenities.",
@@ -332,7 +330,7 @@ async function createProperties() {
     // PENDING
     {
       id: 12,
-      landlordId: 1,
+      creatorId: 1,
       title: "Studio with balcony view",
       description:
         "Compact studio featuring private balcony. Efficient layout, modern appliances, and great city views. Perfect for single professionals.",
@@ -355,7 +353,7 @@ async function createProperties() {
     },
     {
       id: 13,
-      landlordId: 2,
+      creatorId: 2,
       title: "3 room family home",
       description:
         "Spacious family apartment in quiet neighborhood. Three well-proportioned rooms, modern bathroom, and fitted kitchen. Near schools and parks.",
@@ -378,7 +376,7 @@ async function createProperties() {
     },
     {
       id: 14,
-      landlordId: 3,
+      creatorId: 3,
       title: "Modern 1 room apartment",
       description:
         "Contemporary one-room living space. High-quality finishes, smart home features, and efficient design. Central location with easy access to amenities.",
@@ -402,7 +400,7 @@ async function createProperties() {
     // DRAFT
     {
       id: 15,
-      landlordId: 1,
+      creatorId: 1,
       title: "4 room luxury flat",
       description:
         "Premium apartment with high-end features. Four spacious rooms, designer kitchen, and two modern bathrooms. Exclusive residential area.",
@@ -425,7 +423,7 @@ async function createProperties() {
     },
     {
       id: 16,
-      landlordId: 2,
+      creatorId: 2,
       title: "Cozy 2 room garden flat",
       description:
         "Ground floor apartment with garden access. Two comfortable rooms, updated features, and private outdoor space. Peaceful residential setting.",
@@ -448,7 +446,7 @@ async function createProperties() {
     },
     {
       id: 17,
-      landlordId: 3,
+      creatorId: 3,
       title: "Studio loft apartment",
       description:
         "Stylish loft-style studio with high ceilings. Modern design, open plan living, and excellent natural light. Trendy neighborhood location.",
@@ -472,7 +470,7 @@ async function createProperties() {
     // REJECTED
     {
       id: 18,
-      landlordId: 1,
+      creatorId: 1,
       title: "3 room corner unit",
       description:
         "Bright corner apartment with dual aspect windows. Three well-sized rooms, modern kitchen, and plenty of storage. Convenient urban location.",
@@ -495,7 +493,7 @@ async function createProperties() {
     },
     {
       id: 19,
-      landlordId: 2,
+      creatorId: 2,
       title: "Compact 1 room flat",
       description:
         "Efficiently designed one-room apartment. Modern amenities, built-in storage, and smart layout. Great starter home in central area.",
@@ -518,7 +516,7 @@ async function createProperties() {
     },
     {
       id: 20,
-      landlordId: 3,
+      creatorId: 3,
       title: "2 room riverside apartment",
       description:
         "Beautiful apartment near the river. Two spacious rooms, contemporary design, and water views. Walking distance to waterfront amenities.",
@@ -623,7 +621,6 @@ async function createMessages() {
 
   await prisma.message.createMany({ data: messages });
 }
-
 
 async function main() {
   await clearDatabase();

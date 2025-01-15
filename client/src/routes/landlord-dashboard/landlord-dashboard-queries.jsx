@@ -29,7 +29,7 @@ export const useLandlordAds = () => {
   const query = useQuery({
     queryKey: ["landlordAds"],
     queryFn: async () => {
-      const response = await fetch(`/api/landlord/property`, {
+      const response = await fetch(`/api/property`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
