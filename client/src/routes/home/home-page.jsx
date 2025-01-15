@@ -18,7 +18,7 @@ export const Home = () => {
         <FiltersSection />
 
         <div className={classes.resultsSection}>
-          <div style={{ display: "flex", justifyContent: "flex-end"}}>
+          <div style={{ display: "flex", justifyContent: "flex-start"}}>
             <Switch
               size="md"
               color="green"
