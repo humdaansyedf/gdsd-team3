@@ -148,8 +148,10 @@ model Property {
   cableTv        Boolean @default(false)
 
   // Relations
-  landlordId Int
-  landlord   User            @relation("LandlordProperties", fields: [landlordId], references: [id])
+  creatorId Int
+  user       User      @relation("LandlordProperties", fields: [creatorId], references: [id])
+  //new for all users
+  
   media      PropertyMedia[]
   chats      Chat[]
 }

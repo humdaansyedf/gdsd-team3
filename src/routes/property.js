@@ -5,8 +5,17 @@ export const publicPropertyRouter = Router();
 export const propertyRouter = Router();
 
 // Route to get multiple properties
-publicPropertyRouter.post("/property/search", async (req, res) => {
-  const { title, pets, smoking, minPrice, maxPrice, availableFrom, searchRadius, page = 1 } = req.body;
+publicPropertyRouter.post("/public/property/search", async (req, res) => {
+  const {
+    title,
+    pets,
+    smoking,
+    minPrice,
+    maxPrice,
+    availableFrom,
+    searchRadius,
+    page = 1,
+  } = req.body;
   const limit = 50;
   const offset = (page - 1) * limit;
   try {
@@ -97,7 +106,9 @@ publicPropertyRouter.post("/property/search", async (req, res) => {
 
         return {
           ...property,
-          media: featuredMedia ? featuredMedia.url : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+          media: featuredMedia
+            ? featuredMedia.url
+            : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
         };
       })
     );
@@ -108,7 +119,7 @@ publicPropertyRouter.post("/property/search", async (req, res) => {
 });
 
 // Route to get a single property
-publicPropertyRouter.get("/property/:id", async (req, res) => {
+publicPropertyRouter.get("/public/property/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const property = await prisma.property.findUnique({
     where: {
@@ -127,49 +138,27 @@ publicPropertyRouter.get("/property/:id", async (req, res) => {
   }
 });
 
-//API to update listing status
-//requires status field in post body
-//returns with message and property data
-propertyRouter.patch("/property/:id/status", async (req, res) => {
-  const { id } = req.params; // Get property ID from the URL
-  const { status } = req.body; // Get the new status from the request body
+//this is to be used by admin
+// //API to update listing status
+// //requires status field in post body
+// //returns with message and property data
+// propertyRouter.patch("/property/:id/status", async (req, res) => {
+//   const { id } = req.params; // Get property ID from the URL
+//   const { status } = req.body; // Get the new status from the request body
 
-  // Validate the status
-  const validStatuses = ["PENDING", "ACTIVE", "RENTED", "ARCHIVED", "REJECTED"];
-  if (!validStatuses.includes(status)) {
-    return res.status(400).json({ error: "Invalid status value." });
-  }
+//   // Validate the status
+//   const validStatuses = ["PENDING", "ACTIVE", "RENTED", "ARCHIVED", "REJECTED"];
+//   if (!validStatuses.includes(status)) {
+//     return res.status(400).json({ error: "Invalid status value." });
+//   }
 
-  // Update the status in the database
-  const updatedProperty = await prisma.property.update({
-    where: { id: parseInt(id, 10) },
-    data: { status },
-  });
-  res.json({
-    message: `Property status updated to ${status}`,
-    property: updatedProperty,
-  });
-});
-
-//API to get active listings
-propertyRouter.get("/properties/active", async (req, res) => {
-  properties = await prisma.property.findMany({
-    where: { status: "ACTIVE" },
-
-    include: {
-      media: true,
-    },
-  });
-
-  res.json(
-    properties.map((property) => {
-      // Get the first media item as the featured image
-      const featuredMedia = property.media[0];
-
-      return {
-        ...property,
-        media: featuredMedia ? featuredMedia.url : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
-      };
-    })
-  );
-});
+//   // Update the status in the database
+//   const updatedProperty = await prisma.property.update({
+//     where: { id: parseInt(id, 10) },
+//     data: { status },
+//   });
+//   res.json({
+//     message: `Property status updated to ${status}`,
+//     property: updatedProperty,
+//   });
+// });
