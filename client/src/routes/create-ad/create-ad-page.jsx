@@ -1,23 +1,16 @@
 import { useState, useRef } from "react";
-import {
-  Modal,
-  Button,
-  TextInput,
-  Textarea,
-  NumberInput,
-  Select,
-  Checkbox,
-  Group,
-} from "@mantine/core";
-import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+import { Button, TextInput, Textarea, NumberInput, Select, Checkbox, Group } from "@mantine/core";
+import { Autocomplete, LoadScript} from "@react-google-maps/api";
 import classes from "./create-ad-style.module.css";
 import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { DateInput } from "@mantine/dates";
+import {DateInput} from "@mantine/dates";
 const libraries = ["places"];
 //const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+const apiKey = "AIzaSyC6IIx7btkk6TtHmFjUoJAnQ_tJxlQRBPI";
 
-export const CreateAdModal = ({ opened, onClose }) => {
+export const CreateAdPage = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -41,6 +34,7 @@ export const CreateAdModal = ({ opened, onClose }) => {
   const [errors, setErrors] = useState({});
   const [address, setAddress] = useState("");
   const autocompleteRef = useRef(null);
+  const navigate = useNavigate();
 
   // Handle place selection
   const handlePlaceChanged = () => {
@@ -57,12 +51,8 @@ export const CreateAdModal = ({ opened, onClose }) => {
       }
     }
   };
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: "google-map-script",
-    //googleMapsApiKey: apiKey,
-    googleMapsApiKey: "AIzaSyC6IIx7btkk6TtHmFjUoJAnQ_tJxlQRBPI",
-    libraries,
-  });
+
+
 
   // Handle checkbox changes
   const handleCheckboxChange = (field) => {
@@ -71,25 +61,21 @@ export const CreateAdModal = ({ opened, onClose }) => {
 
   // Handle image upload
   const handleImageUpload = (uploadedUrl) => {
-    console.log(uploadedUrl);
     setFormData((prev) => ({
       ...prev,
       media: [...prev.media, { url: uploadedUrl }],
     }));
-    console.log(formData);
   };
 
-  // Submit handler
+  // Handle input changes
   const handleInputChange = (field, value) => {
     setFormData((prev) => {
       const updatedForm = { ...prev, [field]: value };
 
       if (field === "coldRent" || field === "additionalCosts") {
-        updatedForm.totalRent =
-          updatedForm.coldRent + (updatedForm.additionalCosts || 0);
+        updatedForm.totalRent = updatedForm.coldRent + (updatedForm.additionalCosts || 0);
       }
 
-      // Clear error for field
       setErrors((prev) => ({ ...prev, [field]: null }));
       return updatedForm;
     });
@@ -98,30 +84,17 @@ export const CreateAdModal = ({ opened, onClose }) => {
   // Validate fields
   const validateForm = () => {
     const newErrors = {};
-    if (
-      !formData.title.trim() ||
-      formData.title.length < 5 ||
-      formData.title.length > 100
-    ) {
+    if (!formData.title.trim() || formData.title.length < 5 || formData.title.length > 100) {
       newErrors.title = "Title must be between 5 and 100 characters.";
     }
-    if (!formData.propertyType)
-      newErrors.propertyType = "Property Type is required";
-    if (!formData.availableFrom)
-      newErrors.availableFrom = "Available From is required";
+    if (!formData.propertyType) newErrors.propertyType = "Property Type is required";
+    if (!formData.availableFrom) newErrors.availableFrom = "Available From is required";
     if (!address.trim()) newErrors.address = "Address is required";
-    if (
-      !formData.description.trim() ||
-      formData.description.length < 10 ||
-      formData.description.length > 2000
-    ) {
-      newErrors.description =
-        "Description must be between 10 and 2000 characters.";
+    if (!formData.description.trim() || formData.description.length < 10 || formData.description.length > 2000) {
+      newErrors.description = "Description must be between 10 and 2000 characters.";
     }
-    if (formData.totalRent <= 0)
-      newErrors.totalRent = "Total Rent must be greater than 0";
-    if (formData.media.length === 0)
-      newErrors.media = "At least one image is required";
+    if (formData.totalRent <= 0) newErrors.totalRent = "Total Rent must be greater than 0";
+    if (formData.media.length === 0) newErrors.media = "At least one image is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -130,18 +103,17 @@ export const CreateAdModal = ({ opened, onClose }) => {
   // Submit handler
   const handleSubmit = async () => {
     if (!validateForm()) {
-      return; // Stop submission if validation fails
+      return;
     }
     const payload = {
-      status: "DRAFT", // Default status
+      status: "PENDING",
       propertyType: formData.propertyType,
       title: formData.title,
       description: formData.description,
       totalRent: formData.totalRent,
       coldRent: formData.coldRent,
       additionalCosts: formData.additionalCosts,
-      heatingIncludedInAdditionalCosts:
-        formData.heatingIncludedInAdditionalCosts,
+      heatingIncludedInAdditionalCosts: formData.heatingIncludedInAdditionalCosts,
       deposit: formData.deposit,
       numberOfRooms: formData.numberOfRooms,
       numberOfBeds: formData.numberOfBeds,
@@ -155,166 +127,142 @@ export const CreateAdModal = ({ opened, onClose }) => {
     };
 
     try {
-      console.log("Submitting Payload:", payload);
       await axios.post("/api/property", payload);
-      alert("Property created successfully!");
-      onClose(); // Close the modal after success
+      navigate("/property/submission-confirmation")
     } catch (error) {
-      console.error("Error creating property:", error);
       alert("Failed to create property. Please try again.");
     }
   };
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title="Create Property Listing"
-      size="70%"
-      centered
-    >
-      <div className={classes.container}>
-        {/* Image Uploader */}
-        <div className={classes.section}>
-          <ImageUploader onUpload={(url) => handleImageUpload(url)} />
-          {errors.media && <div className={classes.error}>{errors.media}</div>}
-        </div>
+      <div className={classes.pageContainer}>
+        <h1>Create Property Listing</h1>
+        <div className={classes.container}>
+          {/* Image Uploader */}
+          <div className={classes.section}>
+            <ImageUploader onUpload={handleImageUpload}/>
+            {errors.media && <div className={classes.error}>{errors.media}</div>}
+          </div>
 
-        {/* Property Details */}
-        <div className={classes.propertyDetails}>
-          <TextInput
-            label="Ad Title"
-            placeholder="Enter Ad Title"
-            error={errors.title}
-            onChange={(e) => handleInputChange("title", e.target.value)}
-          />
-          <Select
-            label="Property Type"
-            placeholder="Select Property Type"
-            error={errors.propertyType}
-            data={[
-              { value: "APARTMENT", label: "Apartment" },
-              { value: "HOUSE", label: "House" },
-              { value: "STUDIO", label: "Studio" },
-              { value: "ROOM", label: "Room" },
-              { value: "SHARED_ROOM", label: "Shared Room" },
-            ]}
-            onChange={(value) => handleInputChange("propertyType", value)}
-          />
-          <Group grow>
+          {/* Property Details */}
+          <div className={classes.propertyDetails}>
+            <TextInput
+                label="Ad Title"
+                placeholder="Enter Ad Title"
+                error={errors.title}
+                onChange={(e) => handleInputChange("title", e.target.value)}
+            />
+            <Select
+                label="Property Type"
+                placeholder="Select Property Type"
+                error={errors.propertyType}
+                data={[
+                  {value: "APARTMENT", label: "Apartment"},
+                  {value: "HOUSE", label: "House"},
+                  {value: "STUDIO", label: "Studio"},
+                  {value: "ROOM", label: "Room"},
+                  {value: "SHARED_ROOM", label: "Shared Room"},
+                ]}
+                onChange={(value) => handleInputChange("propertyType", value)}
+            />
+            <Group grow>
+              <NumberInput
+                  min={1}
+                  label="Rooms"
+                  onChange={(value) => handleInputChange("numberOfRooms", value)}
+              />
+              <NumberInput
+                  min={0}
+                  label="Beds"
+                  onChange={(value) => handleInputChange("numberOfBeds", value)}
+              />
+              <NumberInput
+                  min={0}
+                  label="Baths"
+                  onChange={(value) => handleInputChange("numberOfBaths", value)}
+              />
+            </Group>
+            <DateInput
+                label="Available From"
+                minDate={new Date()}
+                valueFormat="YYYY-MM-DD"
+                placeholder="YYYY-MM-DD"
+                error={errors.availableFrom}
+                onChange={(value) => handleInputChange("availableFrom", value ? value.toISOString().substring(0, 10) : "")}
+            />
+          </div>
+
+          <Group mt="md" grow>
             <NumberInput
-              min={1}
-              label="Rooms"
-              onChange={(value) => handleInputChange("numberOfRooms", value)}
+                label="Cold Rent (€)"
+                min={0}
+                description="Base rent with no additional costs included."
+                onChange={(value) => handleInputChange("coldRent", value)}
             />
             <NumberInput
-              min={0}
-              label="Beds"
-              onChange={(value) => handleInputChange("numberOfBeds", value)}
+                label="Additional Costs (€)"
+                min={0}
+                description="e.g. Heating, Water and sewage, etc."
+                onChange={(value) => handleInputChange("additionalCosts", value)}
             />
             <NumberInput
-              min={0}
-              label="Baths"
-              onChange={(value) => handleInputChange("numberOfBaths", value)}
+                label="Total Rent (€)"
+                value={formData.totalRent}
+                error={errors.totalRent}
+                readOnly
+                description="This is calculated as Cold Rent + Additional Costs."
+            />
+            <NumberInput
+                label="Deposit (€)"
+                min={0}
+                description="One-off payment made by a tenant"
+                onChange={(value) => handleInputChange("deposit", value)}
             />
           </Group>
-          <DateInput
-            label="Available From"
-            minDate={new Date()}
-            valueFormat="YYYY-MM-DD"
-            placeholder="YYYY-MM-DD"
-            error={errors.availableFrom}
-            onChange={(value) =>
-              handleInputChange(
-                "availableFrom",
-                value ? value.toISOString().substring(0, 10) : ""
-              )
-            }
-          />
-        </div>
-
-        <Group mt="md" grow>
-          <NumberInput
-            label="Cold Rent (€)"
-            min={0}
-            description="Base rent with no additional costs included."
-            onChange={(value) => handleInputChange("coldRent", value)}
-          />
-          <NumberInput
-            label="Additional Costs (€)"
-            min={0}
-            description="e.g. Heating, Water and sewage, etc."
-            onChange={(value) => handleInputChange("additionalCosts", value)}
-          />
-          <NumberInput
-            label="Total Rent (€)"
-            value={formData.totalRent}
-            error={errors.totalRent}
-            readOnly
-            description="This is calculated as Cold Rent + Additional Costs."
-          />
-          <NumberInput
-            label="Deposit (€)"
-            min={0}
-            description="One-off payment made by a tenant"
-            onChange={(value) => handleInputChange("deposit", value)}
-          />
-        </Group>
-        <Group mt="md">
-          <Checkbox
-            label="Heating Included"
-            checked={formData.heatingIncludedInAdditionalCosts}
-            onChange={() =>
-              handleCheckboxChange("heatingIncludedInAdditionalCosts")
-            }
-          />
-          <Checkbox
-            label="Pets Allowed"
-            checked={formData.pets}
-            onChange={() => handleCheckboxChange("pets")}
-          />
-          <Checkbox
-            label="Smoking Allowed"
-            checked={formData.smoking}
-            onChange={() => handleCheckboxChange("smoking")}
-          />
-        </Group>
-        {/* Google Maps Autocomplete */}
-        <div className={classes.section}>
-          <Autocomplete
-            options={{ componentRestrictions: { country: "de" } }}
-            onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-            onPlaceChanged={handlePlaceChanged}
-          >
-            <TextInput
-              label="Address"
-              error={errors.address}
-              placeholder="Enter Address"
+          <Group mt="md">
+            <Checkbox
+                label="Heating Included"
+                checked={formData.heatingIncludedInAdditionalCosts}
+                onChange={() => handleCheckboxChange("heatingIncludedInAdditionalCosts")}
             />
-          </Autocomplete>
-        </div>
-        {/* Description */}
-        <Textarea
-          label="Description"
-          placeholder="Enter Description"
-          error={errors.description}
-          autosize
-          minRows={3}
-          mb="xl"
-          onChange={(e) => handleInputChange("description", e.target.value)}
-        />
+            <Checkbox label="Pets Allowed" checked={formData.pets}
+                      onChange={() => handleCheckboxChange("pets")}/>
+            <Checkbox label="Smoking Allowed" checked={formData.smoking}
+                      onChange={() => handleCheckboxChange("smoking")}/>
+          </Group>
 
-        {/* Submit Button */}
-        <Button
-          fullWidth
-          color="green"
-          onClick={handleSubmit}
-          radius="md"
-          size="lg"
-        >
-          Submit
-        </Button>
+          {/* Google Maps Autocomplete */}
+          <div className={classes.section}>
+            <LoadScript
+                googleMapsApiKey={apiKey}
+                libraries={libraries}
+            >
+              <Autocomplete
+                  options={{componentRestrictions: {country: "de"}}}
+                  onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+                  onPlaceChanged={handlePlaceChanged}
+              >
+                <TextInput label="Address" error={errors.address} placeholder="Enter Address"/>
+              </Autocomplete>
+            </LoadScript>
+          </div>
+
+          {/* Description */}
+          <Textarea
+              label="Description"
+              placeholder="Enter Description"
+              error={errors.description}
+              autosize
+              minRows={3}
+              mb="xl"
+              onChange={(e) => handleInputChange("description", e.target.value)}
+          />
+
+          {/* Submit Button */}
+          <Button fullWidth color="green" onClick={handleSubmit} radius="md" size="lg">
+            Submit
+          </Button>
+        </div>
       </div>
-    </Modal>
   );
 };

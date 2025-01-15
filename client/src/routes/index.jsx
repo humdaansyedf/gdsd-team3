@@ -20,6 +20,12 @@ const LandlordDashboardPage = React.lazy(() =>
     default: mod.LandlordDashboardPage,
   }))
 );
+const CreateAdPage = React.lazy(() =>
+    import("./create-ad/create-ad-page.jsx").then((mod) => ({ default: mod.CreateAdPage }))
+);
+const AdConfirmation = React.lazy(() =>
+    import("./ad-confirmation/ad-confirmation-page.jsx").then((mod) => ({ default: mod.AdConfirmation }))
+);
 const PropertyDetail = React.lazy(() =>
   import("./property-detail/property-detail-page").then((mod) => ({
     default: mod.PropertyDetail,
@@ -104,6 +110,22 @@ export const App = () => {
                 </PrivateRoute>
               }
             />
+              <Route
+                  path="property/new"
+                  element={
+                      <PrivateRoute>
+                      <CreateAdPage />
+                      </PrivateRoute>
+                  }
+              />
+              <Route
+                  path="property/submission-confirmation"
+                  element={
+                      <PrivateRoute>
+                          <AdConfirmation />
+                      </PrivateRoute>
+                  }
+              />
             <Route
               path="profile"
               element={

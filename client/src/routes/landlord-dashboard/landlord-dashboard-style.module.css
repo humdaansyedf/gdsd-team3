@@ -1,8 +1,8 @@
 /* General Layout */
 .container {
-    display: flex;
-    gap: 2rem;
-    margin-top: 12px;
+    display: flex; /* Use flexbox to align filter card and property cards side by side */
+    gap: 2rem; /* Adds spacing between the filter card and property cards */
+    margin-top: 10px;
 }
 
 .mainContent {
@@ -18,10 +18,13 @@
     max-width: 300px;
     padding: 1rem;
     border: 1px solid #e5e5e5;
-    height: fit-content;
-    position: sticky;
-    top: 60px;
-    background: #fff;
+    height: fit-content; /* Adjust height automatically based on content */
+    position: sticky; /* Makes the filter section fixed while scrolling */
+    top: 56px; /* Adjusts the position from the top of the viewport */
+    background: #fff; /* Ensures the background stays consistent */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    z-index: 10; /* Ensures it stays above other elements */
 }
 
 .filtersHeader {
@@ -97,38 +100,87 @@
 }
 
 /* Badge */
-.badge {
-    background-color: #ff6f61;
-    color: white;
-    padding: 0.2rem 0.5rem;
-    border-radius: 50%;
-    font-size: 0.8rem;
-    margin-left: 0.5rem;
-}
 
 /* Results Section */
 .resultsSection {
-    flex: 1;
+    flex: 1; /* Makes this section take the remaining width */
     display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: 2rem;
+    flex-direction: column; /* Ensures property cards stack vertically */
+    gap: 1.5rem; /* Adds spacing between the property cards */
+    /*max-width: calc(100% - 300px);  Adjusts width based on filter section size */
+    max-width: 100%;
 }
 
 /* Property Cards */
 .propertyCard {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    padding: 1rem;
+    align-items: stretch; /* Ensures consistent height for all cards */
     border: 1px solid #e5e5e5;
-    border-radius: 5px;
-    background: #fff;
-    width: 100%;
-    height: 150px;
-    position: relative;
-    box-sizing: border-box;
-    overflow: hidden;
+    border-radius: 15px;
+    padding: 1rem; /* Adds consistent padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.propertyCard img {
+    width: 30%; /* Ensures consistent image width */
+    height: 100%;
+    max-height: 200px; /* Maintains the aspect ratio of the image */
+    border-radius: 10px;
+    object-fit: cover; /* Ensures images fit within the allocated space */
+}
+
+.propertyCardContent {
+    flex: 1; /* Fills the remaining space with the content */
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Evenly spaces the content */
+}
+
+.propertyCardContent h2 {
+    font-size: 1.5rem; /* Adjust the heading size */
+    font-weight: bold;
+    margin: 0 0 2px;
+}
+
+.propertyCardContent p {
+    font-size: 1rem; /* Ensures text size is consistent */
+    margin: 0;
+    color: #555;
+}
+
+.propertyCardTags {
+    display: flex;
+    gap: 8px; /* Adds space between tags */
+    margin: 8px 0;
+}
+
+.propertyCardTags span {
+    border: 1px solid #72bf44;
+    color: #72bf44;
+    padding: 4px 8px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 12px;
+}
+
+.propertyCardTags span:first-of-type {
+    background: #72bf44;
+    color: #fff;
+}
+
+.propertyCard a {
+    align-self: flex-end;
+    text-decoration: none;
+    color: #007bff;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.propertyCard a:hover {
+    color: #0056b3;
 }
 
 .propertyImage {
@@ -139,15 +191,6 @@
     border-radius: 5px;
 }
 
-.propertyCardContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    overflow: hidden;
-}
-
 .propertyCardHeader {
     display: flex;
     justify-content: space-between;
@@ -156,6 +199,19 @@
     margin-bottom: 0.5rem;
 }
 
+.cardHeader {
+    display: flex;
+    justify-content: space-between; /* Aligns title and link horizontally */
+    align-items: center; /* Ensures vertical alignment */
+    margin-bottom: 8px;
+}
+.statusBadge {
+    font-size: 0.85rem; /* Increase the font size */
+    padding: 1rem 1rem; /* Add padding for better readability */
+    border-radius: 8px; /* Smoothen corners */
+    text-transform: uppercase; /* Make text uppercase for emphasis */
+    letter-spacing: 0.05em; /* Add slight letter spacing */
+}
 .propertyCardHeader h4 {
     margin: 0;
     font-size: 1.1rem;
@@ -164,18 +220,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: calc(100% - 80px);
-}
-
-.propertyCardTags {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.propertyCardTags .mantine-Switch-root {
-    position: absolute;
-    top: 0;
-    right: 0;
 }
 
 .propertyCardDescription {
@@ -245,17 +289,89 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Stack the filter and results sections vertically */
+    }
     .dashboardSummary {
         width: 100%;
     }
-
+    .filtersSection {
+        width: 100%; /* Take full width on smaller screens */
+        position: relative; /* Removes sticky behavior on smaller screens */
+        top: 0;
+    }
     .metricsGrid {
         flex-direction: column;
     }
 
     .propertyCard {
         flex-direction: column;
-        height: auto;
+        text-align: center;
+    }
+
+    .propertyCard img {
+        width: 30%; /* Keeps images at 30% of the card width */
+        height: 100px; /* Fixed height for all images */
+        border-radius: 10px;
+        object-fit: cover; /* Ensures images maintain their aspect ratio and fit within the allocated space */
+    }
+
+    .propertyCardContent {
+        flex: 1; /* Allows the content section to take the remaining space */
+        padding: 0 1rem; /* Adds padding between the image and the text */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centers content vertically */
+    }
+
+    .propertyCardContent h3 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+        width: 100%; /* Ensures the title takes full width */
+    }
+
+    .propertyCardContent p {
+        font-size: 1rem;
+        margin: 8px 0;
+        color: #555;
+        width: 100%; /* Ensures the description takes full width */
+        overflow: hidden; /* Ensures text doesn’t overflow */
+        text-overflow: ellipsis; /* Adds ellipsis if the text overflows */
+        white-space: nowrap; /* Keeps text on a single line */
+    }
+
+    .propertyCardTags {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .propertyCardTags span {
+        border: 1px solid #72bf44;
+        color: #72bf44;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: bold;
+        border-radius: 12px;
+    }
+
+    .propertyCardTags span:first-of-type {
+        background: #72bf44;
+        color: white;
+    }
+
+    .propertyCard a {
+        align-self: flex-end;
+        text-decoration: none;
+        color: #007bff;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: color 0.2s;
+    }
+
+    .propertyCard a:hover {
+        color: #0056b3;
     }
 
     .propertyImage {
@@ -266,4 +382,31 @@
     .propertyCardFooter {
         justify-content: center;
     }
+    .resultsSection {
+        max-width: 100%; /* Take full width on smaller screens */
+    }
+    @media (max-width: 768px) {
+        .propertyCard {
+            flex-direction: column; /* Stacks the image and content vertically on small screens */
+            text-align: center;
+        }
+
+        .propertyCard img {
+            width: 100%; /* Full width for smaller screens */
+            height: 100px; /* Keeps a fixed height */
+        }
+
+        .propertyCardContent {
+            padding: 1rem; /* Adds padding around the content */
+        }
+
+        .propertyCardContent h2 {
+            font-size: 1.2rem;
+        }
+
+        .propertyCardContent p {
+            font-size: 0.9rem;
+        }
+    }
+
 }
