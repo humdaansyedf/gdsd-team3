@@ -10,11 +10,9 @@ import { fileRouter } from "./src/routes/file.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { creatorRouter } from "./src/routes/landlord.js";
-import { chatHandlers } from "./chatHandlers.js";
-import { prisma } from "./src/prisma/index.js";
-import { chatHandlers } from "./chatHandlers.js";
-import { prisma } from "./src/prisma/index.js";
 import { adminRouter } from "./src/routes/admin.js";
+import { chatHandlers } from "./chatHandlers.js";
+import { prisma } from "./src/prisma/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
