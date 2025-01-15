@@ -12,6 +12,9 @@ import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { creatorRouter } from "./src/routes/landlord.js";
 import { chatHandlers } from "./chatHandlers.js";
 import { prisma } from "./src/prisma/index.js";
+import { chatHandlers } from "./chatHandlers.js";
+import { prisma } from "./src/prisma/index.js";
+import { adminRouter } from "./src/routes/admin.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -52,6 +55,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware for parsing cookies
 app.use(cookieParser());
+
+// Admin routes
+app.use("/api/admin", adminRouter);
 
 // Public routes
 app.use("/api", authRouter, publicPropertyRouter);

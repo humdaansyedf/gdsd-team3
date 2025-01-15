@@ -20,7 +20,7 @@ async function createSession(token, userId) {
   const session = {
     id: sessionId,
     userId,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
   };
   await prisma.session.create({
     data: {
@@ -56,8 +56,8 @@ async function validateSessionToken(token) {
     await prisma.session.delete({ where: { id: sessionId } });
     return { session: null, user: null };
   }
-  if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
-    session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+  if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 12) {
+    session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24);
     await prisma.session.update({
       where: {
         id: session.id,
@@ -147,6 +147,78 @@ const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters long"),
 });
+authRouter.post("/login", async (req, res) => {
+  const result = loginSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({
+      message: "Invalid data",
+      errors: result.error.errors,
+    });
+  }
+
+  const { email, password } = result.data;
+
+  const user = await prisma.user.findFirst({
+    where: {
+      email: email,
+    },
+    select: {
+      id: true,
+      passwordHash: true,
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: "Invalid email or password" });
+  }
+
+  const validPassword = await verify(user.passwordHash, password, {
+    memoryCost: 19456,
+    timeCost: 2,
+    outputLen: 32,
+    parallelism: 1,
+  });
+
+  if (!validPassword) {
+    return res.status(400).json({ message: "Invalid email or password" });
+  }
+
+  try {
+    const token = generateSessionToken();
+    const session = await createSession(token, user.id);
+
+    res.cookie("auth_session", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      expires: session.expiresAt,
+      secure: !IS_DEV,
+    });
+    return res.json({ message: "Logged in" });
+  } catch (e) {
+    return res.status(400).json({ message: "Failed to log in" });
+  }
+});
+
+authRouter.post("/logout", authMiddleware, async (req, res) => {
+  try {
+    await invalidateSession(req.session.id);
+
+    res.clearCookie("auth_session", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: !IS_DEV,
+    });
+
+    return res.json({ message: "Logged out" });
+  } catch (e) {
+    return res.status(400).json({ message: "Failed to log out" });
+  }
+});
+
+authRouter.get("/me", authMiddleware, async (req, res) => {
+  return res.json(req.user);
+});
+
 authRouter.post("/login", async (req, res) => {
   const result = loginSchema.safeParse(req.body);
   if (!result.success) {

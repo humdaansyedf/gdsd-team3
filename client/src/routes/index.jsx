@@ -4,7 +4,8 @@ import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { Footer } from "../components/Footer/Footer";
 import { Header } from "../components/Header/Header";
 import { useAuth } from "../lib/auth-context";
-import { PrivateRoute, PublicOnlyRoute } from "../lib/auth-routes";
+import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
+import { AdminAuthProvider } from "../lib/admin-auth-provider";
 
 const Login = React.lazy(() =>
   import("./login/login-page").then((mod) => ({ default: mod.Login }))
@@ -38,6 +39,13 @@ const Mymessages = React.lazy(() =>
   import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages }))
 );
 
+const AdminDashboard = React.lazy(() =>
+  import("./admin/admin-dashboard-page").then((mod) => ({ default: mod.AdminDashboard }))
+);
+const AdminProperty = React.lazy(() =>
+  import("./admin/admin-property-page").then((mod) => ({ default: mod.AdminProperty }))
+);
+
 const AppLoader = () => {
   return (
     <div className="app-loader">
@@ -45,6 +53,7 @@ const AppLoader = () => {
     </div>
   );
 };
+
 const AppLayout = () => {
   const { isLoading } = useAuth();
 
@@ -78,12 +87,32 @@ const NotFound = () => {
   );
 };
 
+const AdminLayout = () => {
+  return (
+    <>
+      <div className="disclaimer">
+        Fulda University of Applied Sciences Software Engineering Project, Fall 2024. FOR DEMONSTRATION ONLY.
+      </div>
+      <Container fluid>
+        <Outlet />
+      </Container>
+    </>
+  );
+};
+
 export const App = () => {
   return (
     <React.Suspense fallback={<AppLoader />}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AppLayout />}>
+          <Route
+            path="/"
+            element={
+              <AuthProvider>
+                <AppLayout />
+              </AuthProvider>
+            }
+          >
             <Route index element={<Home />} />
             <Route
               path="login"
@@ -144,6 +173,17 @@ export const App = () => {
               }
             />
             <Route path="*" element={<NotFound />} />
+          </Route>
+          <Route
+            path="admin"
+            element={
+              <AdminAuthProvider>
+                <AdminLayout />
+              </AdminAuthProvider>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="property/:id" element={<AdminProperty />} />
           </Route>
         </Routes>
       </BrowserRouter>

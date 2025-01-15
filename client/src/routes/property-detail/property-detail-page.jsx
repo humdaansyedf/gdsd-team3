@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useClipboard } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-
 import { useGetPropertyById } from "./property-detail-queries";
 
 import { Button } from "@mantine/core";
@@ -45,6 +44,7 @@ export const PropertyDetail = () => {
         color: "green",
       });
     } catch (err) {
+      console.log(err);
       // Show error notification
       notifications.show({
         title: "Copy Failed",
@@ -104,7 +104,9 @@ export const PropertyDetail = () => {
                       Message
                     </Button>
                     <Button variant="filled">Report</Button>
-                    <Button variant="filled" onClick={handleShareClick}>Share</Button>
+                    <Button variant="filled" onClick={handleShareClick}>
+                      Share
+                    </Button>
                   </Button.Group>
                 </div>
               </div>
@@ -131,10 +133,7 @@ export const PropertyDetail = () => {
               <ul>
                 <li>Number of Rooms: {data.numberOfRooms}</li>
                 <li>Number of Baths: {data.numberOfBaths}</li>
-                <li>
-                  Heating included:{" "}
-                  {data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}
-                </li>
+                <li>Heating included: {data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}</li>
                 <li>Pets Allowed: {data.petsAllowed ? "Yes" : "No"}</li>
                 <li>Smoking Allowed: {data.smokingAllowed ? "Yes" : "No"}</li>
               </ul>
