@@ -17,7 +17,7 @@ export const usePropertySearch = () => {
   const query = useQuery({
     queryKey: ["property", { filters }],
     queryFn: async () => {
-      const response = await fetch(`/api/property/search`, {
+      const response = await fetch(`/api/public/property/search`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

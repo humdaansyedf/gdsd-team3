@@ -6,17 +6,31 @@ import { Header } from "../components/Header/Header";
 import { useAuth } from "../lib/auth-context";
 import { PrivateRoute, PublicOnlyRoute } from "../lib/auth-routes";
 
-const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
-const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
-const Home = React.lazy(() => import("./home/home-page").then((mod) => ({ default: mod.Home })));
+const Login = React.lazy(() =>
+  import("./login/login-page").then((mod) => ({ default: mod.Login }))
+);
+const Register = React.lazy(() =>
+  import("./register/register-page").then((mod) => ({ default: mod.Register }))
+);
+const Home = React.lazy(() =>
+  import("./home/home-page").then((mod) => ({ default: mod.Home }))
+);
 const LandlordDashboardPage = React.lazy(() =>
-  import("./landlord-dashboard/landlord-dashboard-page").then((mod) => ({ default: mod.LandlordDashboardPage }))
+  import("./landlord-dashboard/landlord-dashboard-page").then((mod) => ({
+    default: mod.LandlordDashboardPage,
+  }))
 );
 const PropertyDetail = React.lazy(() =>
-  import("./property-detail/property-detail-page").then((mod) => ({ default: mod.PropertyDetail }))
+  import("./property-detail/property-detail-page").then((mod) => ({
+    default: mod.PropertyDetail,
+  }))
 );
-const Profile = React.lazy(() => import("./profile/profile-page").then((mod) => ({ default: mod.Profile })));
-const Mymessages = React.lazy(() => import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages })));
+const Profile = React.lazy(() =>
+  import("./profile/profile-page").then((mod) => ({ default: mod.Profile }))
+);
+const Mymessages = React.lazy(() =>
+  import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages }))
+);
 
 const AppLoader = () => {
   return (
@@ -31,7 +45,8 @@ const AppLayout = () => {
   return (
     <>
       <div className="disclaimer">
-        Fulda University of Applied Sciences Software Engineering Project, Fall 2024. FOR DEMONSTRATION ONLY.
+        Fulda University of Applied Sciences Software Engineering Project, Fall
+        2024. FOR DEMONSTRATION ONLY.
       </div>
       {isLoading ? (
         <AppLoader />
@@ -82,9 +97,9 @@ export const App = () => {
             />
             <Route path="property/:id" element={<PropertyDetail />} />
             <Route
-              path="landlord"
+              path="dashboard"
               element={
-                <PrivateRoute userType="LANDLORD">
+                <PrivateRoute>
                   <LandlordDashboardPage />
                 </PrivateRoute>
               }
