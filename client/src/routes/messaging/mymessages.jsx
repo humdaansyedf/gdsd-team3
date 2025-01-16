@@ -1,14 +1,4 @@
-import {
-  ActionIcon,
-  Avatar,
-  Container,
-  Group,
-  Paper,
-  ScrollArea,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { ActionIcon, Avatar, Container, Group, Paper, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
 import { IconSend } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -22,9 +12,7 @@ export function Mymessages() {
   const { state } = useLocation(); // Contains propertyId, otherUserId from propertyDetailsPage
   const { propertyId, selectedUserId: initialSelectedUserId } = state || {}; // Ensure state is destructured safely
 
-  const [selectedUserId, setSelectedUserId] = useState(
-    initialSelectedUserId || null,
-  ); // Initialize selectedUserId from state
+  const [selectedUserId, setSelectedUserId] = useState(initialSelectedUserId || null); // Initialize selectedUserId from state
   const [activePropertyId, setActivePropertyId] = useState(propertyId || null); // Initialize activePropertyId from state
 
   const [messages, setMessages] = useState([]);
@@ -42,16 +30,9 @@ export function Mymessages() {
     const handleUsersChattedWith = (data) => setUsers(data);
     const handleReceiveMessage = (data) => {
       if (data.from !== currentUserId) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: data.from, content: data.content, align: "left" },
-        ]);
+        setMessages((prevMessages) => [...prevMessages, { sender: data.from, content: data.content, align: "left" }]);
         setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.id === data.from
-              ? { ...user, lastMessage: data.content }
-              : user,
-          ),
+          prevUsers.map((user) => (user.id === data.from ? { ...user, lastMessage: data.content } : user))
         );
       }
     };
@@ -72,7 +53,7 @@ export function Mymessages() {
           sender: msg.userid === currentUserId ? "Me" : msg.userid,
           content: msg.content,
           align: msg.userid === currentUserId ? "right" : "left",
-        })),
+        }))
       );
     };
 
@@ -130,17 +111,10 @@ export function Mymessages() {
     console.log("Sending message:", messageData);
     socket.emit("send_message", messageData);
 
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { sender: "Me", content: messageContent, align: "right" },
-    ]);
+    setMessages((prevMessages) => [...prevMessages, { sender: "Me", content: messageContent, align: "right" }]);
 
     setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === auth.user.id
-          ? { ...user, lastMessage: messageContent }
-          : user,
-      ),
+      prevUsers.map((user) => (user.id === auth.user.id ? { ...user, lastMessage: messageContent } : user))
     );
 
     setNewMessage("");
@@ -149,13 +123,7 @@ export function Mymessages() {
   return (
     <Container fluid my={20} style={{ display: "flex", gap: "20px" }}>
       {/* Left User List Section */}
-      <Paper
-        withBorder
-        shadow="md"
-        p={10}
-        radius="md"
-        style={{ width: "22%", minWidth: "220px" }}
-      >
+      <Paper withBorder shadow="md" p={10} radius="md" style={{ width: "22%", minWidth: "220px" }}>
         <Stack spacing="sm">
           {users.map((user, index) => (
             <Paper
@@ -206,22 +174,17 @@ export function Mymessages() {
       </Paper>
 
       {/* Right Messaging Section */}
-      <Paper
-        withBorder
-        shadow="md"
-        radius="md"
-        style={{ flex: 1, display: "flex", flexDirection: "column" }}
-      >
+      <Paper withBorder shadow="md" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         {/* Messages */}
         <ScrollArea style={{ flex: 1, padding: "10px 20px" }}>
           <Stack>
+            {!selectedUserId && <Text align="center">Select a user to start chatting</Text>}
             {messages.map((message, index) => (
               <Group
                 key={index}
                 align={message.align === "right" ? "flex-end" : "flex-start"}
                 style={{
-                  justifyContent:
-                    message.align === "right" ? "flex-end" : "flex-start",
+                  justifyContent: message.align === "right" ? "flex-end" : "flex-start",
                 }}
               >
                 {message.align === "left" && <Avatar radius="xl" />}
@@ -230,8 +193,7 @@ export function Mymessages() {
                   p="md"
                   radius="md"
                   style={{
-                    backgroundColor:
-                      message.align === "right" ? "#d4f8d4" : "#f5f5f5",
+                    backgroundColor: message.align === "right" ? "#d4f8d4" : "#f5f5f5",
                     maxWidth: "70%",
                   }}
                 >
@@ -243,28 +205,24 @@ export function Mymessages() {
         </ScrollArea>
 
         {/* Input Section */}
-        <Group p="md" style={{ borderTop: "1px solid #e5e5e5" }}>
-          <TextInput
-            placeholder="Type your message..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                handleSendMessage();
-              }
-            }}
-            style={{ flex: 1 }}
-          />
-          <ActionIcon
-            variant="filled"
-            color="green"
-            size="lg"
-            radius="md"
-            onClick={handleSendMessage}
-          >
-            <IconSend />
-          </ActionIcon>
-        </Group>
+        {selectedUserId && (
+          <Group p="md" style={{ borderTop: "1px solid #e5e5e5" }}>
+            <TextInput
+              placeholder="Type your message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  handleSendMessage();
+                }
+              }}
+              style={{ flex: 1 }}
+            />
+            <ActionIcon variant="filled" color="green" size="lg" radius="md" onClick={handleSendMessage}>
+              <IconSend />
+            </ActionIcon>
+          </Group>
+        )}
       </Paper>
     </Container>
   );
