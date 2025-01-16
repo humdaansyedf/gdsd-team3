@@ -7,8 +7,8 @@ export const creatorRouter = express.Router();
 
 creatorRouter.use((req, res, next) => {
   // Check if the user is a landlord
-    if (req.user.type !== "LANDLORD" && req.user.type !== "STUDENT") {
-        return res.status(403).json({
+  if (req.user.type !== "LANDLORD" && req.user.type !== "STUDENT") {
+    return res.status(403).json({
       message: "Forbidden",
     });
   }
@@ -85,12 +85,15 @@ creatorRouter.post("/property", async (req, res) => {
     });
   }
 
-    const user = req.user;
+  const user = req.user;
 
   try {
     const { media, ...propertyData } = result.data;
-    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const totalRent =
+      propertyData.coldRent + (propertyData.additionalCosts || 0);
     const availableFrom = new Date(propertyData.availableFrom);
+
+    const isSublet = req.user.type === "STUDENT";
 
     const property = await prisma.$transaction(async (tx) => {
       const property = await tx.property.create({
@@ -99,6 +102,7 @@ creatorRouter.post("/property", async (req, res) => {
           availableFrom,
           totalRent,
           creatorId: user.id,
+          isSublet: isSublet,
         },
       });
 
@@ -140,76 +144,75 @@ creatorRouter.post("/property", async (req, res) => {
 
 // Get all properties of the landlord
 creatorRouter.post("/property/search", async (req, res) => {
-    const user = req.user; // Ensure this contains the landlord's ID
-    const { title, status, minPrice, maxPrice } = req.body;
+  const user = req.user; // Ensure this contains the landlord's ID
+  const { title, status, minPrice, maxPrice } = req.body;
 
-    const where = {
-        creatorId: user.id, // Ensure only properties belonging to the landlord are returned
+  const where = {
+    creatorId: user.id, // Ensure only properties belonging to the landlord are returned
+  };
+
+  if (title) {
+    where.title = {
+      contains: title,
     };
+  }
 
-    if (title) {
-        where.title = {
-            contains: title,
-        };
-    }
+  if (status && status !== "All") {
+    where.status = status;
+  }
 
-    if (status && status !== "All") {
-        where.status = status;
-    }
+  if (minPrice || maxPrice) {
+    where.totalRent = {
+      gte: parseInt(minPrice) || 0,
+      lte: parseInt(maxPrice) || 99999999,
+    };
+  }
 
-    if (minPrice || maxPrice) {
-        where.totalRent = {
-            gte: parseInt(minPrice) || 0,
-            lte: parseInt(maxPrice) || 99999999,
-        };
-    }
+  try {
+    const properties = await prisma.property.findMany({
+      where,
+      include: {
+        media: true,
+      },
+    });
 
-    try {
-        const properties = await prisma.property.findMany({
-            where,
-            include: {
-                media: true,
-            },
-        });
-
-        res.json(
-            properties.map((property) => ({
-                ...property,
-                media: property.media.length > 0
-                    ? property.media[0].url
-                    : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
-            }))
-        );
-    } catch (error) {
-        console.error("Error fetching properties:", error);
-        res.status(500).json({ message: "Failed to fetch properties" });
-    }
+    res.json(
+      properties.map((property) => ({
+        ...property,
+        media:
+          property.media.length > 0
+            ? property.media[0].url
+            : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+      }))
+    );
+  } catch (error) {
+    console.error("Error fetching properties:", error);
+    res.status(500).json({ message: "Failed to fetch properties" });
+  }
 });
 
 // Get stats
 creatorRouter.get("/dashboard/stats", async (req, res) => {
-    const user = req.user;
+  const user = req.user;
 
-    const allAdsCount = await prisma.property.count({
-        where: {
-            creatorId: user.id,
-        },
-    });
+  const allAdsCount = await prisma.property.count({
+    where: {
+      creatorId: user.id,
+    },
+  });
 
-    const activeAdsCount = await prisma.property.count({
-        where: {
-            creatorId: user.id,
-            status: "ACTIVE",
-        },
-    });
+  const activeAdsCount = await prisma.property.count({
+    where: {
+      creatorId: user.id,
+      status: "ACTIVE",
+    },
+  });
 
-
-    res.json({
-        allAds: allAdsCount,
-        activeAds: activeAdsCount,
-    });
+  res.json({
+    allAds: allAdsCount,
+    activeAds: activeAdsCount,
+  });
 });
-
 
 // Get a single property of the landlord
 creatorRouter.get("/property/:id", async (req, res) => {

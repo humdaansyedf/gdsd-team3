@@ -281,6 +281,8 @@ async function createProperties() {
       deposit: 2000,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      furnished: true,
+      parking: true,
     },
     {
       id: 10,
@@ -304,6 +306,9 @@ async function createProperties() {
       deposit: 3000,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      furnished: true,
+      internet: true,
+      parking: true,
     },
     {
       id: 11,
@@ -327,6 +332,10 @@ async function createProperties() {
       deposit: 2700,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      furnished: true,
+      internet: true,
+      parking: true,
+      cellar: true,
     },
     // PENDING
     {
