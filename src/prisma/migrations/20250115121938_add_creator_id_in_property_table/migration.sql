@@ -9,7 +9,7 @@
 ALTER TABLE `Property` DROP FOREIGN KEY `Property_landlordId_fkey`;
 
 -- DropIndex
-DROP INDEX `Property_landlordId_fkey` ON `property`;
+DROP INDEX `Property_landlordId_fkey` ON `Property`;
 
 -- AlterTable
 ALTER TABLE `Property` DROP COLUMN `landlordId`,
