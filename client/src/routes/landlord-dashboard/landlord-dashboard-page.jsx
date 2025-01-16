@@ -1,8 +1,9 @@
-import { Badge, Loader } from "@mantine/core";
+import { Alert, Badge, Loader } from "@mantine/core";
 import classes from "./landlord-dashboard-style.module.css";
 import { useAdStats, useLandlordAds } from "./landlord-dashboard-queries.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import DashboardFiltersSection from "./landlord-dashboard-filters-section.jsx";
+import { useAuth } from "../../lib/auth-context.jsx";
 
 export const LandlordDashboardPage = () => {
   const navigate = useNavigate();
@@ -16,39 +17,66 @@ export const LandlordDashboardPage = () => {
 
   const { data: adStats, isLoading } = useAdStats();
   const searchQuery = useLandlordAds();
+  const { user } = useAuth();
+
+  const isLandlord = user?.type === "LANDLORD";
 
   return (
     <>
       <div className={classes.container}>
-        <DashboardFiltersSection />
+        {isLandlord && <DashboardFiltersSection />}
         <div className={classes.mainContent}>
-          <div className={classes.dashboardSummary}>
-            <div className={classes.summaryHeader}>
-              <h2>Welcome to Dashboard!</h2>
-              <p>Your Ad details:</p>
-            </div>
-            <div className={classes.metricsGrid}>
-              <div className={classes.metricCard}>
-                <h4>Ads Created</h4>
-                <p>{isLoading ? <Loader size="sm" color="blue" /> : adStats?.allAds || 0}</p>
+          {isLandlord && (
+            <div className={classes.dashboardSummary}>
+              <div className={classes.summaryHeader}>
+                <h2>Welcome to Dashboard!</h2>
+                <p>Your Ad details:</p>
               </div>
-              <div className={classes.metricCard}>
-                <h4>Ads Active</h4>
-                <p>{isLoading ? <Loader size="sm" color="blue" /> : adStats?.activeAds || 0}</p>
+              <div className={classes.metricsGrid}>
+                <div className={classes.metricCard}>
+                  <h4>Ads Created</h4>
+                  <p>{isLoading ? <Loader size="sm" color="blue" /> : adStats?.allAds || 0}</p>
+                </div>
+                <div className={classes.metricCard}>
+                  <h4>Ads Active</h4>
+                  <p>{isLoading ? <Loader size="sm" color="blue" /> : adStats?.activeAds || 0}</p>
+                </div>
+                <div className={classes.metricCard}>
+                  <h4>New Requests</h4>
+                  <p>0</p>
+                </div>
               </div>
-              <div className={classes.metricCard}>
-                <h4>New Requests</h4>
-                <p>0</p>
+              <div className={classes.actionButtons}>
+                <button onClick={handleCreateAdClick}>Create New Listing</button>
+                <button>Documents</button>
+                <button onClick={handleNewMessagesClick}>
+                  New Messages {/*<span className={classes.badge}>6</span>*/}
+                </button>
               </div>
             </div>
-            <div className={classes.actionButtons}>
-              <button onClick={handleCreateAdClick}>Create New Listing</button>
-              <button>Documents</button>
-              <button onClick={handleNewMessagesClick}>
-                New Messages {/*<span className={classes.badge}>6</span>*/}
-              </button>
+          )}
+
+          {!isLandlord && (
+            <div className={classes.dashboardSummary}>
+              <div className={classes.summaryHeader}>
+                <h2>Welcome to your Sublet Dashboard!</h2>
+                <p>Here you can list your rented property as a sublet</p>
+                {searchQuery.data?.length > 0 && (
+                  <Alert color="yellow">
+                    You have already listed your property as a sublet. You can not create more
+                  </Alert>
+                )}
+              </div>
+              <div className={classes.actionButtons}>
+                {searchQuery.data && searchQuery.data.length === 0 && (
+                  <button onClick={handleCreateAdClick}>Create New Listing</button>
+                )}
+                <button onClick={handleNewMessagesClick}>
+                  New Messages {/*<span className={classes.badge}>6</span>*/}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={classes.container}>
             <div className={classes.resultsSection}>

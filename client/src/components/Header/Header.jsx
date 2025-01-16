@@ -1,6 +1,6 @@
-import { Anchor, Autocomplete, Burger, Group } from "@mantine/core";
+import { ActionIcon, Anchor, Autocomplete, Burger, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconMail, IconSearch, IconUserCircle } from "@tabler/icons-react";
+import { IconHome, IconMessage, IconSearch, IconUserCircle } from "@tabler/icons-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/auth-context";
@@ -71,15 +71,17 @@ export function Header() {
         <Group ml={50} gap={10} className={classes.links} visibleFrom="sm">
           {user ? (
             <>
-              {/* Messages Button */}
-              <Link to="/mymessages">
-                <IconMail />
-              </Link>
+              <ActionIcon size="md" variant="subtle" component={Link} to="/mymessages">
+                <IconMessage />
+              </ActionIcon>
 
-              {/* Profile Link */}
-              <Link to="/profile">
+              <ActionIcon size="md" variant="subtle" component={Link} to="/dashboard">
+                <IconHome />
+              </ActionIcon>
+
+              <ActionIcon size="md" variant="subtle" component={Link} to="/profile">
                 <IconUserCircle />
-              </Link>
+              </ActionIcon>
             </>
           ) : (
             items
