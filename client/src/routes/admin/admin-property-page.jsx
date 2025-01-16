@@ -1,21 +1,6 @@
 import { useParams } from "react-router-dom";
-import {
-  useAdminProperty,
-  useAdminPropertyUpdateStatus,
-} from "./admin-queries";
-import {
-  Box,
-  Group,
-  Paper,
-  Text,
-  Title,
-  Image,
-  SimpleGrid,
-  Badge,
-  Divider,
-  List,
-  Button,
-} from "@mantine/core";
+import { useAdminProperty, useAdminPropertyUpdateStatus } from "./admin-queries";
+import { Box, Group, Paper, Text, Title, Image, SimpleGrid, Badge, Divider, List, Button } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { Carousel } from "@mantine/carousel";
 import { getBadgeColor } from "./admin-utils";
@@ -87,24 +72,24 @@ export const AdminProperty = () => {
             <Box>
               <Group justify="space-between" align="start">
                 <Title order={2}>{propertyQuery.data.title}</Title>
-                <Badge
-                  radius="xs"
-                  size="xl"
-                  color={getBadgeColor(propertyQuery.data.status)}
-                >
-                  {propertyQuery.data.status}
-                </Badge>
+                <Group justify="end" align="start" gap="xs">
+                  {propertyQuery.data.isSublet && (
+                    <Badge radius="xs" size="xl" color="blue">
+                      Sublet
+                    </Badge>
+                  )}
+                  <Badge radius="xs" size="xl" color={getBadgeColor(propertyQuery.data.status)}>
+                    {propertyQuery.data.status}
+                  </Badge>
+                </Group>
               </Group>
+
               <Text>Total rent: €{propertyQuery.data.totalRent}</Text>
               <Text>Cold rent: €{propertyQuery.data.coldRent}</Text>
-              <Text>
-                Additional costs: €{propertyQuery.data.additionalCosts}
-              </Text>
+              <Text>Additional costs: €{propertyQuery.data.additionalCosts}</Text>
               <Text>
                 Available From:
-                {new Date(propertyQuery.data.availableFrom).toLocaleDateString(
-                  "en-GB",
-                )}
+                {new Date(propertyQuery.data.availableFrom).toLocaleDateString("en-GB")}
               </Text>
             </Box>
           </SimpleGrid>
@@ -115,25 +100,13 @@ export const AdminProperty = () => {
 
           <Title order={3}>Amenities</Title>
           <List>
+            <List.Item>Number of Rooms: {propertyQuery.data.numberOfRooms}</List.Item>
+            <List.Item>Number of Baths: {propertyQuery.data.numberOfBaths}</List.Item>
             <List.Item>
-              Number of Rooms: {propertyQuery.data.numberOfRooms}
+              Heating included: {propertyQuery.data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}
             </List.Item>
-            <List.Item>
-              Number of Baths: {propertyQuery.data.numberOfBaths}
-            </List.Item>
-            <List.Item>
-              Heating included:{" "}
-              {propertyQuery.data.heatingIncludedInAdditionalCosts
-                ? "Yes"
-                : "No"}
-            </List.Item>
-            <List.Item>
-              Pets Allowed: {propertyQuery.data.petsAllowed ? "Yes" : "No"}
-            </List.Item>
-            <List.Item>
-              Smoking Allowed:{" "}
-              {propertyQuery.data.smokingAllowed ? "Yes" : "No"}
-            </List.Item>
+            <List.Item>Pets Allowed: {propertyQuery.data.petsAllowed ? "Yes" : "No"}</List.Item>
+            <List.Item>Smoking Allowed: {propertyQuery.data.smokingAllowed ? "Yes" : "No"}</List.Item>
           </List>
         </Paper>
       </Box>

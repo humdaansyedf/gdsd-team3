@@ -3,7 +3,7 @@ import { useClipboard } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { useGetPropertyById } from "./property-detail-queries";
 
-import { Button } from "@mantine/core";
+import { Badge, Button } from "@mantine/core";
 
 import classes from "./property-detail-style.module.css";
 import PropertyMap from "./property-map-view";
@@ -84,6 +84,11 @@ export const PropertyDetail = () => {
               {/* Ad title, key info and buttons */}
               <div className={classes.infoContainer}>
                 <h4>{data.title}</h4>
+                {data.isSublet && (
+                  <Badge radius="xs" size="md" color="blue">
+                    This property is a sublet
+                  </Badge>
+                )}
                 <p>Total rent: {data.totalRent}€</p>
                 <p>
                   Cold rent:
@@ -138,10 +143,7 @@ export const PropertyDetail = () => {
               <ul>
                 <li>Number of Rooms: {data.numberOfRooms}</li>
                 <li>Number of Baths: {data.numberOfBaths}</li>
-                <li>
-                  Heating included:{" "}
-                  {data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}
-                </li>
+                <li>Heating included: {data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}</li>
                 <li>Furnished: {data.furnished ? "Yes" : "No"}</li>
                 <li>Internet: {data.internet ? "Yes" : "No"}</li>
                 <li>Parking: {data.parking ? "Yes" : "No"}</li>

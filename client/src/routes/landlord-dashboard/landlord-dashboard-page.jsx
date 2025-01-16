@@ -14,7 +14,7 @@ export const LandlordDashboardPage = () => {
     navigate("/property/new");
   };
 
-  const { data: adStats, isLoading, error, refetch } = useAdStats();
+  const { data: adStats, isLoading } = useAdStats();
   const searchQuery = useLandlordAds();
 
   return (
@@ -30,23 +30,11 @@ export const LandlordDashboardPage = () => {
             <div className={classes.metricsGrid}>
               <div className={classes.metricCard}>
                 <h4>Ads Created</h4>
-                <p>
-                  {isLoading ? (
-                    <Loader size="sm" color="blue" />
-                  ) : (
-                    adStats?.allAds || 0
-                  )}
-                </p>
+                <p>{isLoading ? <Loader size="sm" color="blue" /> : adStats?.allAds || 0}</p>
               </div>
               <div className={classes.metricCard}>
                 <h4>Ads Active</h4>
-                <p>
-                  {isLoading ? (
-                    <Loader size="sm" color="blue" />
-                  ) : (
-                    adStats?.activeAds || 0
-                  )}
-                </p>
+                <p>{isLoading ? <Loader size="sm" color="blue" /> : adStats?.activeAds || 0}</p>
               </div>
               <div className={classes.metricCard}>
                 <h4>New Requests</h4>
@@ -86,10 +74,10 @@ export const LandlordDashboardPage = () => {
                               property.status === "ACTIVE"
                                 ? "green"
                                 : property.status === "PENDING"
-                                  ? "yellow"
-                                  : property.status === "DRAFT"
-                                    ? "gray"
-                                    : "red" /* For REJECTED */
+                                ? "yellow"
+                                : property.status === "DRAFT"
+                                ? "gray"
+                                : "red" /* For REJECTED */
                             }
                             className={classes.statusBadge}
                           >
@@ -99,9 +87,7 @@ export const LandlordDashboardPage = () => {
                         <div className={classes.propertyCardTags}>
                           <span>€ {property.totalRent}</span>
                           {property.petsAllowed && <span>Pets Allowed</span>}
-                          {property.smokingAllowed && (
-                            <span>Smoking Allowed</span>
-                          )}
+                          {property.smokingAllowed && <span>Smoking Allowed</span>}
                         </div>
                         <p>{property.description.slice(0, 50)}...</p>
                         <Link
@@ -114,17 +100,14 @@ export const LandlordDashboardPage = () => {
                             borderRadius: "10px",
                             textDecoration: "none",
                             fontWeight: "bold",
-                            transition:
-                              "background-color 0.3s ease, color 0.3s ease",
+                            transition: "background-color 0.3s ease, color 0.3s ease",
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.backgroundColor =
-                              "#c2edc2"; /* Hover effect */
+                            e.target.style.backgroundColor = "#c2edc2"; /* Hover effect */
                             e.target.style.color = "#ffffff";
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.backgroundColor =
-                              "#d4f8d4"; /* Reset to original */
+                            e.target.style.backgroundColor = "#d4f8d4"; /* Reset to original */
                             e.target.style.color = "#000000";
                           }}
                         >
