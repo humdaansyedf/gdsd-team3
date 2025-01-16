@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Switch} from "@mantine/core";
+import { Switch } from "@mantine/core";
 import { usePropertySearch } from "./home-queries";
 import classes from "./home-style.module.css";
 import { FeaturedCarousel } from "../../components/Carousel/Carousel";
@@ -18,7 +18,7 @@ export const Home = () => {
         <FiltersSection />
 
         <div className={classes.resultsSection}>
-          <div style={{ display: "flex", justifyContent: "flex-start"}}>
+          <div style={{ display: "flex", justifyContent: "flex-start" }}>
             <Switch
               size="md"
               color="green"

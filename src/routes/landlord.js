@@ -183,7 +183,7 @@ creatorRouter.post("/property/search", async (req, res) => {
           property.media.length > 0
             ? property.media[0].url
             : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
-      }))
+      })),
     );
   } catch (error) {
     console.error("Error fetching properties:", error);

@@ -64,7 +64,8 @@ export function Register() {
       type: "STUDENT",
     },
     validate: {
-      name: (value) => (value.length < 2 ? "Name must have at least 3 letters" : null),
+      name: (value) =>
+        value.length < 2 ? "Name must have at least 3 letters" : null,
       email: (value, values) => {
         const isEmail = /^\S+@\S+$/.test(value);
         if (!isEmail) {
@@ -85,8 +86,10 @@ export function Register() {
         }
         return null;
       },
-      password: (value) => (value.length < 8 ? "Password must have at least 8 letters" : null),
-      confirmPassword: (value, values) => (value !== values.password ? "Passwords do not match" : null),
+      password: (value) =>
+        value.length < 8 ? "Password must have at least 8 letters" : null,
+      confirmPassword: (value, values) =>
+        value !== values.password ? "Passwords do not match" : null,
     },
   });
 
@@ -177,7 +180,12 @@ export function Register() {
           />
         </Group>
 
-        <Button type="submit" fullWidth mt="xl" loading={registerMutation.isPending}>
+        <Button
+          type="submit"
+          fullWidth
+          mt="xl"
+          loading={registerMutation.isPending}
+        >
           Create account
         </Button>
       </Paper>

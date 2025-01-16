@@ -63,7 +63,9 @@
   display: flex;
   flex-direction: column; /* Ensures property cards stack vertically */
   gap: 1.5rem; /* Adds spacing between the property cards */
-  max-width: calc(100% - 300px); /* Adjusts width based on filter section size */
+  max-width: calc(
+    100% - 300px
+  ); /* Adjusts width based on filter section size */
 }
 
 .propertyCard {

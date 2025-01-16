@@ -25,7 +25,9 @@ export function Profile() {
       }}
     >
       {/* Profile Picture */}
-      <Box style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+      <Box
+        style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}
+      >
         <Avatar size="xl" radius="xl" />
       </Box>
 
@@ -52,7 +54,7 @@ export function Profile() {
       <Text>Phone: {user.phone || "N/A"}</Text>
       <Text>Address: {user.address || "N/A"}</Text>
 
-        {/* Buttons */}
+      {/* Buttons */}
       <Group position="center" mt="md">
         {/**<Button variant="outline" size="sm" onClick={() => console.log("Edit clicked!")}>
           Edit

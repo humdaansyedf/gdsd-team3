@@ -15,7 +15,7 @@ export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [searchData, setSearchData] = useState([]); 
+  const [searchData, setSearchData] = useState([]);
 
   const items = links.map((link) => (
     <Link key={link.label} to={link.link} className={classes.link}>
@@ -35,7 +35,7 @@ export function Header() {
         return updatedSearchData;
       });
 
-      navigate(`/?title=${query}`); 
+      navigate(`/?title=${query}`);
     }
   };
 
@@ -51,10 +51,14 @@ export function Header() {
         <Group>
           <Autocomplete
             className={classes.search}
-            style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}
+            style={{
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
             placeholder="Search"
             leftSection={<IconSearch size={16} stroke={1.5} />}
-            data={searchData} 
+            data={searchData}
             visibleFrom="xs"
             onKeyDown={(event) => {
               if (event.key === "Enter") {

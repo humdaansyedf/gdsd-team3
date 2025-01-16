@@ -30,5 +30,5 @@ createRoot(document.getElementById("root")).render(
       </MantineProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </StrictMode>
+  </StrictMode>,
 );

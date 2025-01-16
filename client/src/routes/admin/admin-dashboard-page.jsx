@@ -1,12 +1,25 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { IconArrowRight } from "@tabler/icons-react";
-import { Badge, Box, Button, Card, Group, Image, SegmentedControl, SimpleGrid, Text, Title } from "@mantine/core";
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  Group,
+  Image,
+  SegmentedControl,
+  SimpleGrid,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useAdminProperties } from "./admin-queries";
 import { getBadgeColor } from "./admin-utils";
 
 const AdminProperties = ({ properties }) => {
-  const [filteredProperties, setFilteredProperties] = React.useState(() => properties);
+  const [filteredProperties, setFilteredProperties] = React.useState(
+    () => properties,
+  );
 
   return (
     <>
@@ -23,19 +36,32 @@ const AdminProperties = ({ properties }) => {
 
             if (value === "OTHER") {
               setFilteredProperties(
-                properties.filter((property) => !["PENDING", "ACTIVE", "REJECTED"].includes(property.status))
+                properties.filter(
+                  (property) =>
+                    !["PENDING", "ACTIVE", "REJECTED"].includes(
+                      property.status,
+                    ),
+                ),
               );
               return;
             }
 
-            setFilteredProperties(properties.filter((property) => property.status === value));
+            setFilteredProperties(
+              properties.filter((property) => property.status === value),
+            );
           }}
         />
       </Box>
       <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="md">
         {filteredProperties.map((property) => {
           return (
-            <Card key={property.id} shadow="sm" padding="sm" radius="md" withBorder>
+            <Card
+              key={property.id}
+              shadow="sm"
+              padding="sm"
+              radius="md"
+              withBorder
+            >
               <Card.Section>
                 <Image src={property.media} alt={property.title} h={200} />
               </Card.Section>
@@ -59,7 +85,11 @@ const AdminProperties = ({ properties }) => {
               </Group>
               <Text mt="xs">{property.description.slice(0, 100)}...</Text>
               <Group gap="xs" mt="md">
-                <Badge radius="xs" size="lg" color={getBadgeColor(property.status)}>
+                <Badge
+                  radius="xs"
+                  size="lg"
+                  color={getBadgeColor(property.status)}
+                >
                   {property.status}
                 </Badge>
                 <Button

@@ -43,7 +43,7 @@ export const ImageUploader = ({ onUpload }) => {
           onSettled: () => {
             setLoading(false);
           },
-        }
+        },
       );
     });
   };
@@ -68,12 +68,18 @@ export const ImageUploader = ({ onUpload }) => {
   return (
     <div>
       {/* Dropzone for selecting files */}
-      <Dropzone accept={IMAGE_MIME_TYPE} onDrop={handleFilesUpload} multiple disabled={loading}>
+      <Dropzone
+        accept={IMAGE_MIME_TYPE}
+        onDrop={handleFilesUpload}
+        multiple
+        disabled={loading}
+      >
         {loading ? (
           <Loader />
         ) : (
           <Text ta="center" size="sm" color="dimmed">
-            Drag & Drop images here or click to <span style={{ color: "blue" }}>Browse</span>
+            Drag & Drop images here or click to{" "}
+            <span style={{ color: "blue" }}>Browse</span>
           </Text>
         )}
       </Dropzone>
@@ -83,7 +89,13 @@ export const ImageUploader = ({ onUpload }) => {
         <SimpleGrid cols={4} mt="md">
           {images.map((image, index) => (
             <div key={index} style={{ position: "relative" }}>
-              <Image src={image.url} alt={image.name} height={100} radius="sm" withPlaceholder />
+              <Image
+                src={image.url}
+                alt={image.name}
+                height={100}
+                radius="sm"
+                withPlaceholder
+              />
               <Button
                 size="xs"
                 color="red"

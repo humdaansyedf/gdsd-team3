@@ -1,4 +1,11 @@
-import { Button, Checkbox, NumberInput, Select, SimpleGrid, TextInput } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  NumberInput,
+  Select,
+  SimpleGrid,
+  TextInput,
+} from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
@@ -31,7 +38,12 @@ const FiltersSection = () => {
     <aside className={classes.filtersSection}>
       <div className={classes.filtersHeader}>
         <h2>Filters</h2>
-        <Button size="compact-xs" color="gray" type="button" onClick={() => setShowFilters((prev) => !prev)}>
+        <Button
+          size="compact-xs"
+          color="gray"
+          type="button"
+          onClick={() => setShowFilters((prev) => !prev)}
+        >
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
       </div>
@@ -47,14 +59,20 @@ const FiltersSection = () => {
               if (values.smoking) params.set("smoking", values.smoking);
               if (values.minPrice !== 0) params.minPrice = values.minPrice;
               if (values.maxPrice !== 5000) params.maxPrice = values.maxPrice;
-              if (values.availableFrom) params.availableFrom = values.availableFrom;
-              if (values.searchRadius !== "whole area") params.searchRadius = values.searchRadius;
+              if (values.availableFrom)
+                params.availableFrom = values.availableFrom;
+              if (values.searchRadius !== "whole area")
+                params.searchRadius = values.searchRadius;
               setSearchParams(params);
             })}
           >
             <div className={classes.filter}>
               <h4>Title:</h4>
-              <TextInput placeholder="Enter query" key={form.key("title")} {...form.getInputProps("title")} />
+              <TextInput
+                placeholder="Enter query"
+                key={form.key("title")}
+                {...form.getInputProps("title")}
+              />
             </div>
 
             <div className={classes.filter}>
@@ -94,7 +112,14 @@ const FiltersSection = () => {
               <h4>Search radius:</h4>
               <Select
                 placeholder="Whole area"
-                data={["Whole area", "+5km", "+10km", "+20km", "+100km", "200km"]}
+                data={[
+                  "Whole area",
+                  "+5km",
+                  "+10km",
+                  "+20km",
+                  "+100km",
+                  "200km",
+                ]}
                 key={form.key("searchRadius")}
                 {...form.getInputProps("searchRadius")}
               />

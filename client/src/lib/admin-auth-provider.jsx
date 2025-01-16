@@ -1,5 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, Container, Paper, PasswordInput, TextInput, Title } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Paper,
+  PasswordInput,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
 import { AdminAuthContext } from "./admin-auth-context";
@@ -49,7 +56,8 @@ function AdminLogin() {
     },
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      password: (value) => (value.length < 8 ? "Password must have at least 8 letters" : null),
+      password: (value) =>
+        value.length < 8 ? "Password must have at least 8 letters" : null,
     },
   });
 
@@ -79,7 +87,12 @@ function AdminLogin() {
           {...form.getInputProps("password")}
           disabled={loginMutation.isPending}
         />
-        <Button type="submit" fullWidth mt="xl" loading={loginMutation.isPending}>
+        <Button
+          type="submit"
+          fullWidth
+          mt="xl"
+          loading={loginMutation.isPending}
+        >
           Sign in as admin
         </Button>
       </Paper>
