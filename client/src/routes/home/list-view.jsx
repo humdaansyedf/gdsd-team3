@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import classes from "./home-style.module.css";
+import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
 
-export const ListView = ({ properties }) => {
+export const ListView = ({ properties, onWishlistUpdate = () => {} }) => {
   return (
     <>
       {properties.map((property) => (
@@ -12,6 +13,7 @@ export const ListView = ({ properties }) => {
           ) : (
             <div>No Image Available</div>
           )}
+          <WishlistButton propertyId={property.id} className={classes.wishlistButton} onWishlistUpdate={onWishlistUpdate} />
           <div className={classes.propertyCardContent}>
             <h2>{property.title}</h2>
             <div className={classes.propertyCardTags}>
