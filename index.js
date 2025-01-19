@@ -13,6 +13,7 @@ import { creatorRouter } from "./src/routes/landlord.js";
 import { adminRouter } from "./src/routes/admin.js";
 import { chatHandlers } from "./chatHandlers.js";
 import { prisma } from "./src/prisma/index.js";
+import { wishlistRouter } from "./src/routes/wishlist.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -65,6 +66,9 @@ app.use("/api", authMiddleware);
 
 // Private routes
 app.use("/api", propertyRouter, fileRouter, creatorRouter);
+
+//wishlist routes
+app.use("/api", wishlistRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {

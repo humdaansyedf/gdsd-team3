@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useClipboard } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { useGetPropertyById } from "./property-detail-queries";
+import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
 
 import { Badge, Button } from "@mantine/core";
 
@@ -83,7 +84,12 @@ export const PropertyDetail = () => {
 
               {/* Ad title, key info and buttons */}
               <div className={classes.infoContainer}>
+              {/* Title with Wishlist Icon */}
+              <div className={classes.titleWithWishlist}>
                 <h4>{data.title}</h4>
+                <WishlistButton propertyId={data.id} />
+              </div>
+
                 {data.isSublet && (
                   <Badge radius="xs" size="md" color="blue">
                     This property is a sublet

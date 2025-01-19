@@ -139,6 +139,17 @@
   color: #0056b3;
 }
 
+.wishlistButton {
+  position: absolute;
+  top: 10px; /* Adjust as needed */
+  right: 10px; /* Moves it to the right inside the red circle */
+  background: white; /* Optional: Adds background */
+  border-radius: 50%; /* Optional: Makes it circular */
+  padding: 5px; /* Adjust for spacing */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Adds shadow */
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .container {
     flex-direction: column; /* Stack the filter and results sections vertically */
