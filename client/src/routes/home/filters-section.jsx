@@ -1,11 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  NumberInput,
-  Select,
-  SimpleGrid,
-  TextInput,
-} from "@mantine/core";
+import { Button, Checkbox, Flex, Group, NumberInput, Paper, Select, SimpleGrid, Stack, TextInput } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
@@ -26,32 +19,25 @@ const FiltersSection = () => {
     searchRadius: searchParams.get("searchRadius") || "whole area",
   };
 
-  console.log(initialValues);
-
   const form = useForm({
     mode: "uncontrolled",
     initialValues: initialValues,
   });
 
-  console.log(form);
   return (
-    <aside className={classes.filtersSection}>
-      <div className={classes.filtersHeader}>
+    <Paper withBorder p="md" shadow="sm" className={classes.filtersSection}>
+      <Group justify="space-between">
         <h2>Filters</h2>
-        <Button
-          size="compact-xs"
-          color="gray"
-          type="button"
-          onClick={() => setShowFilters((prev) => !prev)}
-        >
+        <Button size="compact-xs" color="gray" type="button" onClick={() => setShowFilters((prev) => !prev)}>
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
-      </div>
+      </Group>
 
       {showFilters && (
         <>
-          <form
-            className={classes.filters}
+          <Stack
+            gap="sm"
+            component="form"
             onSubmit={form.onSubmit((values) => {
               const params = new URLSearchParams();
               if (values.title) params.set("title", values.title);
@@ -59,23 +45,17 @@ const FiltersSection = () => {
               if (values.smoking) params.set("smoking", values.smoking);
               if (values.minPrice !== 0) params.minPrice = values.minPrice;
               if (values.maxPrice !== 5000) params.maxPrice = values.maxPrice;
-              if (values.availableFrom)
-                params.availableFrom = values.availableFrom;
-              if (values.searchRadius !== "whole area")
-                params.searchRadius = values.searchRadius;
+              if (values.availableFrom) params.availableFrom = values.availableFrom;
+              if (values.searchRadius !== "whole area") params.searchRadius = values.searchRadius;
               setSearchParams(params);
             })}
           >
-            <div className={classes.filter}>
+            <Stack gap={4}>
               <h4>Title:</h4>
-              <TextInput
-                placeholder="Enter query"
-                key={form.key("title")}
-                {...form.getInputProps("title")}
-              />
-            </div>
+              <TextInput placeholder="Enter query" key={form.key("title")} {...form.getInputProps("title")} />
+            </Stack>
 
-            <div className={classes.filter}>
+            <Stack gap={4}>
               <h4>Price Range:</h4>
               <SimpleGrid cols={2} spacing="xs">
                 <NumberInput
@@ -97,58 +77,51 @@ const FiltersSection = () => {
                   {...form.getInputProps("maxPrice")}
                 />
               </SimpleGrid>
-            </div>
+            </Stack>
 
-            <div className={classes.filter}>
+            <Stack gap={4}>
               <h4>Earliest available:</h4>
               <DateInput
                 minDate={new Date()}
                 key={form.key("availableFrom")}
                 {...form.getInputProps("availableFrom")}
               />
-            </div>
+            </Stack>
 
-            <div className={classes.filter}>
+            <Stack gap={4}>
               <h4>Search radius:</h4>
               <Select
                 placeholder="Whole area"
-                data={[
-                  "Whole area",
-                  "+5km",
-                  "+10km",
-                  "+20km",
-                  "+100km",
-                  "200km",
-                ]}
+                data={["Whole area", "+5km", "+10km", "+20km", "+100km", "200km"]}
                 key={form.key("searchRadius")}
                 {...form.getInputProps("searchRadius")}
               />
-            </div>
+            </Stack>
 
-            <div className={classes.filter}>
+            <Stack gap={4}>
               <h4>Additional:</h4>
-              <Checkbox
-                label="Pets Allowed"
-                className={classes.checkBox}
-                key={form.key("pets")}
-                {...form.getInputProps("pets", { type: "checkbox" })}
-              />
-              <Checkbox
-                label="Smoking Allowed"
-                className={classes.checkBox}
-                key={form.key("smoking")}
-                {...form.getInputProps("smoking", { type: "checkbox" })}
-              />
-            </div>
+              <Stack gap={8}>
+                <Checkbox
+                  label="Pets Allowed"
+                  key={form.key("pets")}
+                  {...form.getInputProps("pets", { type: "checkbox" })}
+                />
+                <Checkbox
+                  label="Smoking Allowed"
+                  key={form.key("smoking")}
+                  {...form.getInputProps("smoking", { type: "checkbox" })}
+                />
+              </Stack>
+            </Stack>
 
-            <div className={classes.filterBtns}>
-              <Button type="submit" className={classes.applyFiltersBtn}>
+            <Flex gap="xs" mt="xs">
+              <Button type="submit" w="67%">
                 Search
               </Button>
               <Button
+                w="33%"
                 color="gray"
                 type="button"
-                className={classes.resetFiltersBtn}
                 onClick={() => {
                   form.setValues({
                     title: "",
@@ -164,11 +137,11 @@ const FiltersSection = () => {
               >
                 Reset
               </Button>
-            </div>
-          </form>
+            </Flex>
+          </Stack>
         </>
       )}
-    </aside>
+    </Paper>
   );
 };
 

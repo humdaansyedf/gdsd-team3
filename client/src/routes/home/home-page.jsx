@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Switch } from "@mantine/core";
+import { Flex, Switch } from "@mantine/core";
 import { usePropertySearch } from "./home-queries";
 import classes from "./home-style.module.css";
-import { FeaturedCarousel } from "../../components/Carousel/Carousel";
 import FiltersSection from "./filters-section";
 import MapView from "./map-view";
 import ListView from "./list-view";
@@ -13,8 +12,7 @@ export const Home = () => {
 
   return (
     <>
-      <FeaturedCarousel />
-      <div className={classes.container}>
+      <Flex gap="md" mt="mt">
         <FiltersSection />
 
         <div className={classes.resultsSection}>
@@ -40,7 +38,7 @@ export const Home = () => {
               <ListView properties={searchQuery.data} />
             ))}
         </div>
-      </div>
+      </Flex>
     </>
   );
 };
