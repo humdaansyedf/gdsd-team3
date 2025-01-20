@@ -7,12 +7,11 @@ import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import { IS_DEV } from "./src/lib/utils.js";
 import { fileRouter } from "./src/routes/file.js";
+import { adminRouter } from "./src/routes/admin.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
-import { creatorRouter } from "./src/routes/landlord.js";
-import { adminRouter } from "./src/routes/admin.js";
+import { creatorRouter } from "./src/routes/creator.js";
 import { chatHandlers } from "./chatHandlers.js";
-import { prisma } from "./src/prisma/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,7 +33,7 @@ io.on("connection", (socket) => {
   // console.log('A user connected:', socket.id);
 
   // Handle chat-related events
-  chatHandlers(io, socket, prisma);
+  chatHandlers(io, socket);
 
   socket.on("disconnect", () => {
     // console.log('A user disconnected:', socket.id);
