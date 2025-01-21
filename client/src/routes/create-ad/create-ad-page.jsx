@@ -1,18 +1,39 @@
 import { useState, useRef } from "react";
-import { Button, TextInput, Textarea, NumberInput, Select, Checkbox, Group } from "@mantine/core";
-import { Autocomplete, LoadScript } from "@react-google-maps/api";
+import {
+  Button,
+  TextInput,
+  Textarea,
+  NumberInput,
+  Select,
+  Checkbox,
+  Group,
+  Container,
+  Title,
+  Stack,
+  SimpleGrid,
+  Paper,
+} from "@mantine/core";
+import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
 import classes from "./create-ad-style.module.css";
 import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { DateInput } from "@mantine/dates";
+import { DateInput, YearPickerInput } from "@mantine/dates";
+
 const libraries = ["places"];
 
 export const CreateAdPage = () => {
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
     propertyType: "",
+    description: "",
+    latitude: null,
+    longitude: null,
+    address1: null,
+    address2: null,
+    city: null,
+    state: null,
+    postcode: null,
     totalRent: 0,
     coldRent: 0,
     additionalCosts: 0,
@@ -21,11 +42,26 @@ export const CreateAdPage = () => {
     numberOfRooms: 1,
     numberOfBeds: 0,
     numberOfBaths: 0,
-    availableFrom: "",
-    latitude: null,
-    longitude: null,
+    totalFloors: null,
+    floorNumber: null,
+    livingSpaceSqm: null,
+    yearBuilt: null,
+    availableFrom: null,
+    minimumLeaseTermInMonths: null,
+    maximumLeaseTermInMonths: null,
+    noticePeriodInMonths: null,
     pets: false,
     smoking: false,
+    kitchen: false,
+    furnished: false,
+    balcony: false,
+    cellar: false,
+    washingMachine: false,
+    elevator: false,
+    garden: false,
+    parking: false,
+    internet: false,
+    cableTv: false,
     media: [], // Image URLs
   });
 
@@ -93,7 +129,6 @@ export const CreateAdPage = () => {
     if (formData.media.length === 0) newErrors.media = "At least one image is required";
 
     setErrors(newErrors);
-    console.log(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -133,21 +168,26 @@ export const CreateAdPage = () => {
   };
 
   return (
-    <div className={classes.pageContainer}>
-      <h1>Create Property Listing</h1>
-      <div className={classes.container}>
+    <Container>
+      <Title order={2}>Create Property Listing</Title>
+      <Stack mt="lg" gap="lg">
         {/* Image Uploader */}
-        <div className={classes.section}>
+        <div>
           <ImageUploader onUpload={handleImageUpload} />
           {errors.media && <div className={classes.error}>{errors.media}</div>}
         </div>
 
-        {/* Property Details */}
-        <div className={classes.propertyDetails}>
+        <SimpleGrid
+          cols={{
+            base: 1,
+            sm: 2,
+          }}
+        >
           <TextInput
             label="Ad Title"
             placeholder="Enter Ad Title"
             error={errors.title}
+            value={formData.title}
             onChange={(e) => handleInputChange("title", e.target.value)}
           />
           <Select
@@ -161,13 +201,85 @@ export const CreateAdPage = () => {
               { value: "ROOM", label: "Room" },
               { value: "SHARED_ROOM", label: "Shared Room" },
             ]}
+            value={formData.propertyType}
             onChange={(value) => handleInputChange("propertyType", value)}
           />
-          <Group grow>
-            <NumberInput min={1} label="Rooms" onChange={(value) => handleInputChange("numberOfRooms", value)} />
-            <NumberInput min={0} label="Beds" onChange={(value) => handleInputChange("numberOfBeds", value)} />
-            <NumberInput min={0} label="Baths" onChange={(value) => handleInputChange("numberOfBaths", value)} />
+        </SimpleGrid>
+
+        <Textarea
+          label="Description"
+          placeholder="Enter Description"
+          error={errors.description}
+          autosize
+          minRows={3}
+          value={formData.description}
+          onChange={(e) => handleInputChange("description", e.target.value)}
+        />
+
+        <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={libraries}>
+          <Autocomplete
+            options={{ componentRestrictions: { country: "de" } }}
+            onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+            onPlaceChanged={handlePlaceChanged}
+          >
+            <TextInput label="Address" error={errors.address} placeholder="Enter Address" />
+          </Autocomplete>
+        </LoadScriptNext>
+
+        <SimpleGrid
+          cols={{
+            base: 1,
+            sm: 2,
+          }}
+        >
+          <Group grow align="start">
+            <NumberInput
+              label="Cold Rent (€)"
+              min={0}
+              description="Base rent"
+              value={formData.coldRent}
+              onChange={(value) => handleInputChange("coldRent", value)}
+            />
+            <NumberInput
+              label="Deposit (€)"
+              min={0}
+              description="One-off payment by the tenant"
+              value={formData.deposit}
+              onChange={(value) => handleInputChange("deposit", value)}
+            />
           </Group>
+
+          <Stack gap="xs">
+            <Group grow>
+              <NumberInput
+                label="Additional Costs (€)"
+                min={0}
+                description="e.g. Heating, Water, etc."
+                value={formData.additionalCosts}
+                onChange={(value) => handleInputChange("additionalCosts", value)}
+              />
+              <NumberInput
+                label="Total Rent (€)"
+                value={formData.totalRent}
+                error={errors.totalRent}
+                readOnly
+                description="Cold Rent + Additional Costs."
+              />
+            </Group>
+            <Checkbox
+              label="Heating included in Additional Costs"
+              checked={formData.heatingIncludedInAdditionalCosts}
+              onChange={() => handleCheckboxChange("heatingIncludedInAdditionalCosts")}
+            />
+          </Stack>
+        </SimpleGrid>
+
+        <SimpleGrid
+          cols={{
+            base: 1,
+            sm: 2,
+          }}
+        >
           <DateInput
             label="Available From"
             minDate={new Date()}
@@ -176,78 +288,125 @@ export const CreateAdPage = () => {
             error={errors.availableFrom}
             onChange={(value) => handleInputChange("availableFrom", value ? value.toISOString().substring(0, 10) : "")}
           />
-        </div>
+          <Group grow>
+            <NumberInput
+              min={1}
+              label="Rooms"
+              value={formData.numberOfRooms}
+              onChange={(value) => handleInputChange("numberOfRooms", value)}
+            />
+            <NumberInput
+              min={0}
+              label="Beds"
+              value={formData.numberOfBeds}
+              onChange={(value) => handleInputChange("numberOfBeds", value)}
+            />
+            <NumberInput
+              min={0}
+              label="Baths"
+              value={formData.numberOfBaths}
+              onChange={(value) => handleInputChange("numberOfBaths", value)}
+            />
+          </Group>
+          <Group grow>
+            <NumberInput
+              min={1}
+              label="Total Floors"
+              value={formData.totalFloors}
+              onChange={(value) => handleInputChange("totalFloors", value)}
+            />
+            <NumberInput
+              min={0}
+              label="Floor Number"
+              value={formData.floorNumber}
+              onChange={(value) => handleInputChange("floorNumber", value)}
+            />
+            <NumberInput
+              min={0}
+              label="Living Space (sqm)"
+              value={formData.livingSpaceSqm}
+              onChange={(value) => handleInputChange("livingSpaceSqm", value)}
+            />
+          </Group>
+          <Group grow align="start">
+            <YearPickerInput
+              label="Year Built"
+              maxDate={new Date()}
+              valueFormat="YYYY"
+              placeholder="YYYY"
+              error={errors.yearBuilt}
+              value={formData.yearBuilt ? new Date(formData.yearBuilt) : null}
+              onChange={(value) => {
+                handleInputChange("yearBuilt", value ? value.getFullYear().toString() : "");
+              }}
+            />
+            <NumberInput
+              label="Notice Period (months)"
+              min={0}
+              value={formData.noticePeriodInMonths}
+              onChange={(value) => handleInputChange("noticePeriodInMonths", value)}
+            />
+          </Group>
+          <Group grow align="start">
+            <NumberInput
+              label="Minimum Lease Term (months)"
+              min={0}
+              value={formData.minimumLeaseTermInMonths}
+              onChange={(value) => handleInputChange("minimumLeaseTermInMonths", value)}
+            />
+            <NumberInput
+              label="Maximum Lease Term (months)"
+              min={0}
+              value={formData.maximumLeaseTermInMonths}
+              onChange={(value) => handleInputChange("maximumLeaseTermInMonths", value)}
+            />
+          </Group>
+        </SimpleGrid>
 
-        <Group mt="md" grow>
-          <NumberInput
-            label="Cold Rent (€)"
-            min={0}
-            description="Base rent with no additional costs included."
-            onChange={(value) => handleInputChange("coldRent", value)}
-          />
-          <NumberInput
-            label="Additional Costs (€)"
-            min={0}
-            description="e.g. Heating, Water and sewage, etc."
-            onChange={(value) => handleInputChange("additionalCosts", value)}
-          />
-          <NumberInput
-            label="Total Rent (€)"
-            value={formData.totalRent}
-            error={errors.totalRent}
-            readOnly
-            description="This is calculated as Cold Rent + Additional Costs."
-          />
-          <NumberInput
-            label="Deposit (€)"
-            min={0}
-            description="One-off payment made by a tenant"
-            onChange={(value) => handleInputChange("deposit", value)}
-          />
-        </Group>
-        <Group mt="md">
-          <Checkbox
-            label="Heating Included"
-            checked={formData.heatingIncludedInAdditionalCosts}
-            onChange={() => handleCheckboxChange("heatingIncludedInAdditionalCosts")}
-          />
-          <Checkbox label="Pets Allowed" checked={formData.pets} onChange={() => handleCheckboxChange("pets")} />
-          <Checkbox
-            label="Smoking Allowed"
-            checked={formData.smoking}
-            onChange={() => handleCheckboxChange("smoking")}
-          />
-        </Group>
+        <Paper p="xs" withBorder>
+          <Title order={6} mb="xs">
+            Amenities
+          </Title>
+          <SimpleGrid
+            cols={{
+              base: 1,
+              xs: 2,
+              sm: 3,
+              md: 4,
+              lg: 5,
+            }}
+          >
+            <Checkbox label="Pets Allowed" checked={formData.pets} onChange={() => handleCheckboxChange("pets")} />
+            <Checkbox
+              label="Smoking Allowed"
+              checked={formData.smoking}
+              onChange={() => handleCheckboxChange("smoking")}
+            />
+            <Checkbox label="Kitchen" checked={formData.kitchen} onChange={() => handleCheckboxChange("kitchen")} />
+            <Checkbox
+              label="Furnished"
+              checked={formData.furnished}
+              onChange={() => handleCheckboxChange("furnished")}
+            />
+            <Checkbox label="Balcony" checked={formData.balcony} onChange={() => handleCheckboxChange("balcony")} />
+            <Checkbox label="Cellar" checked={formData.cellar} onChange={() => handleCheckboxChange("cellar")} />
+            <Checkbox
+              label="Washing Machine"
+              checked={formData.washingMachine}
+              onChange={() => handleCheckboxChange("washingMachine")}
+            />
+            <Checkbox label="Elevator" checked={formData.elevator} onChange={() => handleCheckboxChange("elevator")} />
+            <Checkbox label="Garden" checked={formData.garden} onChange={() => handleCheckboxChange("garden")} />
+            <Checkbox label="Parking" checked={formData.parking} onChange={() => handleCheckboxChange("parking")} />
+            <Checkbox label="Internet" checked={formData.internet} onChange={() => handleCheckboxChange("internet")} />
+            <Checkbox label="Cable TV" checked={formData.cableTv} onChange={() => handleCheckboxChange("cableTv")} />
+          </SimpleGrid>
+        </Paper>
 
-        {/* Google Maps Autocomplete */}
-        <div className={classes.section}>
-          <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={libraries}>
-            <Autocomplete
-              options={{ componentRestrictions: { country: "de" } }}
-              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-              onPlaceChanged={handlePlaceChanged}
-            >
-              <TextInput label="Address" error={errors.address} placeholder="Enter Address" />
-            </Autocomplete>
-          </LoadScript>
-        </div>
-
-        {/* Description */}
-        <Textarea
-          label="Description"
-          placeholder="Enter Description"
-          error={errors.description}
-          autosize
-          minRows={3}
-          mb="xl"
-          onChange={(e) => handleInputChange("description", e.target.value)}
-        />
-
-        {/* Submit Button */}
-        <Button fullWidth color="green" onClick={handleSubmit} radius="md" size="lg">
+        <Button fullWidth color="green" onClick={handleSubmit} radius="md" size="lg" my="xl">
           Submit
         </Button>
-      </div>
-    </div>
+      </Stack>
+    </Container>
   );
 };

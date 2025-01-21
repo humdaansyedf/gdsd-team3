@@ -94,6 +94,10 @@ export const PropertyDetail = () => {
             <Text>{data.createdAt}</Text>
           </Paper>
 
+          <pre>
+            <code>{JSON.stringify(data, null, 2)}</code>
+          </pre>
+
           <div className={classes.boxContainer}>
             {/* highlights container */}
             <div className={classes.titleSection}>
