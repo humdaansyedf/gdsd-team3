@@ -1,13 +1,4 @@
-import {
-  Anchor,
-  Button,
-  Container,
-  Paper,
-  PasswordInput,
-  Text,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Anchor, Button, Container, Paper, PasswordInput, Text, TextInput, Title } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -58,13 +49,12 @@ export function Login() {
     },
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      password: (value) =>
-        value.length < 8 ? "Password must have at least 8 letters" : null,
+      password: (value) => (value.length < 8 ? "Password must have at least 8 letters" : null),
     },
   });
 
   return (
-    <Container size={420} my={40}>
+    <Container size={420} mt={20}>
       <Title ta="center">Login</Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Do not have an account yet?{" "}
@@ -95,12 +85,7 @@ export function Login() {
           {...form.getInputProps("password")}
           disabled={loginMutation.isPending}
         />
-        <Button
-          type="submit"
-          fullWidth
-          mt="xl"
-          loading={loginMutation.isPending}
-        >
+        <Button type="submit" fullWidth mt="xl" loading={loginMutation.isPending}>
           Sign in
         </Button>
       </Paper>

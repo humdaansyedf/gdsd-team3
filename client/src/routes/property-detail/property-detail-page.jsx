@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useClipboard } from "@mantine/hooks";
+import { Badge, Button, Container, Group, Image, Loader, Paper, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { useClipboard } from "@mantine/hooks";
+import { Carousel } from "@mantine/carousel";
 import { useGetPropertyById } from "./property-detail-queries";
-
-import { Badge, Button } from "@mantine/core";
 
 import classes from "./property-detail-style.module.css";
 import PropertyMap from "./property-map-view";
@@ -56,12 +56,44 @@ export const PropertyDetail = () => {
 
   return (
     <>
-      {isLoading && <p>Loading...</p>}
+      {isLoading && <Loader />}
       {error && <p>Error: {error.message}</p>}
 
       {data && (
         // Outermost container
-        <div key={data.id} className={classes.container}>
+        <Container>
+          <Paper radius="sm" style={{ overflow: "hidden" }}>
+            <Carousel loop height={400} bg="gray.2">
+              {data.media.map((media) => (
+                <Carousel.Slide key={media.id}>
+                  <Image
+                    src={media.url}
+                    alt={media.title}
+                    style={{
+                      objectFit: "contain",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                </Carousel.Slide>
+              ))}
+            </Carousel>
+          </Paper>
+          <Paper withBorder p="md" mt="md" shadow="sm">
+            <Title order={2}>{data.title}</Title>
+            <Group mt="xs" gap="xs">
+              <Badge variant="light" size="lg" radius="sm">
+                €{data.totalRent}
+              </Badge>
+              {data.isSublet && (
+                <Badge variant="light" size="lg" color="blue" radius="sm">
+                  This property is a sublet
+                </Badge>
+              )}
+            </Group>
+            <Text>{data.createdAt}</Text>
+          </Paper>
+
           <div className={classes.boxContainer}>
             {/* highlights container */}
             <div className={classes.titleSection}>
@@ -151,7 +183,7 @@ export const PropertyDetail = () => {
               </ul>
             </div>
           </div>
-        </div>
+        </Container>
       )}
     </>
   );
