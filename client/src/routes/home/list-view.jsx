@@ -1,54 +1,75 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import classes from "./home-style.module.css";
+import { ActionIcon, Badge, Button, Card, Flex, Image, SimpleGrid, Text, Title, Tooltip } from "@mantine/core";
+import { IconArrowRight, IconDog, IconSmoking } from "@tabler/icons-react";
 
 export const ListView = ({ properties }) => {
   return (
-    <>
+    <SimpleGrid
+      cols={{
+        base: 1,
+        xs: 2,
+        md: 3,
+        lg: 4,
+      }}
+      gap="md"
+    >
       {properties.map((property) => (
-        <div key={property.id} className={classes.propertyCard}>
-          {property.media ? (
-            <img src={property.media} alt={property.title} />
-          ) : (
-            <div>No Image Available</div>
-          )}
-          <div className={classes.propertyCardContent}>
-            <h2>{property.title}</h2>
-            <div className={classes.propertyCardTags}>
-              <span>€ {property.totalRent}</span>
-              {property.isSublet && <span>Sublet</span>}
-              {property.petsAllowed && <span>Pets Allowed</span>}
-              {property.smokingAllowed && <span>Smoking Allowed</span>}
-            </div>
-            <p>{property.description.slice(0, 50)}...</p>
-            <Link
-              to={`/property/${property.id}`}
+        <Card key={property.id} withBorder p="md" shadow="sm">
+          <Card.Section>
+            <Image
+              src={property.media}
+              alt={property.title}
               style={{
-                display: "inline-block",
-                backgroundColor: "#d4f8d4",
-                color: "#000000",
-                padding: "0.5rem 1rem",
-                borderRadius: "10px",
-                textDecoration: "none",
-                fontWeight: "bold",
-                transition: "background-color 0.3s ease, color 0.3s ease",
+                width: "100%",
+                height: "200px",
+                objectFit: "cover",
               }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = "#c2edc2"; /* Hover effect */
-                e.target.style.color = "#ffffff";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor =
-                  "#d4f8d4"; /* Reset to original */
-                e.target.style.color = "#000000";
-              }}
-            >
-              View →
-            </Link>
-          </div>
-        </div>
+            />
+          </Card.Section>
+          <Title mt="sm" order={4}>
+            {property.title}
+          </Title>
+          <Flex gap={4} mt="xs">
+            <Badge radius="xs" size="lg">
+              € {property.totalRent}
+            </Badge>
+            {property.isSublet && (
+              <Badge radius="xs" size="lg" color="blue">
+                Sublet
+              </Badge>
+            )}
+            <Flex gap={4} ml="auto">
+              {property.pets && (
+                <Tooltip label="Pets Allowed" position="bottom">
+                  <ActionIcon radius="xs" variant="light">
+                    <IconDog size={16} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              {property.smoking && (
+                <Tooltip label="Smoking Allowed" position="bottom">
+                  <ActionIcon radius="xs" variant="light">
+                    <IconSmoking size={16} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+            </Flex>
+          </Flex>
+          <Text my="sm">{property.description.slice(0, 50)}...</Text>
+
+          <Button
+            mt="auto"
+            variant="light"
+            component={Link}
+            to={`/property/${property.id}`}
+            rightSection={<IconArrowRight size={16} />}
+            justify="space-between"
+          >
+            View Details
+          </Button>
+        </Card>
       ))}
-    </>
+    </SimpleGrid>
   );
 };
 
