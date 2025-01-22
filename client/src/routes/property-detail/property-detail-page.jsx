@@ -3,6 +3,7 @@ import {
   Badge,
   Box,
   Button,
+  Center,
   Container,
   Flex,
   Group,
@@ -15,7 +16,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconCalendar, IconCheck, IconMapPin, IconMessage, IconShare, IconX } from "@tabler/icons-react";
+import { IconCalendar, IconCheck, IconMapPin, IconMessage, IconPhotoOff, IconShare, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useClipboard } from "@mantine/hooks";
 import { Carousel } from "@mantine/carousel";
@@ -56,7 +57,7 @@ const PropertyBooleanStat = ({ label, value }) => {
   );
 };
 
-export const PropertyDetailView = ({ data }) => {
+export const PropertyDetailView = ({ data, isAdmin = false }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const clipboard = useClipboard();
@@ -98,24 +99,36 @@ export const PropertyDetailView = ({ data }) => {
       });
     }
   };
+
+  const showMap = user || isAdmin;
+
   return (
     <Container px={0}>
       <Paper radius="sm" style={{ overflow: "hidden" }}>
-        <Carousel loop height={400} bg="gray.2">
-          {data.media.map((media) => (
-            <Carousel.Slide key={media.id}>
-              <Image
-                src={media.url}
-                alt={media.title}
-                style={{
-                  objectFit: "contain",
-                  width: "100%",
-                  height: "100%",
-                }}
-              />
-            </Carousel.Slide>
-          ))}
-        </Carousel>
+        {data.media.length > 0 ? (
+          <Carousel loop height={400} bg="gray.2">
+            {data.media.map((media) => (
+              <Carousel.Slide key={media.id}>
+                <Image
+                  src={media.url}
+                  alt={media.title}
+                  style={{
+                    objectFit: "contain",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
+              </Carousel.Slide>
+            ))}
+          </Carousel>
+        ) : (
+          <Center h={400} bg="gray.2" c="dimmed">
+            <Stack align="center" gap="xs">
+              <IconPhotoOff size={64} />
+              No images available
+            </Stack>
+          </Center>
+        )}
       </Paper>
       <Paper withBorder p="md" mt="md" shadow="sm">
         <Group gap="xs" justify="space-between">
@@ -131,7 +144,7 @@ export const PropertyDetailView = ({ data }) => {
         </Badge>
 
         <Stack gap={4} mt="sm" c="gray.7">
-          {user && data.address1 && (
+          {showMap && data.address1 && (
             <Group align="center" gap={4}>
               <IconMapPin size={14} />
               <Text size="sm">{data.address1}</Text>
@@ -145,16 +158,18 @@ export const PropertyDetailView = ({ data }) => {
             </Group>
           )}
         </Stack>
-        <Button.Group mt="lg">
-          {user && user.id !== data.creatorId && (
-            <Button variant="outline" size="md" onClick={handleMessageClick} rightSection={<IconMessage size={16} />}>
-              Message
+        {!isAdmin && (
+          <Button.Group mt="lg">
+            {user && user.id !== data.creatorId && (
+              <Button variant="outline" size="md" onClick={handleMessageClick} rightSection={<IconMessage size={16} />}>
+                Message
+              </Button>
+            )}
+            <Button variant="outline" size="md" onClick={handleShareClick} rightSection={<IconShare size={16} />}>
+              Share
             </Button>
-          )}
-          <Button variant="outline" size="md" onClick={handleShareClick} rightSection={<IconShare size={16} />}>
-            Share
-          </Button>
-        </Button.Group>
+          </Button.Group>
+        )}
       </Paper>
       <Paper withBorder p="md" mt="md" shadow="sm">
         <SimpleGrid
@@ -238,7 +253,7 @@ export const PropertyDetailView = ({ data }) => {
           <Title order={4} mb="sm">
             Location
           </Title>
-          {user && data.address1 && (
+          {showMap && data.address1 && (
             <Group align="center" gap={4} mb="xs">
               <IconMapPin size={14} />
               <Text size="sm">{data.address1}</Text>
@@ -246,7 +261,7 @@ export const PropertyDetailView = ({ data }) => {
           )}
           <Box h="100%" style={{ flex: 1, position: "relative" }}>
             <PropertyMap data={data} />
-            {!user && (
+            {!showMap && (
               <div
                 style={{
                   position: "absolute",
