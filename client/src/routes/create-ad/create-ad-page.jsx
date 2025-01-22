@@ -189,7 +189,7 @@ export const CreateAdPage = () => {
   };
 
   return (
-    <Container>
+    <Container px={0}>
       <Title order={2}>Create Property Listing</Title>
       <Stack mt="lg" gap="lg">
         <div>

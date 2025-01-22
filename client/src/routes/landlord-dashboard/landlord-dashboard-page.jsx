@@ -8,7 +8,7 @@ import { useAuth } from "../../lib/auth-context.jsx";
 export const LandlordDashboardPage = () => {
   const navigate = useNavigate();
   const handleNewMessagesClick = () => {
-    navigate("/mymessages");
+    navigate("/messages");
   };
 
   const handleCreateAdClick = () => {

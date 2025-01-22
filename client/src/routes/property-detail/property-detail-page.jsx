@@ -19,12 +19,12 @@ export const PropertyDetail = () => {
   const handleMessageClick = () => {
     if (data && data.creatorId) {
       console.log(data.creatorId);
-      console.log("Navigating to /mymessages with state:", {
+      console.log("Navigating to /messages with state:", {
         propertyId: data.id,
         selectedUserId: data.creatorId,
       });
 
-      navigate(`/mymessages`, {
+      navigate(`/messages`, {
         state: { propertyId: data.id, selectedUserId: data.creatorId },
       });
     } else {

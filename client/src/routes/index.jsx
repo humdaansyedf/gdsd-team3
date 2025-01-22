@@ -1,9 +1,6 @@
 import { Container, Loader } from "@mantine/core";
 import * as React from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
-import { Footer } from "../components/Footer/Footer";
-import { Header } from "../components/Header/Header";
-import { useAuth } from "../lib/auth-context";
 import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
 import { AdminAuthProvider } from "../lib/admin-auth-provider";
 import { AppLayout } from "../components/AppLayout/AppLayout.jsx";
@@ -146,7 +143,7 @@ export const App = () => {
               }
             />
             <Route
-              path="mymessages"
+              path="messages"
               element={
                 <PrivateRoute>
                   <Mymessages />

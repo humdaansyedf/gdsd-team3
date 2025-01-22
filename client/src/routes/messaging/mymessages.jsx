@@ -1,9 +1,23 @@
-import { ActionIcon, Avatar, Container, Group, Paper, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
-import { IconSend } from "@tabler/icons-react";
+import {
+  ActionIcon,
+  Avatar,
+  Center,
+  Container,
+  Group,
+  Paper,
+  ScrollArea,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  UnstyledButton,
+} from "@mantine/core";
+import { IconArrowLeft, IconSend } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import io from "socket.io-client";
 import { useAuth } from "../../lib/auth-context";
+import classes from "./mymessages.module.css";
 
 // Connect to the Socket.IO server
 const socket = io();
@@ -39,7 +53,15 @@ export function Mymessages() {
 
     // Automatically fetch chat history if `selectedUserId` and `activePropertyId` are set
     if (selectedUserId && activePropertyId) {
-      joinRoomIfNotCurrentUser(selectedUserId, activePropertyId);
+      if (auth.user.id !== selectedUserId) {
+        socket.emit("join_room", {
+          propertyId: activePropertyId,
+          currentUserId: auth.user.id,
+          selectedUserId: selectedUserId,
+        });
+      } else {
+        console.log("User clicked themselves; skipping room join.");
+      }
       socket.emit("getChatHistory", {
         propertyId: activePropertyId,
         currentUserId,
@@ -67,20 +89,7 @@ export function Mymessages() {
       socket.off("receive_message", handleReceiveMessage);
       socket.off("chatHistory", handleChatHistory);
     };
-  }, [auth?.user?.id, activePropertyId, selectedUserId, socket]);
-
-  //check usage
-  const joinRoomIfNotCurrentUser = (selectedUserId, activePropertyId) => {
-    if (auth.user.id !== selectedUserId) {
-      socket.emit("join_room", {
-        propertyId: activePropertyId,
-        currentUserId: auth.user.id,
-        selectedUserId: selectedUserId,
-      });
-    } else {
-      console.log("User clicked themselves; skipping room join.");
-    }
-  };
+  }, [auth?.user?.id, activePropertyId, selectedUserId]);
 
   const handleUserClick = (user) => {
     console.log("handleUserClick: selected user", user);
@@ -120,65 +129,73 @@ export function Mymessages() {
     setNewMessage("");
   };
 
+  const selectedUser = users.find((user) => user.id === selectedUserId);
+
   return (
-    <Container fluid my={20} style={{ display: "flex", gap: "20px" }}>
-      {/* Left User List Section */}
-      <Paper withBorder shadow="md" p={10} radius="md" style={{ width: "22%", minWidth: "220px" }}>
-        <Stack spacing="sm">
-          {users.map((user, index) => (
-            <Paper
-              key={index}
-              withBorder
-              p="sm"
-              radius={20}
-              shadow="xs"
-              style={{
-                backgroundColor: "#e8f5e9",
-                width: "100%",
-                cursor: "pointer", // Change cursor to pointer
-                transition: "transform 0.3s ease, background-color 0.3s ease", // Smooth animation for scaling and background
-              }}
-              onClick={() => handleUserClick(user)}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#c8e6c9"; // Hover background color
-                e.currentTarget.style.transform = "scale(1.05)"; // Slightly enlarge the card
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#e8f5e9"; // Revert to original background color
-                e.currentTarget.style.transform = "scale(1)"; // Reset size
-              }}
-            >
-              <Group spacing="sm" noWrap>
-                <Avatar radius="xl" />
-                <Stack spacing={0} style={{ flex: 1 }}>
-                  <Text size="sm" weight={500}>
-                    {user.name} {/* Updated with username */}
-                  </Text>
-                  <Text
-                    size="xs"
-                    color="dimmed"
-                    style={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                    title={user.lastMessage} // Tooltip to show the full message
-                  >
-                    {user.lastMessage}
-                  </Text>
-                </Stack>
-              </Group>
-            </Paper>
-          ))}
-        </Stack>
+    <Container fluid px={0} className={classes.chatContainer} data-active={selectedUserId !== null}>
+      <Paper withBorder shadow="sm" className={classes.chatLeft}>
+        {users.map((user, index) => (
+          <UnstyledButton
+            className={classes.chatListButton}
+            key={index}
+            onClick={() => handleUserClick(user)}
+            data-active={selectedUserId === user.id}
+          >
+            <Group p="xs" gap="xs" wrap="nowrap">
+              <Avatar />
+              <Stack
+                gap={0}
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <Text size="sm" weight={500}>
+                  {user.name}
+                </Text>
+                <Text
+                  size="xs"
+                  c="dimmed"
+                  style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={user.lastMessage}
+                >
+                  {user.lastMessage}
+                </Text>
+              </Stack>
+            </Group>
+          </UnstyledButton>
+        ))}
       </Paper>
 
-      {/* Right Messaging Section */}
-      <Paper withBorder shadow="md" radius="md" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        {/* Messages */}
-        <ScrollArea style={{ flex: 1, padding: "10px 20px" }}>
-          <Stack>
-            {!selectedUserId && <Text align="center">Select a user to start chatting</Text>}
+      <Paper withBorder shadow="sm" className={classes.chatRight}>
+        {!selectedUserId && (
+          <Center h="100%">
+            <Text align="center">Select a user to start chatting</Text>
+          </Center>
+        )}
+        {selectedUserId && (
+          <Group p="sm" gap="xs" style={{ borderBottom: "1px solid #e5e5e5" }}>
+            <ActionIcon
+              variant="subtle"
+              color="green"
+              size="lg"
+              onClick={() => {
+                setSelectedUserId(null);
+                setMessages([]);
+              }}
+            >
+              <IconArrowLeft />
+            </ActionIcon>
+            <Title order={3}>{selectedUser.name}</Title>
+          </Group>
+        )}
+        <ScrollArea>
+          <Stack p="xs">
             {messages.map((message, index) => (
               <Group
                 key={index}
@@ -188,15 +205,7 @@ export function Mymessages() {
                 }}
               >
                 {message.align === "left" && <Avatar radius="xl" />}
-                <Paper
-                  shadow="sm"
-                  p="md"
-                  radius="md"
-                  style={{
-                    backgroundColor: message.align === "right" ? "#d4f8d4" : "#f5f5f5",
-                    maxWidth: "70%",
-                  }}
-                >
+                <Paper withBorder p="xs" bg={message.align === "right" ? "green.1" : "gray.1"} maw="70%">
                   <Text size="sm">{message.content}</Text>
                 </Paper>
               </Group>
@@ -204,9 +213,8 @@ export function Mymessages() {
           </Stack>
         </ScrollArea>
 
-        {/* Input Section */}
         {selectedUserId && (
-          <Group p="md" style={{ borderTop: "1px solid #e5e5e5" }}>
+          <Group mt="auto" p="sm" gap="xs" style={{ borderTop: "1px solid #e5e5e5" }}>
             <TextInput
               placeholder="Type your message..."
               value={newMessage}
@@ -218,7 +226,7 @@ export function Mymessages() {
               }}
               style={{ flex: 1 }}
             />
-            <ActionIcon variant="filled" color="green" size="lg" radius="md" onClick={handleSendMessage}>
+            <ActionIcon variant="filled" color="green" size="lg" onClick={handleSendMessage}>
               <IconSend />
             </ActionIcon>
           </Group>

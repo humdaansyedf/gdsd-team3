@@ -71,7 +71,7 @@ export function Header() {
         <Group ml={50} gap={10} className={classes.links} visibleFrom="sm">
           {user ? (
             <>
-              <ActionIcon size="md" variant="subtle" component={Link} to="/mymessages">
+              <ActionIcon size="md" variant="subtle" component={Link} to="/messages">
                 <IconMessage />
               </ActionIcon>
 
