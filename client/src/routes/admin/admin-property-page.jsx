@@ -1,18 +1,22 @@
 import { useParams } from "react-router-dom";
 import { useAdminProperty, useAdminPropertyUpdateStatus } from "./admin-queries";
-import { Box, Group, Paper, Text, Title, Image, SimpleGrid, Badge, Divider, List, Button } from "@mantine/core";
+import { Box, Group, Text, Title, SimpleGrid, Badge, Button, Container } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
-import { Carousel } from "@mantine/carousel";
 import { getBadgeColor } from "./admin-utils";
+import { PropertyDetailView } from "../property-detail/property-detail-page";
 
 const AdminUpdateStatus = ({ id, status }) => {
   const updateStatusMutation = useAdminPropertyUpdateStatus(id);
 
+  if (!["ACTIVE", "REJECTED", "PENDING"].includes(status)) {
+    return null;
+  }
+
   return (
-    <Group>
+    <SimpleGrid cols={2} spacing="xs">
       {status !== "ACTIVE" && (
         <Button
-          size="xl"
+          size="lg"
           color="green"
           loading={updateStatusMutation.isPending}
           onClick={() => updateStatusMutation.mutate("ACTIVE")}
@@ -23,7 +27,7 @@ const AdminUpdateStatus = ({ id, status }) => {
       )}
       {status !== "REJECTED" && (
         <Button
-          size="xl"
+          size="lg"
           color="red"
           loading={updateStatusMutation.isPending}
           onClick={() => updateStatusMutation.mutate("REJECTED")}
@@ -32,7 +36,7 @@ const AdminUpdateStatus = ({ id, status }) => {
           REJECT
         </Button>
       )}
-    </Group>
+    </SimpleGrid>
   );
 };
 
@@ -55,61 +59,16 @@ export const AdminProperty = () => {
 
   return (
     <Box py="lg">
-      <Group justify="space-between" align="start" mb="md">
+      <Group justify="space-between" align="center" mb="md">
         <Title order={1}>Admin Dashboard</Title>
-        <AdminUpdateStatus id={id} status={propertyQuery.data.status} />
+        <Badge mr="auto" radius="sm" variant="light" size="xl" color={getBadgeColor(propertyQuery.data.status)}>
+          {propertyQuery.data.status}
+        </Badge>
       </Group>
-      <Box>
-        <Paper withBorder p="sm">
-          <SimpleGrid cols={2} spacing="md">
-            <Carousel loop height={300}>
-              {propertyQuery.data.media.map((media) => (
-                <Carousel.Slide key={media.id}>
-                  <Image src={media.url} alt={media.title} />
-                </Carousel.Slide>
-              ))}
-            </Carousel>
-            <Box>
-              <Group justify="space-between" align="start">
-                <Title order={2}>{propertyQuery.data.title}</Title>
-                <Group justify="end" align="start" gap="xs">
-                  {propertyQuery.data.isSublet && (
-                    <Badge radius="xs" size="xl" color="blue">
-                      Sublet
-                    </Badge>
-                  )}
-                  <Badge radius="xs" size="xl" color={getBadgeColor(propertyQuery.data.status)}>
-                    {propertyQuery.data.status}
-                  </Badge>
-                </Group>
-              </Group>
-
-              <Text>Total rent: €{propertyQuery.data.totalRent}</Text>
-              <Text>Cold rent: €{propertyQuery.data.coldRent}</Text>
-              <Text>Additional costs: €{propertyQuery.data.additionalCosts}</Text>
-              <Text>
-                Available From:
-                {new Date(propertyQuery.data.availableFrom).toLocaleDateString("en-GB")}
-              </Text>
-            </Box>
-          </SimpleGrid>
-          <Divider my="lg" />
-          <Title order={3}>Description</Title>
-          <Text>{propertyQuery.data.description}</Text>
-          <Divider my="lg" />
-
-          <Title order={3}>Amenities</Title>
-          <List>
-            <List.Item>Number of Rooms: {propertyQuery.data.numberOfRooms}</List.Item>
-            <List.Item>Number of Baths: {propertyQuery.data.numberOfBaths}</List.Item>
-            <List.Item>
-              Heating included: {propertyQuery.data.heatingIncludedInAdditionalCosts ? "Yes" : "No"}
-            </List.Item>
-            <List.Item>Pets Allowed: {propertyQuery.data.petsAllowed ? "Yes" : "No"}</List.Item>
-            <List.Item>Smoking Allowed: {propertyQuery.data.smokingAllowed ? "Yes" : "No"}</List.Item>
-          </List>
-        </Paper>
-      </Box>
+      <PropertyDetailView data={propertyQuery.data} isAdmin />
+      <Container my="xl" px={0}>
+        <AdminUpdateStatus id={id} status={propertyQuery.data.status} />
+      </Container>
     </Box>
   );
 };

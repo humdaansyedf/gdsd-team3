@@ -5,17 +5,6 @@ import { deleteImageFromS3 } from "../lib/s3.js";
 
 export const creatorRouter = express.Router();
 
-creatorRouter.use((req, res, next) => {
-  // Check if the user is a landlord
-  if (req.user.type !== "LANDLORD" && req.user.type !== "STUDENT") {
-    return res.status(403).json({
-      message: "Forbidden",
-    });
-  }
-
-  next();
-});
-
 const propertySchema = z.object({
   // status and type
   status: z.enum(["DRAFT", "PENDING"]),
@@ -89,8 +78,7 @@ creatorRouter.post("/property", async (req, res) => {
 
   try {
     const { media, ...propertyData } = result.data;
-    const totalRent =
-      propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
     const availableFrom = new Date(propertyData.availableFrom);
 
     const isSublet = req.user.type === "STUDENT";
@@ -183,7 +171,7 @@ creatorRouter.post("/property/search", async (req, res) => {
           property.media.length > 0
             ? property.media[0].url
             : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
-      })),
+      }))
     );
   } catch (error) {
     console.error("Error fetching properties:", error);
@@ -195,22 +183,30 @@ creatorRouter.post("/property/search", async (req, res) => {
 creatorRouter.get("/dashboard/stats", async (req, res) => {
   const user = req.user;
 
-  const allAdsCount = await prisma.property.count({
-    where: {
-      creatorId: user.id,
-    },
-  });
-
-  const activeAdsCount = await prisma.property.count({
-    where: {
-      creatorId: user.id,
-      status: "ACTIVE",
-    },
-  });
+  const [allAdsCount, activeAdsCount, pendingAdsCount] = await Promise.all([
+    prisma.property.count({
+      where: {
+        creatorId: user.id,
+      },
+    }),
+    prisma.property.count({
+      where: {
+        creatorId: user.id,
+        status: "ACTIVE",
+      },
+    }),
+    prisma.property.count({
+      where: {
+        creatorId: user.id,
+        status: "PENDING",
+      },
+    }),
+  ]);
 
   res.json({
     allAds: allAdsCount,
     activeAds: activeAdsCount,
+    pendingAds: pendingAdsCount,
   });
 });
 
