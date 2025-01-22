@@ -183,22 +183,30 @@ creatorRouter.post("/property/search", async (req, res) => {
 creatorRouter.get("/dashboard/stats", async (req, res) => {
   const user = req.user;
 
-  const allAdsCount = await prisma.property.count({
-    where: {
-      creatorId: user.id,
-    },
-  });
-
-  const activeAdsCount = await prisma.property.count({
-    where: {
-      creatorId: user.id,
-      status: "ACTIVE",
-    },
-  });
+  const [allAdsCount, activeAdsCount, pendingAdsCount] = await Promise.all([
+    prisma.property.count({
+      where: {
+        creatorId: user.id,
+      },
+    }),
+    prisma.property.count({
+      where: {
+        creatorId: user.id,
+        status: "ACTIVE",
+      },
+    }),
+    prisma.property.count({
+      where: {
+        creatorId: user.id,
+        status: "PENDING",
+      },
+    }),
+  ]);
 
   res.json({
     allAds: allAdsCount,
     activeAds: activeAdsCount,
+    pendingAds: pendingAdsCount,
   });
 });
 

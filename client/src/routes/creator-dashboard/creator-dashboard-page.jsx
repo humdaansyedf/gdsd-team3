@@ -1,154 +1,200 @@
-import { Alert, Badge, Loader } from "@mantine/core";
-import classes from "./creator-dashboard-style.module.css";
-import { useAdStats, useLandlordAds } from "./creator-dashboard-queries.jsx";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Container,
+  Flex,
+  Group,
+  Image,
+  Loader,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+import { IconArrowRight, IconMessage, IconPlus } from "@tabler/icons-react";
+import { useCreatorAds, useCreatorAdStats } from "./creator-dashboard-queries.jsx";
+import { Link } from "react-router-dom";
 import DashboardFiltersSection from "./creator-dashboard-filters-section.jsx";
 import { useAuth } from "../../lib/auth-context.jsx";
+import { getBadgeColor } from "../admin/admin-utils.jsx";
+
+const StudentDashboard = ({ adsQuery }) => {
+  return (
+    <Container px={0}>
+      <Stack>
+        <Paper p="md" withBorder shadow="sm" bg="gray.0">
+          <Title order={2}>Student Dashboard</Title>
+          <Text mt="sm">Welcome to the student dashboard. Here you can list your property for rent as a sublet</Text>
+
+          <Group gap="xs" mt="lg">
+            {adsQuery.data.length === 0 && (
+              <Button size="lg" component={Link} to="/property/new" rightSection={<IconPlus />}>
+                Create Ad
+              </Button>
+            )}
+            <Button size="lg" variant="light" component={Link} to="/messages" rightSection={<IconMessage />}>
+              Messages
+            </Button>
+          </Group>
+          {adsQuery.data.length > 0 && (
+            <Alert mt="xs" color="blue">
+              You have already listed a property as sublet. Archive it to list another
+            </Alert>
+          )}
+        </Paper>
+        {adsQuery.error && <Alert color="red">Error Loading Ad</Alert>}
+        {adsQuery.data.length > 0 ? (
+          <SimpleGrid
+            cols={{
+              base: 1,
+              xs: 2,
+              md: 3,
+            }}
+            gap="md"
+          >
+            {adsQuery.data.map((property) => {
+              return <PropertyCard key={property.id} property={property} />;
+            })}
+          </SimpleGrid>
+        ) : (
+          <Alert color="gray">No Ad Yet</Alert>
+        )}
+      </Stack>
+    </Container>
+  );
+};
+
+const PropertyCard = ({ property }) => {
+  return (
+    <Card withBorder p="md" shadow="sm">
+      <Card.Section>
+        <Image
+          src={property.media}
+          alt={property.title}
+          style={{
+            width: "100%",
+            height: "200px",
+            objectFit: "cover",
+          }}
+        />
+      </Card.Section>
+      <Title mt="sm" order={4}>
+        {property.title}
+      </Title>
+      <Flex justify="space-between" gap={4} mt="xs">
+        <Badge radius="xs" size="lg">
+          € {property.totalRent}
+        </Badge>
+        <Badge variant="light" radius="xs" size="lg" color={getBadgeColor(property.status)}>
+          {property.status}
+        </Badge>
+      </Flex>
+      <Text my="sm">{property.description.slice(0, 50)}...</Text>
+
+      <Button
+        mt="auto"
+        variant="light"
+        component={Link}
+        to={`/property/${property.id}/edit`}
+        rightSection={<IconArrowRight size={16} />}
+        justify="space-between"
+      >
+        Edit
+      </Button>
+    </Card>
+  );
+};
+
+const LandlordDashboard = ({ adsQuery, adStatsQuery }) => {
+  return (
+    <Container px={0}>
+      <Stack>
+        <Paper p="md" withBorder shadow="sm" bg="gray.0">
+          <Title order={2}>Landlord Dashboard</Title>
+          {adStatsQuery.error && <Alert color="red">Error Loading Stats</Alert>}
+          {adStatsQuery.data && (
+            <SimpleGrid
+              mt="xl"
+              cols={{
+                base: 1,
+                sm: 3,
+              }}
+            >
+              <Paper p="md" withBorder shadow="none" bg="white">
+                <Flex justify="space-between">
+                  <Title order={4}>Ads Created</Title>
+                  <Text size="3rem" c="blue">
+                    {adStatsQuery.data.allAds || 0}
+                  </Text>
+                </Flex>
+              </Paper>
+              <Paper p="md" withBorder shadow="none" bg="white">
+                <Flex justify="space-between">
+                  <Title order={4}>Ads Active</Title>
+                  <Text size="3rem" c="blue">
+                    {adStatsQuery.data.activeAds || 0}
+                  </Text>
+                </Flex>{" "}
+              </Paper>
+              <Paper p="md" withBorder shadow="none" bg="white">
+                <Flex justify="space-between">
+                  <Title order={4}>Ads Pending</Title>
+                  <Text size="3rem" c="blue">
+                    {adStatsQuery.data.pendingAds || 0}
+                  </Text>
+                </Flex>{" "}
+              </Paper>
+            </SimpleGrid>
+          )}
+          <Group gap="xs" mt="xl">
+            <Button size="lg" component={Link} to="/property/new" rightSection={<IconPlus />}>
+              Create Ad
+            </Button>
+            <Button size="lg" variant="light" component={Link} to="/messages" rightSection={<IconMessage />}>
+              Messages
+            </Button>
+          </Group>
+        </Paper>
+        <DashboardFiltersSection />
+        {adsQuery.error && <Alert color="red">Error Loading Ads</Alert>}
+        {adsQuery.data.length > 0 ? (
+          <SimpleGrid
+            cols={{
+              base: 1,
+              xs: 2,
+              md: 3,
+            }}
+            gap="md"
+          >
+            {adsQuery.data.map((property) => {
+              return <PropertyCard key={property.id} property={property} />;
+            })}
+          </SimpleGrid>
+        ) : (
+          <Alert color="gray">No Ads Yet</Alert>
+        )}
+      </Stack>
+    </Container>
+  );
+};
 
 export const CreatorDashboardPage = () => {
-  const navigate = useNavigate();
-  const handleNewMessagesClick = () => {
-    navigate("/messages");
-  };
-
-  const handleCreateAdClick = () => {
-    navigate("/property/new");
-  };
-
-  const { data: adStats, isLoading } = useAdStats();
-  const searchQuery = useLandlordAds();
   const { user } = useAuth();
+  const adsQuery = useCreatorAds();
+  const adStatsQuery = useCreatorAdStats();
 
   const isLandlord = user?.type === "LANDLORD";
 
-  return (
-    <>
-      <div className={classes.container}>
-        {isLandlord && <DashboardFiltersSection />}
-        <div className={classes.mainContent}>
-          {isLandlord && (
-            <div className={classes.dashboardSummary}>
-              <div className={classes.summaryHeader}>
-                <h2>Welcome to Dashboard!</h2>
-                <p>Your Ad details:</p>
-              </div>
-              <div className={classes.metricsGrid}>
-                <div className={classes.metricCard}>
-                  <h4>Ads Created</h4>
-                  <p>{isLoading ? <Loader size="sm" color="blue" /> : adStats?.allAds || 0}</p>
-                </div>
-                <div className={classes.metricCard}>
-                  <h4>Ads Active</h4>
-                  <p>{isLoading ? <Loader size="sm" color="blue" /> : adStats?.activeAds || 0}</p>
-                </div>
-                <div className={classes.metricCard}>
-                  <h4>New Requests</h4>
-                  <p>0</p>
-                </div>
-              </div>
-              <div className={classes.actionButtons}>
-                <button onClick={handleCreateAdClick}>Create New Listing</button>
-                <button>Documents</button>
-                <button onClick={handleNewMessagesClick}>
-                  New Messages {/*<span className={classes.badge}>6</span>*/}
-                </button>
-              </div>
-            </div>
-          )}
+  if (adsQuery.isLoading || adStatsQuery.isLoading) {
+    return <Loader />;
+  }
 
-          {!isLandlord && (
-            <div className={classes.dashboardSummary}>
-              <div className={classes.summaryHeader}>
-                <h2>Welcome to your Sublet Dashboard!</h2>
-                <p>Here you can list your rented property as a sublet</p>
-                {searchQuery.data?.length > 0 && (
-                  <Alert color="yellow">
-                    You have already listed your property as a sublet. You can not create more
-                  </Alert>
-                )}
-              </div>
-              <div className={classes.actionButtons}>
-                {searchQuery.data && searchQuery.data.length === 0 && (
-                  <button onClick={handleCreateAdClick}>Create New Listing</button>
-                )}
-                <button onClick={handleNewMessagesClick}>
-                  New Messages {/*<span className={classes.badge}>6</span>*/}
-                </button>
-              </div>
-            </div>
-          )}
+  if (isLandlord) {
+    return <LandlordDashboard adsQuery={adsQuery} adStatsQuery={adStatsQuery} />;
+  }
 
-          <div className={classes.container}>
-            <div className={classes.resultsSection}>
-              {searchQuery.isLoading && <p>Loading...</p>}
-              {searchQuery.error && <p>Error: {searchQuery.error.message}</p>}
-
-              {searchQuery.data &&
-                searchQuery.data.map((property) => {
-                  if (!property) return null;
-                  return (
-                    <div key={property.id} className={classes.propertyCard}>
-                      {property.media ? (
-                        <img src={property.media} alt={property.title} />
-                      ) : (
-                        <div>No Image Available</div>
-                      )}
-
-                      <div className={classes.propertyCardContent}>
-                        <div className={classes.cardHeader}>
-                          <h2>{property.title}</h2>
-                          <Badge
-                            color={
-                              property.status === "ACTIVE"
-                                ? "green"
-                                : property.status === "PENDING"
-                                ? "yellow"
-                                : property.status === "DRAFT"
-                                ? "gray"
-                                : "red" /* For REJECTED */
-                            }
-                            className={classes.statusBadge}
-                          >
-                            {property.status}
-                          </Badge>
-                        </div>
-                        <div className={classes.propertyCardTags}>
-                          <span>€ {property.totalRent}</span>
-                          {property.petsAllowed && <span>Pets Allowed</span>}
-                          {property.smokingAllowed && <span>Smoking Allowed</span>}
-                        </div>
-                        <p>{property.description.slice(0, 50)}...</p>
-                        <Link
-                          to={`/property/${property.id}`}
-                          style={{
-                            display: "inline-block",
-                            backgroundColor: "#d4f8d4",
-                            color: "#000000",
-                            padding: "0.5rem 1rem",
-                            borderRadius: "10px",
-                            textDecoration: "none",
-                            fontWeight: "bold",
-                            transition: "background-color 0.3s ease, color 0.3s ease",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = "#c2edc2"; /* Hover effect */
-                            e.target.style.color = "#ffffff";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = "#d4f8d4"; /* Reset to original */
-                            e.target.style.color = "#000000";
-                          }}
-                        >
-                          Edit →
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+  return <StudentDashboard adsQuery={adsQuery} />;
 };
