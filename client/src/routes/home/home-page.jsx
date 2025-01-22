@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Button, Center, Flex, SegmentedControl, Stack } from "@mantine/core";
-import { IconList, IconMap, IconAdjustments, IconAdjustmentsOff } from "@tabler/icons-react";
+import { IconMap, IconAdjustments, IconAdjustmentsOff, IconLayoutGrid } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { usePropertySearch } from "./home-queries";
 import FiltersSection from "./filters-section";
 import MapView from "./map-view";
-import ListView from "./list-view";
+import GridView from "./grid-view";
 
 export const Home = () => {
-  const [view, setView] = useState("list");
+  const [view, setView] = useState("grid");
   const searchQuery = usePropertySearch();
   const [showMobileFilters, { toggle: toggleMobileFilters }] = useDisclosure(false);
   const [showDesktopFilters, { toggle: toggleDesktopFilters }] = useDisclosure(true);
@@ -48,11 +48,11 @@ export const Home = () => {
                 {
                   label: (
                     <Center style={{ gap: 10 }}>
-                      <IconList size={16} />
-                      <span>List View</span>
+                      <IconLayoutGrid size={16} />
+                      <span>Grid View</span>
                     </Center>
                   ),
-                  value: "list",
+                  value: "grid",
                 },
                 {
                   label: (
@@ -76,7 +76,7 @@ export const Home = () => {
                 <MapView properties={searchQuery.data} />
               </div>
             ) : (
-              <ListView properties={searchQuery.data} />
+              <GridView properties={searchQuery.data} />
             ))}
         </Stack>
       </Flex>

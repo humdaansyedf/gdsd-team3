@@ -2,13 +2,10 @@ import { useState } from "react";
 import { Button, Select, NumberInput, SimpleGrid } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import classes from "./creator-dashboard-style.module.css";
-import { useLandlordAds } from "./creator-dashboard-queries.jsx";
 import { useSearchParams } from "react-router-dom";
 
 const DashboardFiltersSection = () => {
-  const { data: ads, isLoading, error } = useLandlordAds();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const initialValues = {
     status: searchParams.get("status") || "All",
     minPrice: parseInt(searchParams.get("minPrice")) || 0,
@@ -19,7 +16,6 @@ const DashboardFiltersSection = () => {
     mode: "uncontrolled",
     initialValues,
   });
-  const searchQuery = useLandlordAds();
   const handleSubmit = (values) => {
     const params = new URLSearchParams();
     if (values.status !== "All") params.set("status", values.status);

@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 
-// Fetch Landlord Ad Stats
-export const useAdStats = () => {
+// Fetch creator Ad Stats
+export const useCreatorAdStats = () => {
   return useQuery({
-    queryKey: ["landlordAdStats"],
+    queryKey: ["creatorAdStats"],
     queryFn: async () => {
       const response = await fetch(`/api/dashboard/stats`, {
         method: "GET",
@@ -20,8 +20,9 @@ export const useAdStats = () => {
     refetchInterval: 300000,
   });
 };
-// Fetch Landlord Ads
-export const useLandlordAds = () => {
+
+// Fetch creator Ads
+export const useCreatorAds = () => {
   const [searchParams] = useSearchParams();
 
   // Extract filters from searchParams
@@ -33,7 +34,7 @@ export const useLandlordAds = () => {
   };
 
   return useQuery({
-    queryKey: ["landlordAds", filters], // Include filters in the query key
+    queryKey: ["creatorAds", { filters }], // Include filters in the query key
     queryFn: async () => {
       const response = await fetch(`/api/property/search`, {
         method: "POST",
