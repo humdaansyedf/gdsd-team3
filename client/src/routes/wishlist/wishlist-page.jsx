@@ -1,6 +1,7 @@
 import { useAuth } from "../../lib/auth-context";
 import { useWishlist } from "./wishlist-queries";
-import ListView from "../home/list-view";
+import GridView from "../home/grid-view";
+import { Alert, Title } from "@mantine/core";
 
 export const WishlistPage = () => {
   const { user, isLoading } = useAuth();
@@ -13,13 +14,16 @@ export const WishlistPage = () => {
   }
 
   return (
-    <div>
-      <h2>Your Wishlist</h2>
+    <>
+      <Title order={2} mb="lg">
+        Your Wishlist
+      </Title>
+
       {wishlist.length === 0 ? (
-        <p>No wishlisted properties</p>
+        <Alert color="gray">No wishlisted properties</Alert>
       ) : (
-        <ListView properties={wishlist} />
+        <GridView properties={wishlist} />
       )}
-    </div>
+    </>
   );
 };

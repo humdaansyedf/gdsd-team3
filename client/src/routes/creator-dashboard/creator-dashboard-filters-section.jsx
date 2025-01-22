@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { Button, Select, NumberInput, SimpleGrid, Paper, Flex, Title, Group, Box } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import classes from "./creator-dashboard-style.module.css";
 import { useSearchParams } from "react-router-dom";
 
 const DashboardFiltersSection = () => {

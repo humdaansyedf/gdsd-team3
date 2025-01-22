@@ -64,10 +64,7 @@ app.use("/api", authRouter, publicPropertyRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use("/api", propertyRouter, fileRouter, creatorRouter);
-
-//wishlist routes
-app.use("/api", wishlistRouter);
+app.use("/api", propertyRouter, fileRouter, creatorRouter, wishlistRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {

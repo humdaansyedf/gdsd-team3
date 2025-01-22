@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ActionIcon, SimpleGrid, Badge, Button, Card, Flex, Image, Text, Title, Tooltip } from "@mantine/core";
 import { IconArrowRight, IconDog, IconSmoking } from "@tabler/icons-react";
+import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
 
 const PropertyCard = ({ property }) => {
   return (
@@ -43,6 +44,7 @@ const PropertyCard = ({ property }) => {
               </ActionIcon>
             </Tooltip>
           )}
+          <WishlistButton propertyId={property.id} />
         </Flex>
       </Flex>
       <Text my="sm">{property.description.slice(0, 50)}...</Text>

@@ -16,7 +16,8 @@ export const WishlistButton = ({ propertyId }) => {
   const toggleWishlist = () => {
     if (isWishlisted) {
       removeFromWishlist(propertyId, {
-        onSuccess: () => notifications.show({ title: "Removed", message: "Property removed from wishlist", color: "red" }),
+        onSuccess: () =>
+          notifications.show({ title: "Removed", message: "Property removed from wishlist", color: "red" }),
       });
     } else {
       addToWishlist(propertyId, {
@@ -29,7 +30,7 @@ export const WishlistButton = ({ propertyId }) => {
 
   return (
     <ActionIcon onClick={toggleWishlist} variant="subtle">
-      {isWishlisted ? <IconHeartFilled color="red" /> : <IconHeart />}
+      {isWishlisted ? <IconHeartFilled color="red" size={16} /> : <IconHeart size={16} />}
     </ActionIcon>
   );
 };

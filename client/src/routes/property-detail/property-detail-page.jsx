@@ -134,13 +134,13 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
       <Paper withBorder p="md" mt="md" shadow="sm">
         <Group gap="xs" justify="space-between">
           <Title order={2}>{data.title}</Title>
-          <WishlistButton propertyId={data.id} />
 
           {data.isSublet && (
-            <Badge variant="light" color="blue" size="lg" radius="sm">
+            <Badge variant="light" color="blue" size="lg" radius="sm" ml="auto">
               Sublet Property
             </Badge>
           )}
+          <WishlistButton propertyId={data.id} />
         </Group>
         <Badge variant="light" size="xl" radius="sm" mt="sm">
           {data.totalRent} €
