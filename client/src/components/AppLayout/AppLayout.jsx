@@ -1,6 +1,6 @@
 import { Anchor, AppShell, Burger, Group, Button, TextInput, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLayoutGrid, IconMessage, IconUserCircle, IconSearch } from "@tabler/icons-react";
+import { IconLayoutGrid, IconMessage, IconUserCircle, IconSearch, IconHeart } from "@tabler/icons-react";
 
 import classes from "./AppLayout.module.css";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -35,7 +35,7 @@ export function AppLayout() {
               <Anchor component={Link} to="/">
                 NeuAnfang
               </Anchor>
-              <Group ml="xl" gap="xs" visibleFrom="sm">
+              <Group gap="xs" visibleFrom="sm">
                 <TextInput
                   placeholder="Search"
                   size="xs"
@@ -65,6 +65,15 @@ export function AppLayout() {
                       leftSection={<IconMessage size={16} />}
                     >
                       Messages
+                    </Button>
+                    <Button
+                      component={Link}
+                      variant="subtle"
+                      size="compact-sm"
+                      to="/wishlist"
+                      leftSection={<IconHeart size={16} />}
+                    >
+                      Wishlist
                     </Button>
                     <Button
                       component={Link}
