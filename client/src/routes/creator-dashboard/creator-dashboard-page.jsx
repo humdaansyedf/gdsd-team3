@@ -1,11 +1,11 @@
 import { Alert, Badge, Loader } from "@mantine/core";
-import classes from "./landlord-dashboard-style.module.css";
-import { useAdStats, useLandlordAds } from "./landlord-dashboard-queries.jsx";
+import classes from "./creator-dashboard-style.module.css";
+import { useAdStats, useLandlordAds } from "./creator-dashboard-queries.jsx";
 import { Link, useNavigate } from "react-router-dom";
-import DashboardFiltersSection from "./landlord-dashboard-filters-section.jsx";
+import DashboardFiltersSection from "./creator-dashboard-filters-section.jsx";
 import { useAuth } from "../../lib/auth-context.jsx";
 
-export const LandlordDashboardPage = () => {
+export const CreatorDashboardPage = () => {
   const navigate = useNavigate();
   const handleNewMessagesClick = () => {
     navigate("/messages");

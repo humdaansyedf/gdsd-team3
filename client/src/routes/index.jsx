@@ -8,9 +8,9 @@ import { AppLayout } from "../components/AppLayout/AppLayout.jsx";
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
 const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
 const Home = React.lazy(() => import("./home/home-page").then((mod) => ({ default: mod.Home })));
-const LandlordDashboardPage = React.lazy(() =>
-  import("./landlord-dashboard/landlord-dashboard-page").then((mod) => ({
-    default: mod.LandlordDashboardPage,
+const CreatorDashboardPage = React.lazy(() =>
+  import("./creator-dashboard/creator-dashboard-page").then((mod) => ({
+    default: mod.CreatorDashboardPage,
   }))
 );
 const CreateAdPage = React.lazy(() =>
@@ -49,30 +49,6 @@ const AppLoader = () => {
     </div>
   );
 };
-
-// const AppLayout = () => {
-//   const { isLoading } = useAuth();
-
-//   return (
-//     <>
-//       <div className="disclaimer">
-//         Fulda University of Applied Sciences Software Engineering Project, Fall
-//         2024. FOR DEMONSTRATION ONLY.
-//       </div>
-//       {isLoading ? (
-//         <AppLoader />
-//       ) : (
-//         <>
-//           <Header />
-//           <Container fluid>
-//             <Outlet />
-//           </Container>
-//           <Footer />
-//         </>
-//       )}
-//     </>
-//   );
-// };
 
 const NotFound = () => {
   return (
@@ -130,7 +106,7 @@ export const App = () => {
               path="dashboard"
               element={
                 <PrivateRoute>
-                  <LandlordDashboardPage />
+                  <CreatorDashboardPage />
                 </PrivateRoute>
               }
             />

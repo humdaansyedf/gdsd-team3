@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Button, Select, NumberInput, SimpleGrid } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import classes from "./landlord-dashboard-style.module.css";
-import { useLandlordAds } from "./landlord-dashboard-queries.jsx";
+import classes from "./creator-dashboard-style.module.css";
+import { useLandlordAds } from "./creator-dashboard-queries.jsx";
 import { useSearchParams } from "react-router-dom";
 
 const DashboardFiltersSection = () => {
@@ -32,21 +32,13 @@ const DashboardFiltersSection = () => {
     <aside className={classes.filtersSection}>
       <div className={classes.filtersHeader}>
         <h2>Filters</h2>
-        <Button
-          size="compact-xs"
-          color="gray"
-          type="button"
-          onClick={() => setShowFilters((prev) => !prev)}
-        >
+        <Button size="compact-xs" color="gray" type="button" onClick={() => setShowFilters((prev) => !prev)}>
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
       </div>
 
       {showFilters && (
-        <form
-          className={classes.filters}
-          onSubmit={form.onSubmit((values) => handleSubmit(values))}
-        >
+        <form className={classes.filters} onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <div className={classes.filter}>
             <h4>Status:</h4>
             <Select
@@ -65,20 +57,8 @@ const DashboardFiltersSection = () => {
           <div className={classes.filter}>
             <h4>Price Range:</h4>
             <SimpleGrid cols={2} spacing="xs">
-              <NumberInput
-                placeholder="Min. Rent"
-                min={0}
-                max={5000}
-                step={50}
-                {...form.getInputProps("minPrice")}
-              />
-              <NumberInput
-                placeholder="Max. Rent"
-                min={0}
-                max={5000}
-                step={50}
-                {...form.getInputProps("maxPrice")}
-              />
+              <NumberInput placeholder="Min. Rent" min={0} max={5000} step={50} {...form.getInputProps("minPrice")} />
+              <NumberInput placeholder="Max. Rent" min={0} max={5000} step={50} {...form.getInputProps("maxPrice")} />
             </SimpleGrid>
           </div>
 
