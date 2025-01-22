@@ -12,9 +12,9 @@ import {
   Stack,
   SimpleGrid,
   Paper,
+  Text,
 } from "@mantine/core";
 import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
-import classes from "./create-ad-style.module.css";
 import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -66,7 +66,6 @@ export const CreateAdPage = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [address, setAddress] = useState("");
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
 
@@ -75,9 +74,9 @@ export const CreateAdPage = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
       if (place.geometry) {
-        setAddress(place.formatted_address);
         setFormData((prev) => ({
           ...prev,
+          address1: place.formatted_address,
           latitude: place.geometry.location.lat(),
           longitude: place.geometry.location.lng(),
         }));
@@ -121,7 +120,7 @@ export const CreateAdPage = () => {
     }
     if (!formData.propertyType) newErrors.propertyType = "Property Type is required";
     if (!formData.availableFrom) newErrors.availableFrom = "Available From is required";
-    if (!address.trim()) newErrors.address = "Address is required";
+    if (!formData.address1.trim()) newErrors.address1 = "Address is required";
     if (!formData.description.trim() || formData.description.length < 10 || formData.description.length > 2000) {
       newErrors.description = "Description must be between 10 and 2000 characters.";
     }
@@ -139,9 +138,16 @@ export const CreateAdPage = () => {
     }
     const payload = {
       status: "PENDING",
-      propertyType: formData.propertyType,
       title: formData.title,
+      propertyType: formData.propertyType,
       description: formData.description,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      address1: formData.address1,
+      address2: formData.address2 || "",
+      city: formData.city || "",
+      state: formData.state || "",
+      postcode: formData.postcode || "",
       totalRent: formData.totalRent,
       coldRent: formData.coldRent,
       additionalCosts: formData.additionalCosts,
@@ -150,11 +156,26 @@ export const CreateAdPage = () => {
       numberOfRooms: formData.numberOfRooms,
       numberOfBeds: formData.numberOfBeds,
       numberOfBaths: formData.numberOfBaths,
+      totalFloors: formData.totalFloors,
+      floorNumber: formData.floorNumber,
+      livingSpaceSqm: formData.livingSpaceSqm,
+      yearBuilt: formData.yearBuilt,
       availableFrom: formData.availableFrom,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
+      minimumLeaseTermInMonths: formData.minimumLeaseTermInMonths,
+      maximumLeaseTermInMonths: formData.maximumLeaseTermInMonths,
+      noticePeriodInMonths: formData.noticePeriodInMonths,
       pets: formData.pets,
       smoking: formData.smoking,
+      kitchen: formData.kitchen,
+      furnished: formData.furnished,
+      balcony: formData.balcony,
+      cellar: formData.cellar,
+      washingMachine: formData.washingMachine,
+      elevator: formData.elevator,
+      garden: formData.garden,
+      parking: formData.parking,
+      internet: formData.internet,
+      cableTv: formData.cableTv,
       media: formData.media,
     };
 
@@ -171,10 +192,13 @@ export const CreateAdPage = () => {
     <Container>
       <Title order={2}>Create Property Listing</Title>
       <Stack mt="lg" gap="lg">
-        {/* Image Uploader */}
         <div>
           <ImageUploader onUpload={handleImageUpload} />
-          {errors.media && <div className={classes.error}>{errors.media}</div>}
+          {errors.media && (
+            <Text size="xs" c="red" mt={4}>
+              {errors.media}
+            </Text>
+          )}
         </div>
 
         <SimpleGrid
@@ -222,7 +246,7 @@ export const CreateAdPage = () => {
             onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
             onPlaceChanged={handlePlaceChanged}
           >
-            <TextInput label="Address" error={errors.address} placeholder="Enter Address" />
+            <TextInput label="Address" error={errors.address1} placeholder="Enter Address" />
           </Autocomplete>
         </LoadScriptNext>
 
@@ -250,7 +274,7 @@ export const CreateAdPage = () => {
           </Group>
 
           <Stack gap="xs">
-            <Group grow>
+            <Group grow align="start">
               <NumberInput
                 label="Additional Costs (€)"
                 min={0}
@@ -288,7 +312,7 @@ export const CreateAdPage = () => {
             error={errors.availableFrom}
             onChange={(value) => handleInputChange("availableFrom", value ? value.toISOString().substring(0, 10) : "")}
           />
-          <Group grow>
+          <Group grow align="start">
             <NumberInput
               min={1}
               label="Rooms"
@@ -308,7 +332,7 @@ export const CreateAdPage = () => {
               onChange={(value) => handleInputChange("numberOfBaths", value)}
             />
           </Group>
-          <Group grow>
+          <Group grow align="start">
             <NumberInput
               min={1}
               label="Total Floors"
@@ -363,11 +387,12 @@ export const CreateAdPage = () => {
           </Group>
         </SimpleGrid>
 
-        <Paper p="xs" withBorder>
+        <Paper p="sm" withBorder>
           <Title order={6} mb="xs">
             Amenities
           </Title>
           <SimpleGrid
+            mb="xs"
             cols={{
               base: 1,
               xs: 2,
@@ -404,7 +429,7 @@ export const CreateAdPage = () => {
         </Paper>
 
         <Button fullWidth color="green" onClick={handleSubmit} radius="md" size="lg" my="xl">
-          Submit
+          Submit for review
         </Button>
       </Stack>
     </Container>
