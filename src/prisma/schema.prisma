@@ -78,6 +78,7 @@ model User {
   properties        Property[]        @relation("LandlordProperties")
   participatedChats ChatParticipant[]
   messages          Message[]
+  wishlists         Wishlist[]
 }
 
 model Session {
@@ -90,6 +91,7 @@ model Session {
   user       User      @relation(fields: [userId], references: [id])
 }
 
+// Property models
 model Property {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -152,8 +154,9 @@ model Property {
   user      User @relation("LandlordProperties", fields: [creatorId], references: [id])
   //new for all users
 
-  media PropertyMedia[]
-  chats Chat[]
+  media     PropertyMedia[]
+  chats     Chat[]
+  wishlists Wishlist[]
 }
 
 model PropertyMedia {
@@ -170,6 +173,18 @@ model PropertyMedia {
   // Relations
   propertyId Int
   property   Property @relation(fields: [propertyId], references: [id])
+}
+
+model Wishlist {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  propertyId Int
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+
+  @@unique([userId, propertyId])
 }
 
 //Chat models

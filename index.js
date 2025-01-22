@@ -11,6 +11,7 @@ import { adminRouter } from "./src/routes/admin.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { creatorRouter } from "./src/routes/creator.js";
+import { wishlistRouter } from "./src/routes/wishlist.js";
 import { chatHandlers } from "./chatHandlers.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -64,6 +65,9 @@ app.use("/api", authMiddleware);
 
 // Private routes
 app.use("/api", propertyRouter, fileRouter, creatorRouter);
+
+//wishlist routes
+app.use("/api", wishlistRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {

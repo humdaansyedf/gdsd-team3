@@ -42,6 +42,12 @@ const AdminProperty = React.lazy(() =>
   }))
 );
 
+const WishlistPage = React.lazy(() =>
+  import("./wishlist/wishlist-page").then((mod) => ({
+    default: mod.WishlistPage,
+  }))
+);
+
 const AppLoader = () => {
   return (
     <div className="app-loader">
@@ -100,6 +106,16 @@ export const App = () => {
                 <PublicOnlyRoute>
                   <Register />
                 </PublicOnlyRoute>
+              }
+            />
+            <Route
+              path="wishlist"
+              element={
+                <PrivateRoute userType="STUDENT">
+                  {" "}
+                  {/*Ensure only students can access */}
+                  <WishlistPage />
+                </PrivateRoute>
               }
             />
             <Route

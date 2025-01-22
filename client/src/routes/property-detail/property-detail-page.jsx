@@ -24,6 +24,7 @@ import { useGetPropertyById } from "./property-detail-queries";
 import PropertyMap from "./property-map-view";
 import dayjs from "dayjs";
 import { useAuth } from "../../lib/auth-context";
+import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
 
 const PropertyStat = ({ label, value }) => {
   return (
@@ -133,6 +134,8 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
       <Paper withBorder p="md" mt="md" shadow="sm">
         <Group gap="xs" justify="space-between">
           <Title order={2}>{data.title}</Title>
+          <WishlistButton propertyId={data.id} />
+
           {data.isSublet && (
             <Badge variant="light" color="blue" size="lg" radius="sm">
               Sublet Property

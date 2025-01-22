@@ -71,5 +71,6 @@ export const PrivateRoute = ({ children, userType }) => {
   if (userType && user.type !== userType) {
     return <Navigate to="/" />;
   }
+  
   return children;
 };

@@ -22,11 +22,17 @@
 .titleSection {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 30px;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
   flex: 1;
+}
+
+.titleWithWishlist {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .imageSection {
