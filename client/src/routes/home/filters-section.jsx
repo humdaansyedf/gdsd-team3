@@ -43,10 +43,11 @@ const Filters = ({ onFilter, onReset }) => {
         if (values.title) params.set("title", values.title);
         if (values.pets) params.set("pets", values.pets);
         if (values.smoking) params.set("smoking", values.smoking);
-        if (values.minPrice !== 0) params.minPrice = values.minPrice;
-        if (values.maxPrice !== 5000) params.maxPrice = values.maxPrice;
-        if (values.availableFrom) params.availableFrom = values.availableFrom;
-        if (values.searchRadius !== "whole area") params.searchRadius = values.searchRadius;
+        if (values.minPrice !== 0) params.set("minPrice", values.minPrice);
+        if (values.maxPrice !== 5000) params.set("maxPrice", values.maxPrice);
+        if (values.availableFrom) params.set("availableFrom", values.availableFrom);
+        if (values.searchRadius !== "whole area") params.set("searchRadius", values.searchRadius);
+
         setSearchParams(params);
         if (onFilter) {
           onFilter();
