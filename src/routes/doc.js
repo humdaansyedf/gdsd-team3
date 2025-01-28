@@ -33,16 +33,26 @@ const uploadDocumentSchema = z.object({
 
 // Generate Pre-Signed URL for Upload
 documentRouter.post("/document", async (req, res) => {
+  console.log("Received Upload Request:", req.body);
+  console.log("User ID:", req.user ? req.user.id : "No user data");
+
   const data = req.body;
+  console.log("User Info:", req.user);
   const result = uploadDocumentSchema.safeParse(data);
 
   if (!result.success) {
+    console.error("Invalid document data:", result.error.errors);
     return res.status(400).json({ message: "Invalid document data", errors: result.error.errors });
   }
 
   const { name } = result.data;
   const userId = req.user.id;
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized. User ID is missing." });
+  }
+
   const key = `user/${userId}/${Date.now()}-${name}`;
+  console.log("Generated S3 Key:", key);
 
   try {
     const url = await getSignedUrl(
@@ -53,9 +63,10 @@ documentRouter.post("/document", async (req, res) => {
       }),
       { expiresIn: 60 * 5 }
     );
+    console.log("Generated S3 Signed URL:", url);
 
     const document = await prisma.document.create({
-      data: { userId, fileName: name, key },
+      data: { userId, fileName: name, key, url },
     });
 
     res.json({ message: "Document upload URL created", data: { url, key } });

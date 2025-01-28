@@ -12,33 +12,34 @@ const UploadDocumentModal = ({ opened, onClose, fetchDocuments }) => {
       setError("Please select a document to upload.");
       return;
     }
-
+  
     setUploading(true);
     setError("");
-
+  
     try {
-      // Step 1: Get a pre-signed URL from the backend
+      console.log("Requesting signed URL...");
       const response = await axios.post(
         "http://localhost:3000/api/document",
         { name: file.name },
         { withCredentials: true }
       );
-
-      const uploadUrl = response.data.data.uploadUrl;
+      console.log("Signed URL response:", response.data);
+  
+      const uploadUrl = response.data.data.url; // Fix here
       if (!uploadUrl) {
         throw new Error("Failed to retrieve upload URL.");
       }
-
-      // Step 2: Upload the file to S3
-      await axios.put(uploadUrl, file, {
+  
+      console.log("Uploading file to S3...");
+      const s3Response = await axios.put(uploadUrl, file, {
         headers: { "Content-Type": file.type },
       });
-
-      // Step 3: Refresh document list after successful upload
+      console.log("S3 Upload Response:", s3Response);
+  
       fetchDocuments();
       onClose();
     } catch (error) {
-      console.error("Error uploading document:", error);
+      console.error("Error uploading document:", error.response?.data || error.message);
       setError("Upload failed. Please try again.");
     } finally {
       setUploading(false);
