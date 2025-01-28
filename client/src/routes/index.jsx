@@ -1,9 +1,9 @@
 import { Container, Loader } from "@mantine/core";
 import * as React from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
-import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
-import { AdminAuthProvider } from "../lib/admin-auth-provider";
 import { AppLayout } from "../components/AppLayout/AppLayout.jsx";
+import { AdminAuthProvider } from "../lib/admin-auth-provider";
+import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
 const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
@@ -30,6 +30,7 @@ const PropertyDetail = React.lazy(() =>
 );
 const Profile = React.lazy(() => import("./profile/profile-page").then((mod) => ({ default: mod.Profile })));
 const Mymessages = React.lazy(() => import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages })));
+const MyDocuments = React.lazy(() => import("./my-documents/my-documents"));
 
 const AdminDashboard = React.lazy(() =>
   import("./admin/admin-dashboard-page").then((mod) => ({
@@ -147,6 +148,14 @@ export const App = () => {
               element={
                 <PrivateRoute>
                   <CreateAdPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="my-documents"
+              element={
+                <PrivateRoute userType="STUDENT"> 
+                  <MyDocuments />
                 </PrivateRoute>
               }
             />

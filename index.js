@@ -1,26 +1,34 @@
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
+import { chatHandlers } from "./chatHandlers.js";
 import { IS_DEV } from "./src/lib/utils.js";
-import { fileRouter } from "./src/routes/file.js";
 import { adminRouter } from "./src/routes/admin.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
-import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { creatorRouter } from "./src/routes/creator.js";
+import { documentRouter } from "./src/routes/doc.js";
+import { fileRouter } from "./src/routes/file.js";
+import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { wishlistRouter } from "./src/routes/wishlist.js";
-import { chatHandlers } from "./chatHandlers.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const port = process.env.PORT || 3000;
 
 const app = express();
-const server = createServer(app);
 
+
+app.use(cors({
+  origin: "http://localhost:5173",  // Allow frontend requests
+  credentials: true,  // Allow cookies/auth headers
+}));
+
+const server = createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
@@ -40,6 +48,8 @@ io.on("connection", (socket) => {
     // console.log('A user disconnected:', socket.id);
   });
 });
+
+
 
 // Disable some headers
 app.set("etag", false);
@@ -64,7 +74,7 @@ app.use("/api", authRouter, publicPropertyRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use("/api", propertyRouter, fileRouter, creatorRouter, wishlistRouter);
+app.use("/api", propertyRouter, fileRouter, creatorRouter, wishlistRouter, documentRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {

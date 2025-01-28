@@ -1,241 +1,254 @@
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
-}
+  generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "debian-openssl-3.0.x"]
+  }
 
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
+  datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+  }
 
-enum UserType {
-  STUDENT
-  LANDLORD
-}
+  enum UserType {
+    STUDENT
+    LANDLORD
+  }
 
-enum UserStatus {
-  PENDING
-  ACTIVE
-  SUSPENDED
-  DEACTIVATED
-}
+  enum UserStatus {
+    PENDING
+    ACTIVE
+    SUSPENDED
+    DEACTIVATED
+  }
 
-enum PropertyType {
-  APARTMENT
-  HOUSE
-  ROOM
-  STUDIO
-  SHARED_ROOM
-}
+  enum PropertyType {
+    APARTMENT
+    HOUSE
+    ROOM
+    STUDIO
+    SHARED_ROOM
+  }
 
-enum PropertyStatus {
-  DRAFT
-  PENDING
-  ACTIVE
-  RENTED
-  ARCHIVED
-  REJECTED
-}
+  enum PropertyStatus {
+    DRAFT
+    PENDING
+    ACTIVE
+    RENTED
+    ARCHIVED
+    REJECTED
+  }
 
-enum MediaType {
-  IMAGE
-  VIDEO
-  DOCUMENT
-}
+  enum MediaType {
+    IMAGE
+    VIDEO
+    DOCUMENT
+  }
 
-enum MediaStatus {
-  PENDING
-  ACTIVE
-  REJECTED
-}
+  enum MediaStatus {
+    PENDING
+    ACTIVE
+    REJECTED
+  }
 
-enum MessageType {
-  TEXT
-  FILE
-  IMAGE
-  VIDEO
-}
+  enum MessageType {
+    TEXT
+    FILE
+    IMAGE
+    VIDEO
+  }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  model User {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  type           UserType  @default(STUDENT)
-  email          String    @unique
-  passwordHash   String
-  name           String
-  phone          String?   @unique
-  address        String?
-  profilePicture String?
-  isVerified     Boolean   @default(true)
-  isOnline       Boolean   @default(false)
-  lastOnlineAt   DateTime?
-  lastLoginAt    DateTime?
+    type           UserType  @default(STUDENT)
+    email          String    @unique
+    passwordHash   String
+    name           String
+    phone          String?   @unique
+    address        String?
+    profilePicture String?
+    isVerified     Boolean   @default(true)
+    isOnline       Boolean   @default(false)
+    lastOnlineAt   DateTime?
+    lastLoginAt    DateTime?
 
-  // Relations
-  sessions          Session[]
-  properties        Property[]        @relation("LandlordProperties")
-  participatedChats ChatParticipant[]
-  messages          Message[]
-  wishlists         Wishlist[]
-}
+    // Relations
+    sessions          Session[]
+    properties        Property[]        @relation("LandlordProperties")
+    participatedChats ChatParticipant[]
+    messages          Message[]
+    wishlists         Wishlist[]
+    documents         Document[]
+  }
 
-model Session {
-  id         String    @id
-  userId     Int
-  createdAt  DateTime  @default(now())
-  expiresAt  DateTime?
-  ipAddress  String?
-  deviceInfo String?
-  user       User      @relation(fields: [userId], references: [id])
-}
+  model Session {
+    id         String    @id
+    userId     Int
+    createdAt  DateTime  @default(now())
+    expiresAt  DateTime?
+    ipAddress  String?
+    deviceInfo String?
+    user       User      @relation(fields: [userId], references: [id])
+  }
 
-// Property models
-model Property {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Property models
+  model Property {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  // status and type
-  status       PropertyStatus @default(DRAFT)
-  propertyType PropertyType   @default(APARTMENT)
-  title        String         @db.Text()
-  description  String         @db.Text()
-  isSublet     Boolean        @default(false)
+    // status and type
+    status       PropertyStatus @default(DRAFT)
+    propertyType PropertyType   @default(APARTMENT)
+    title        String         @db.Text()
+    description  String         @db.Text()
+    isSublet     Boolean        @default(false)
 
-  // location and address
-  longitude Float
-  latitude  Float
-  address1  String?
-  address2  String?
-  city      String?
-  state     String?
-  postcode  String?
+    // location and address
+    longitude Float
+    latitude  Float
+    address1  String?
+    address2  String?
+    city      String?
+    state     String?
+    postcode  String?
 
-  // price and costs
-  totalRent                        Float
-  coldRent                         Float
-  additionalCosts                  Float?
-  heatingIncludedInAdditionalCosts Boolean @default(false)
-  deposit                          Float?
+    // price and costs
+    totalRent                        Float
+    coldRent                         Float
+    additionalCosts                  Float?
+    heatingIncludedInAdditionalCosts Boolean @default(false)
+    deposit                          Float?
 
-  // rooms and space
-  numberOfRooms  Int
-  numberOfBeds   Int?
-  numberOfBaths  Int?
-  totalFloors    Int?
-  floorNumber    Int?
-  livingSpaceSqm Float?
-  yearBuilt      String?
+    // rooms and space
+    numberOfRooms  Int
+    numberOfBeds   Int?
+    numberOfBaths  Int?
+    totalFloors    Int?
+    floorNumber    Int?
+    livingSpaceSqm Float?
+    yearBuilt      String?
 
-  // availability and lease terms
-  availableFrom            DateTime
-  minimumLeaseTermInMonths Int?
-  maximumLeaseTermInMonths Int?
-  noticePeriodInMonths     Int?
+    // availability and lease terms
+    availableFrom            DateTime
+    minimumLeaseTermInMonths Int?
+    maximumLeaseTermInMonths Int?
+    noticePeriodInMonths     Int?
 
-  // amenities
-  pets           Boolean @default(false)
-  smoking        Boolean @default(false)
-  kitchen        Boolean @default(false)
-  furnished      Boolean @default(false)
-  balcony        Boolean @default(false)
-  cellar         Boolean @default(false)
-  washingMachine Boolean @default(false)
-  elevator       Boolean @default(false)
-  garden         Boolean @default(false)
-  parking        Boolean @default(false)
-  internet       Boolean @default(false)
-  cableTv        Boolean @default(false)
+    // amenities
+    pets           Boolean @default(false)
+    smoking        Boolean @default(false)
+    kitchen        Boolean @default(false)
+    furnished      Boolean @default(false)
+    balcony        Boolean @default(false)
+    cellar         Boolean @default(false)
+    washingMachine Boolean @default(false)
+    elevator       Boolean @default(false)
+    garden         Boolean @default(false)
+    parking        Boolean @default(false)
+    internet       Boolean @default(false)
+    cableTv        Boolean @default(false)
 
-  // Relations
-  creatorId Int
-  user      User @relation("LandlordProperties", fields: [creatorId], references: [id])
-  //new for all users
+    // Relations
+    creatorId Int
+    user      User @relation("LandlordProperties", fields: [creatorId], references: [id])
+    //new for all users
 
-  media     PropertyMedia[]
-  chats     Chat[]
-  wishlists Wishlist[]
-}
+    media     PropertyMedia[]
+    chats     Chat[]
+    wishlists Wishlist[]
+  }
 
-model PropertyMedia {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  model PropertyMedia {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  status    MediaStatus
-  type      MediaType
-  url       String
-  name      String
-  thumbnail String?
+    status    MediaStatus
+    type      MediaType
+    url       String
+    name      String
+    thumbnail String?
 
-  // Relations
-  propertyId Int
-  property   Property @relation(fields: [propertyId], references: [id])
-}
+    // Relations
+    propertyId Int
+    property   Property @relation(fields: [propertyId], references: [id])
+  }
 
-model Wishlist {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  propertyId Int
-  createdAt  DateTime @default(now())
+  model Wishlist {
+    id         Int      @id @default(autoincrement())
+    userId     Int
+    propertyId Int
+    createdAt  DateTime @default(now())
 
-  user     User     @relation(fields: [userId], references: [id])
-  property Property @relation(fields: [propertyId], references: [id])
+    user     User     @relation(fields: [userId], references: [id])
+    property Property @relation(fields: [propertyId], references: [id])
 
-  @@unique([userId, propertyId])
-}
+    @@unique([userId, propertyId])
+  }
 
-//Chat models
-model Chat {
-  id            Int      @id @default(autoincrement())
-  propertyId    Int
-  lastMessageAt DateTime
+  //Chat models
+  model Chat {
+    id            Int      @id @default(autoincrement())
+    propertyId    Int
+    lastMessageAt DateTime
 
-  property Property @relation(fields: [propertyId], references: [id])
+    property Property @relation(fields: [propertyId], references: [id])
 
-  participants ChatParticipant[]
-  messages     Message[]
-}
+    participants ChatParticipant[]
+    messages     Message[]
+  }
 
-model ChatParticipant {
-  chatid Int
-  userid Int
+  model ChatParticipant {
+    chatid Int
+    userid Int
 
-  chat Chat @relation(fields: [chatid], references: [id])
-  user User @relation(fields: [userid], references: [id])
+    chat Chat @relation(fields: [chatid], references: [id])
+    user User @relation(fields: [userid], references: [id])
 
-  @@unique([chatid, userid])
-}
+    @@unique([chatid, userid])
+  }
 
-model Message {
-  id        Int      @id @default(autoincrement())
-  chatid    Int
-  userid    Int
-  content   String
-  createdAt DateTime @default(now())
+  model Message {
+    id        Int      @id @default(autoincrement())
+    chatid    Int
+    userid    Int
+    content   String
+    createdAt DateTime @default(now())
 
-  chat Chat @relation(fields: [chatid], references: [id])
-  user User @relation(fields: [userid], references: [id])
-}
+    chat Chat @relation(fields: [chatid], references: [id])
+    user User @relation(fields: [userid], references: [id])
+  }
 
-// Admin Models
-model Admin {
-  id           Int            @id @default(autoincrement())
-  email        String         @unique
-  passwordHash String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  sessions     AdminSession[]
-}
+  // Admin Models
+  model Admin {
+    id           Int            @id @default(autoincrement())
+    email        String         @unique
+    passwordHash String
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    sessions     AdminSession[]
+  }
 
-model AdminSession {
-  id         String    @id
-  adminId    Int
-  createdAt  DateTime  @default(now())
-  expiresAt  DateTime?
-  ipAddress  String?
-  deviceInfo String?
-  admin      Admin     @relation(fields: [adminId], references: [id])
-}
+  model AdminSession {
+    id         String    @id
+    adminId    Int
+    createdAt  DateTime  @default(now())
+    expiresAt  DateTime?
+    ipAddress  String?
+    deviceInfo String?
+    admin      Admin     @relation(fields: [adminId], references: [id])
+  }
+
+  //Student Document Uploads
+  model Document {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    fileName  String
+    key       String   @unique
+    url       String   @unique 
+    createdAt DateTime @default(now())
+
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  }

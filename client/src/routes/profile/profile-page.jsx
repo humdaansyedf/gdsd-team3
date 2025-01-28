@@ -1,5 +1,5 @@
 import { Avatar, Badge, Button, Container, Flex, Group, Paper, Stack, Text, Title } from "@mantine/core";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../../lib/auth-context";
 
 export function Profile() {
@@ -12,7 +12,7 @@ export function Profile() {
   return (
     <Container size="xs" mt="xl">
       <Paper withBorder shadow="md" p="lg">
-        <Stack align="center" Stack spacing="xs">
+        <Stack align="center" spacing="xs">
           <Avatar size="xl" />
 
           <Badge size="lg" radius="sm" variant="light">
@@ -27,9 +27,12 @@ export function Profile() {
           </Flex>
 
           <Group position="center">
-            {/**<Button variant="outline" size="sm" onClick={() => console.log("Edit clicked!")}>
-          Edit
-        </Button>**/}
+            {user.type === "STUDENT" && (
+              <Button variant="outline" size="md" component={Link} to="/my-documents">
+                My Documents
+              </Button>
+            )}
+
             <Button variant="filled" size="md" color="red" onClick={logout}>
               Logout
             </Button>
