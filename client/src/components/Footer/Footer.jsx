@@ -1,5 +1,9 @@
 import { ActionIcon, Container, Group, Text } from "@mantine/core";
-import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from "@tabler/icons-react";
+import {
+  IconBrandInstagram,
+  IconBrandTwitter,
+  IconBrandYoutube,
+} from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import classes from "./Footer.module.css";
 
@@ -61,7 +65,12 @@ export function Footer() {
           © 2024 NeuAnfang. All rights reserved.
         </Text>
 
-        <Group gap={0} className={classes.social} justify="flex-end" wrap="nowrap">
+        <Group
+          gap={0}
+          className={classes.social}
+          justify="flex-end"
+          wrap="nowrap"
+        >
           <ActionIcon size="lg" color="gray" variant="subtle">
             <IconBrandTwitter size={18} stroke={1.5} />
           </ActionIcon>

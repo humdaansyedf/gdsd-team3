@@ -6,6 +6,11 @@ export const useGetPropertyById = (id) => {
     queryFn: async () => {
       const response = await fetch(`/api/public/property/${id}`);
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error);
+      }
+
       return data;
     },
   });

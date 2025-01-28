@@ -1,41 +1,51 @@
 import { Container, Loader } from "@mantine/core";
 import * as React from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
-import { Footer } from "../components/Footer/Footer";
-import { Header } from "../components/Header/Header";
-import { useAuth } from "../lib/auth-context";
-import { PrivateRoute, PublicOnlyRoute } from "../lib/auth-routes";
+import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
+import { AdminAuthProvider } from "../lib/admin-auth-provider";
+import { AppLayout } from "../components/AppLayout/AppLayout.jsx";
 
-const Login = React.lazy(() =>
-  import("./login/login-page").then((mod) => ({ default: mod.Login }))
-);
-const Register = React.lazy(() =>
-  import("./register/register-page").then((mod) => ({ default: mod.Register }))
-);
-const Home = React.lazy(() =>
-  import("./home/home-page").then((mod) => ({ default: mod.Home }))
-);
-const LandlordDashboardPage = React.lazy(() =>
-  import("./landlord-dashboard/landlord-dashboard-page").then((mod) => ({
-    default: mod.LandlordDashboardPage,
+const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
+const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
+const Home = React.lazy(() => import("./home/home-page").then((mod) => ({ default: mod.Home })));
+const CreatorDashboardPage = React.lazy(() =>
+  import("./creator-dashboard/creator-dashboard-page").then((mod) => ({
+    default: mod.CreatorDashboardPage,
   }))
 );
 const CreateAdPage = React.lazy(() =>
-    import("./create-ad/create-ad-page.jsx").then((mod) => ({ default: mod.CreateAdPage }))
+  import("./create-ad/create-ad-page.jsx").then((mod) => ({
+    default: mod.CreateAdPage,
+  }))
 );
 const AdConfirmation = React.lazy(() =>
-    import("./ad-confirmation/ad-confirmation-page.jsx").then((mod) => ({ default: mod.AdConfirmation }))
+  import("./ad-confirmation/ad-confirmation-page.jsx").then((mod) => ({
+    default: mod.AdConfirmation,
+  }))
 );
 const PropertyDetail = React.lazy(() =>
   import("./property-detail/property-detail-page").then((mod) => ({
     default: mod.PropertyDetail,
   }))
 );
-const Profile = React.lazy(() =>
-  import("./profile/profile-page").then((mod) => ({ default: mod.Profile }))
+const Profile = React.lazy(() => import("./profile/profile-page").then((mod) => ({ default: mod.Profile })));
+const Mymessages = React.lazy(() => import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages })));
+
+const AdminDashboard = React.lazy(() =>
+  import("./admin/admin-dashboard-page").then((mod) => ({
+    default: mod.AdminDashboard,
+  }))
 );
-const Mymessages = React.lazy(() =>
-  import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages }))
+const AdminProperty = React.lazy(() =>
+  import("./admin/admin-property-page").then((mod) => ({
+    default: mod.AdminProperty,
+  }))
+);
+
+const WishlistPage = React.lazy(() =>
+  import("./wishlist/wishlist-page").then((mod) => ({
+    default: mod.WishlistPage,
+  }))
 );
 
 const AppLoader = () => {
@@ -43,29 +53,6 @@ const AppLoader = () => {
     <div className="app-loader">
       <Loader />
     </div>
-  );
-};
-const AppLayout = () => {
-  const { isLoading } = useAuth();
-
-  return (
-    <>
-      <div className="disclaimer">
-        Fulda University of Applied Sciences Software Engineering Project, Fall
-        2024. FOR DEMONSTRATION ONLY.
-      </div>
-      {isLoading ? (
-        <AppLoader />
-      ) : (
-        <>
-          <Header />
-          <Container fluid>
-            <Outlet />
-          </Container>
-          <Footer />
-        </>
-      )}
-    </>
   );
 };
 
@@ -78,12 +65,32 @@ const NotFound = () => {
   );
 };
 
+const AdminLayout = () => {
+  return (
+    <>
+      <div className="disclaimer">
+        Fulda University of Applied Sciences Software Engineering Project, Fall 2024. FOR DEMONSTRATION ONLY.
+      </div>
+      <Container fluid>
+        <Outlet />
+      </Container>
+    </>
+  );
+};
+
 export const App = () => {
   return (
     <React.Suspense fallback={<AppLoader />}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AppLayout />}>
+          <Route
+            path="/"
+            element={
+              <AuthProvider>
+                <AppLayout />
+              </AuthProvider>
+            }
+          >
             <Route index element={<Home />} />
             <Route
               path="login"
@@ -101,31 +108,24 @@ export const App = () => {
                 </PublicOnlyRoute>
               }
             />
-            <Route path="property/:id" element={<PropertyDetail />} />
+            <Route
+              path="wishlist"
+              element={
+                <PrivateRoute userType="STUDENT">
+                  {" "}
+                  {/*Ensure only students can access */}
+                  <WishlistPage />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="dashboard"
               element={
                 <PrivateRoute>
-                  <LandlordDashboardPage />
+                  <CreatorDashboardPage />
                 </PrivateRoute>
               }
             />
-              <Route
-                  path="property/new"
-                  element={
-                      <PrivateRoute>
-                      <CreateAdPage />
-                      </PrivateRoute>
-                  }
-              />
-              <Route
-                  path="property/submission-confirmation"
-                  element={
-                      <PrivateRoute>
-                          <AdConfirmation />
-                      </PrivateRoute>
-                  }
-              />
             <Route
               path="profile"
               element={
@@ -135,15 +135,42 @@ export const App = () => {
               }
             />
             <Route
-              path="mymessages"
+              path="messages"
               element={
-                // commented for testing
-                //<PublicRoute>
-                <Mymessages />
-                // </PublicRoute>
+                <PrivateRoute>
+                  <Mymessages />
+                </PrivateRoute>
               }
             />
+            <Route
+              path="property/new"
+              element={
+                <PrivateRoute>
+                  <CreateAdPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="property/submission-confirmation"
+              element={
+                <PrivateRoute>
+                  <AdConfirmation />
+                </PrivateRoute>
+              }
+            />
+            <Route path="property/:id" element={<PropertyDetail />} />
             <Route path="*" element={<NotFound />} />
+          </Route>
+          <Route
+            path="admin"
+            element={
+              <AdminAuthProvider>
+                <AdminLayout />
+              </AdminAuthProvider>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="property/:id" element={<AdminProperty />} />
           </Route>
         </Routes>
       </BrowserRouter>

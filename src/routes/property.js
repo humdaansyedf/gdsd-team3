@@ -110,7 +110,7 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
             ? featuredMedia.url
             : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
         };
-      })
+      }),
     );
   } catch (error) {
     console.log(error);
@@ -133,32 +133,9 @@ publicPropertyRouter.get("/public/property/:id", async (req, res) => {
 
   if (!property) {
     res.status(404).json({ error: "property not found" });
-  } else {
-    res.json(property);
+    return;
   }
+
+  res.json(property);
+  return;
 });
-
-//this is to be used by admin
-// //API to update listing status
-// //requires status field in post body
-// //returns with message and property data
-// propertyRouter.patch("/property/:id/status", async (req, res) => {
-//   const { id } = req.params; // Get property ID from the URL
-//   const { status } = req.body; // Get the new status from the request body
-
-//   // Validate the status
-//   const validStatuses = ["PENDING", "ACTIVE", "RENTED", "ARCHIVED", "REJECTED"];
-//   if (!validStatuses.includes(status)) {
-//     return res.status(400).json({ error: "Invalid status value." });
-//   }
-
-//   // Update the status in the database
-//   const updatedProperty = await prisma.property.update({
-//     where: { id: parseInt(id, 10) },
-//     data: { status },
-//   });
-//   res.json({
-//     message: `Property status updated to ${status}`,
-//     property: updatedProperty,
-//   });
-// });

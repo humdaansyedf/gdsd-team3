@@ -6,13 +6,13 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `property` DROP FOREIGN KEY `Property_landlordId_fkey`;
+ALTER TABLE `Property` DROP FOREIGN KEY `Property_landlordId_fkey`;
 
 -- DropIndex
-DROP INDEX `Property_landlordId_fkey` ON `property`;
+DROP INDEX `Property_landlordId_fkey` ON `Property`;
 
 -- AlterTable
-ALTER TABLE `property` DROP COLUMN `landlordId`,
+ALTER TABLE `Property` DROP COLUMN `landlordId`,
     ADD COLUMN `creatorId` INTEGER NOT NULL;
 
 -- AddForeignKey

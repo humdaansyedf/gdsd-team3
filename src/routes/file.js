@@ -32,7 +32,7 @@ const uploadFileSchema = z.object({
       },
       {
         message: `Invalid file type. Allowed file types are: ${ALLOWED_FILE_TYPES.join(", ")}`,
-      }
+      },
     ),
 });
 
@@ -59,7 +59,7 @@ fileRouter.post("/file", async (req, res) => {
         Bucket: process.env.APP_AWS_BUCKET_NAME, // S3 bucket name
         Key: `public/${key}`, // File key
       }),
-      { expiresIn: 60 * 5 } // URL expiration time (5 minutes)
+      { expiresIn: 60 * 5 }, // URL expiration time (5 minutes)
     );
 
     res.json({

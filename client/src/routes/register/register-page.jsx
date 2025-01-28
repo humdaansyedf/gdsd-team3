@@ -91,7 +91,7 @@ export function Register() {
   });
 
   return (
-    <Container size={600} my={40}>
+    <Container size={600} mt={20}>
       <Title ta="center">Register</Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Already have an account?{" "}

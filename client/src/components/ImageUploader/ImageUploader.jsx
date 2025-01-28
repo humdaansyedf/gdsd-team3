@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Text, Image, SimpleGrid, Button, Loader } from "@mantine/core";
+import { Text, Image, SimpleGrid, Loader, ActionIcon, Group } from "@mantine/core";
+import { IconTrash, IconUpload } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { usePublicFileUpload } from "./fileUpload";
 import axios from "axios";
@@ -11,11 +12,13 @@ export const ImageUploader = ({ onUpload }) => {
   const [loading, setLoading] = useState(false); // Loading state for file upload
 
   // Handle file uploads (using dropzone or manual selection)
-  const handleFilesUpload = (files) => {
+  const handleFilesUpload = async (files) => {
+    console.log(files);
     setLoading(true);
 
-    files.forEach((file) => {
-      fileUploadMutation.mutate(
+    // mutate one by one for awiat loop
+    for await (const file of files) {
+      await fileUploadMutation.mutateAsync(
         { file },
         {
           onSuccess: (uploadedUrl) => {
@@ -33,6 +36,7 @@ export const ImageUploader = ({ onUpload }) => {
             });
           },
           onError: (error) => {
+            console.log(error);
             console.error("Upload failed for", file.name, error);
             notifications.show({
               title: "Error",
@@ -45,7 +49,7 @@ export const ImageUploader = ({ onUpload }) => {
           },
         }
       );
-    });
+    }
   };
 
   const handleDeleteImage = async (index, url) => {
@@ -69,34 +73,59 @@ export const ImageUploader = ({ onUpload }) => {
     <div>
       {/* Dropzone for selecting files */}
       <Dropzone accept={IMAGE_MIME_TYPE} onDrop={handleFilesUpload} multiple disabled={loading}>
-        {loading ? (
-          <Loader />
-        ) : (
-          <Text ta="center" size="sm" color="dimmed">
-            Drag & Drop images here or click to <span style={{ color: "blue" }}>Browse</span>
-          </Text>
-        )}
+        <Group justify="center" gap="xs" mih={120} style={{ pointerEvents: "none" }}>
+          {loading ? (
+            <Loader />
+          ) : (
+            <>
+              <IconUpload size={40} color="var(--mantine-color-dimmed)" stroke={1.5} />
+              <div>
+                <Text inline>Drag images here or click to select files</Text>
+                <Text size="xs" c="dimmed" inline mt={7}>
+                  Attach as many files as you like, each file should not exceed 5mb
+                </Text>
+              </div>
+            </>
+          )}
+        </Group>
       </Dropzone>
 
       {/* Image Previews */}
       {images.length > 0 && (
-        <SimpleGrid cols={4} mt="md">
+        <SimpleGrid
+          cols={{
+            base: 2,
+            sm: 3,
+            md: 4,
+          }}
+          spacing="xs"
+          mt="md"
+        >
           {images.map((image, index) => (
             <div key={index} style={{ position: "relative" }}>
-              <Image src={image.url} alt={image.name} height={100} radius="sm" withPlaceholder />
-              <Button
-                size="xs"
+              <Image
+                src={image.url}
+                alt={image.name}
+                height={150}
+                radius="sm"
+                withPlaceholder
+                bg="gray.2"
+                style={{
+                  objectFit: "contain",
+                }}
+              />
+              <ActionIcon
+                size="sm"
                 color="red"
                 style={{
                   position: "absolute",
                   top: "5px",
                   right: "5px",
-                  padding: "0 6px",
                 }}
                 onClick={() => handleDeleteImage(index, image.url)}
               >
-                &times;
-              </Button>
+                <IconTrash size={14} />
+              </ActionIcon>
             </div>
           ))}
         </SimpleGrid>

@@ -54,7 +54,7 @@ export function Login() {
   });
 
   return (
-    <Container size={420} my={40}>
+    <Container size={420} mt={20}>
       <Title ta="center">Login</Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Do not have an account yet?{" "}

@@ -1,49 +1,35 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { Button } from "@mantine/core";
-import classes from "./ad-confirmation-style.module.css";
+import { useLocation, Link } from "react-router-dom";
+import { Button, Container, Group, Paper, Text, Title } from "@mantine/core";
 
 export const AdConfirmation = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
+  const location = useLocation();
+  const propertyId = location.state?.propertyId || null;
 
-    const propertyId = location.state?.propertyId || null;
-
-    const handleMessagesClick = () => {
-        navigate("/mymessages");
-    };
-
-    const handleDashboardClick = () => {
-        navigate("/dashboard");
-    };
-
-    const handleEditAdClick = () => {
-        if (propertyId) {
-            navigate(`/property/${propertyId}/edit`);
-        }
-    };
-
-    return (
-        <div className={classes.confirmationContainer}>
-            <div className={classes.confirmationBox}>
-                <h2>Your ad request has been sent!</h2>
-                <p>
-                    We'll verify the documents and let you know shortly. The admin will
-                    review your files and documents and verify them accordingly. If
-                    everything turns out great, your ad will be published shortly. You
-                    will receive a notification within 1-2 business days.
-                </p>
-                <div className={classes.actionButtons}>
-                    <Button color="green" onClick={handleMessagesClick}>
-                        Messages
-                    </Button>
-                    <Button color="blue" onClick={handleDashboardClick}>
-                        Dashboard
-                    </Button>
-                    <Button color="yellow" onClick={handleEditAdClick}>
-                        Edit Ad
-                    </Button>
-                </div>
-            </div>
-        </div>
-    );
+  return (
+    <Container>
+      <Paper withBorder shadow="sm" p="xl" mt="xl">
+        <Title order={2} mb="lg">
+          Your ad request has been sent!
+        </Title>
+        <Text>
+          We&apos;ll verify the documents and let you know shortly. The admin will review your files and documents and
+          verify them accordingly. If everything turns out great, your ad will be published shortly. You will receive a
+          notification within 1-2 business days.
+        </Text>
+        <Group mt="xl" gap="xs">
+          <Button component={Link} to={`/messages`} size="lg" color="green">
+            Messages
+          </Button>
+          <Button component={Link} to={`/dashboard`} size="lg" color="blue">
+            Dashboard
+          </Button>
+          {propertyId && (
+            <Button component={Link} to={`/property/${propertyId}/edit`} size="lg" color="yellow">
+              Edit Ad
+            </Button>
+          )}
+        </Group>
+      </Paper>
+    </Container>
+  );
 };

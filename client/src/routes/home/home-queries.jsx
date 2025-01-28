@@ -8,8 +8,8 @@ export const usePropertySearch = () => {
     title: searchParams.get("title") || "",
     pets: searchParams.get("pets") || false,
     smoking: searchParams.get("smoking") || false,
-    minPrice: searchParams.get("minPrice") || 0,
-    maxPrice: searchParams.get("maxPrice") || 99999999,
+    minPrice: searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : 0,
+    maxPrice: searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : 999999,
     availableFrom: searchParams.get("availableFrom") || "",
     searchRadius: searchParams.get("searchRadius") || "whole area",
   };

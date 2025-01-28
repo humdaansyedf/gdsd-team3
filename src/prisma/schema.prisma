@@ -1,7 +1,6 @@
 generator client {
-  provider        = "prisma-client-js"
-  binaryTargets   = ["native", "debian-openssl-3.0.x"]
-  previewFeatures = ["omitApi"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -79,6 +78,7 @@ model User {
   properties        Property[]        @relation("LandlordProperties")
   participatedChats ChatParticipant[]
   messages          Message[]
+  wishlists         Wishlist[]
 }
 
 model Session {
@@ -91,6 +91,7 @@ model Session {
   user       User      @relation(fields: [userId], references: [id])
 }
 
+// Property models
 model Property {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -101,6 +102,7 @@ model Property {
   propertyType PropertyType   @default(APARTMENT)
   title        String         @db.Text()
   description  String         @db.Text()
+  isSublet     Boolean        @default(false)
 
   // location and address
   longitude Float
@@ -149,11 +151,12 @@ model Property {
 
   // Relations
   creatorId Int
-  user       User      @relation("LandlordProperties", fields: [creatorId], references: [id])
+  user      User @relation("LandlordProperties", fields: [creatorId], references: [id])
   //new for all users
-  
-  media      PropertyMedia[]
-  chats      Chat[]
+
+  media     PropertyMedia[]
+  chats     Chat[]
+  wishlists Wishlist[]
 }
 
 model PropertyMedia {
@@ -169,67 +172,70 @@ model PropertyMedia {
 
   // Relations
   propertyId Int
-  property   Property @relation(fields: [propertyId], references: [id]) 
+  property   Property @relation(fields: [propertyId], references: [id])
+}
+
+model Wishlist {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  propertyId Int
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+
+  @@unique([userId, propertyId])
 }
 
 //Chat models
 model Chat {
-  id             Int             @id @default(autoincrement())
-  propertyId     Int
-  lastMessageAt  DateTime
+  id            Int      @id @default(autoincrement())
+  propertyId    Int
+  lastMessageAt DateTime
 
-  property       Property        @relation(fields: [propertyId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
 
-  participants   ChatParticipant[] 
-  messages       Message[]
-
+  participants ChatParticipant[]
+  messages     Message[]
 }
 
-
 model ChatParticipant {
-  chatid         Int
-  userid         Int
+  chatid Int
+  userid Int
 
-  chat           Chat            @relation(fields: [chatid], references: [id])
-  user           User            @relation(fields: [userid], references: [id])
+  chat Chat @relation(fields: [chatid], references: [id])
+  user User @relation(fields: [userid], references: [id])
 
-  @@unique([chatid, userid]) 
+  @@unique([chatid, userid])
 }
 
 model Message {
-  id             Int             @id @default(autoincrement())
-  chatid         Int
-  userid         Int
-  content        String          
-  createdAt      DateTime        @default(now())
-  
-  chat           Chat            @relation(fields: [chatid], references: [id])
-  user           User            @relation(fields: [userid], references: [id])
-}
+  id        Int      @id @default(autoincrement())
+  chatid    Int
+  userid    Int
+  content   String
+  createdAt DateTime @default(now())
 
+  chat Chat @relation(fields: [chatid], references: [id])
+  user User @relation(fields: [userid], references: [id])
+}
 
 // Admin Models
 model Admin {
-  id        Int            @id @default(autoincrement())
-  email     String         @unique
-  password  String
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  sessions  AdminSession[]
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  passwordHash String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  sessions     AdminSession[]
 }
 
 model AdminSession {
-  id         Int       @id @default(autoincrement())
-  userId     Int
+  id         String    @id
+  adminId    Int
   createdAt  DateTime  @default(now())
   expiresAt  DateTime?
   ipAddress  String?
   deviceInfo String?
-  admin      Admin     @relation(fields: [userId], references: [id])
-}
-
-model DummyTable {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  admin      Admin     @relation(fields: [adminId], references: [id])
 }
