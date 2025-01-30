@@ -212,8 +212,8 @@ creatorRouter.get("/dashboard/stats", async (req, res) => {
 
 // Get a single property of the landlord
 creatorRouter.get("/property/:id", async (req, res) => {
-  const user = req.user;
-  const id = req.params.id;
+  const user = parseInt(req.user);
+  const id = parseInt(req.params.id);
 
   const property = await prisma.property.findFirst({
     where: {
@@ -248,8 +248,8 @@ creatorRouter.put("/property/:id", async (req, res) => {
     });
   }
 
-  const id = req.params.id;
-  const user = req.user;
+  const id = parseInt(req.params.id);
+  const user = parseInt(req.user);
 
   try {
     const property = await prisma.property.update({
@@ -268,7 +268,7 @@ creatorRouter.put("/property/:id", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: "Failed to update property",
+      message: error.message,
     });
   }
 });

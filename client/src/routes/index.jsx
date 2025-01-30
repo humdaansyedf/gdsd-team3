@@ -18,6 +18,11 @@ const CreateAdPage = React.lazy(() =>
     default: mod.CreateAdPage,
   }))
 );
+const EditAdPage = React.lazy(() =>
+    import("./edit-ad/edit-ad-page.jsx").then((mod) => ({
+        default: mod.EditAdPage,
+    }))
+);
 const AdConfirmation = React.lazy(() =>
   import("./ad-confirmation/ad-confirmation-page.jsx").then((mod) => ({
     default: mod.AdConfirmation,
@@ -150,6 +155,14 @@ export const App = () => {
                 </PrivateRoute>
               }
             />
+              <Route
+                  path="property/:id/edit"
+                  element={
+                      <PrivateRoute>
+                          <EditAdPage />
+                      </PrivateRoute>
+                  }
+              />
             <Route
               path="property/submission-confirmation"
               element={
