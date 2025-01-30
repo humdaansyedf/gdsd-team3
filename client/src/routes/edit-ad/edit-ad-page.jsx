@@ -110,6 +110,7 @@ export const EditAdPage = () => {
 
     const handleImageUpload = (uploadedUrl) => {
         form.setFieldValue("media", [...form.values.media, { url: uploadedUrl }]);
+        console.log(uploadedUrl);
     };
 
     const handleSubmit = async (values) => {
@@ -122,7 +123,7 @@ export const EditAdPage = () => {
         }, {});
 
         // Add fields that are required by the backend but not included in the updatedFields
-        const requiredFields = ["status", "propertyType", "title", "description", "numberOfRooms", "coldRent", "availableFrom"];
+        const requiredFields = ["status", "propertyType", "title", "description", "numberOfRooms", "coldRent", "availableFrom", "longitude", "latitude"];
         requiredFields.forEach((field) => {
             if (!(field in updatedFields)) {
                 updatedFields[field] = values[field] || initialData[field];
@@ -132,6 +133,7 @@ export const EditAdPage = () => {
         const payload = {
             ...updatedFields,
             status: "PENDING",
+            //availableFrom: new Date(values.availableFrom),
             availableFrom: values.availableFrom
                 ? values.availableFrom.toISOString().substring(0, 10) // Convert to YYYY-MM-DD
                 : null,

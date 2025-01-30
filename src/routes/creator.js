@@ -249,17 +249,64 @@ creatorRouter.put("/property/:id", async (req, res) => {
   }
 
   const id = parseInt(req.params.id);
-  const user = parseInt(req.user);
+  const user = req.user;
 
+  // const where = {
+  //   id,
+  //   creatorId: user.id
+  // };
+  // console.log('console log: ',where);
+  // try {
+  //   const property = await prisma.property.update({
+  //     where,
+  //     data: {
+  //       ...result.data,
+  //     },
+  //     include: {
+  //       media: true,
+  //     }
+  //   })
   try {
-    const property = await prisma.property.update({
-      where: {
+    const { media, ...propertyData } = result.data;
+    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const availableFrom = new Date(propertyData.availableFrom);
+    const where = {
         id,
-        creatorId: user.id,
-      },
-      data: {
-        ...result.data,
-      },
+        creatorId: user.id
+      };
+    console.log('AF =',availableFrom);
+    console.log('PD =',propertyData);
+    const isSublet = req.user.type === "STUDENT";
+    console.log(media);
+    const property = await prisma.$transaction(async (tx) => {
+      const property = await tx.property.update({
+        where,
+        data: {
+          ...propertyData,
+          availableFrom,
+          totalRent,
+          creatorId: user.id,
+          isSublet: isSublet,
+        },
+      });
+      // if (media.length > 0) {
+      //   const propertyMedia = media.map(({ url }) => {
+      //     const name = url.split("amazonaws.com/")[1];
+      //     return {
+      //       propertyId: property.id,
+      //       status: "PENDING",
+      //       type: "IMAGE",
+      //       url,
+      //       name,
+      //     };
+      //   });
+      //
+      //   await tx.propertyMedia.createMany({
+      //     data: propertyMedia,
+      //   });
+      //  }
+
+      return property;
     });
 
     res.json({
@@ -267,6 +314,15 @@ creatorRouter.put("/property/:id", async (req, res) => {
       data: { id: property.id },
     });
   } catch (error) {
+    console.error("Property creation failed:", error);
+
+    if (data.media) {
+      for (const { url } of data.media) {
+        const key = url.split("amazonaws.com/")[1];
+        await deleteImageFromS3(key);
+      }
+    }
+
     res.status(500).json({
       message: error.message,
     });
@@ -353,7 +409,7 @@ creatorRouter.post("/property/:id/media", async (req, res) => {
     });
   }
 
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
   const user = req.user;
 
   const property = await prisma.property.findFirst({
