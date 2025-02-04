@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Container, Flex, Table, Text, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconShare, IconTrash, IconUpload } from "@tabler/icons-react";
+import { IconEye, IconShare, IconTrash, IconUpload } from "@tabler/icons-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../lib/auth-context";
@@ -39,19 +39,43 @@ const MyDocuments = () => {
     }
   };
 
-  const handleCopyLink = (url) => {
-    navigator.clipboard.writeText(url);
-    notifications.show({
-      title: "Link Copied!",
-      message: "The document link has been copied to clipboard.",
-      color: "green",
-      autoClose: 2000,
-    });
+  const handleViewDocument = async (key) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/document`, {
+        params: { key }, // Pass the key as a query parameter
+        withCredentials: true,
+      });
+      window.open(response.data.url, "_blank");
+    } catch (error) {
+      console.error("Error fetching document URL:", error);
+      notifications.show({
+        title: "Error",
+        message: "Failed to fetch document.",
+        color: "red",
+      });
+    }
+  };
+
+  const handleCopyLink = async (key) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/document`, {
+        params: { key }, // Pass the key as a query parameter
+        withCredentials: true,
+      });
+      navigator.clipboard.writeText(response.data.url);
+      notifications.show({
+        title: "Link Copied!",
+        message: "The document link has been copied to clipboard.",
+        color: "green",
+        autoClose: 2000,
+      });
+    } catch (error) {
+      console.error("Error generating shareable link:", error);
+    }
   };
 
   return (
     <Container>
-      {/* Header with Title and Upload Button */}
       <Flex justify="space-between" align="center" mt="md" mb="md">
         <Text size="xl" weight={600}>My Documents</Text>
         <Button size="sm" onClick={() => setModalOpen(true)} leftIcon={<IconUpload />}>
@@ -59,33 +83,30 @@ const MyDocuments = () => {
         </Button>
       </Flex>
 
-      {/* Table for Documents */}
       <Table withBorder withColumnBorders>
         <thead>
           <tr>
             <th style={{ textAlign: "left", padding: "12px" }}>Document Name</th>
-            <th style={{ textAlign: "right", padding: "12px", width: "200px" }}>Actions</th>
+            <th style={{ textAlign: "right", padding: "12px", width: "250px" }}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {documents.length > 0 ? (
             documents.map((doc) => (
               <tr key={doc.key}>
-                <td style={{ padding: "12px" }}>
-                  <a href={doc.url} target="_blank" rel="noopener noreferrer">
-                    {doc.fileName}
-                  </a>
-                </td>
+                <td style={{ padding: "12px" }}>{doc.fileName}</td>
                 <td style={{ textAlign: "right", padding: "12px" }}>
-                  <Flex justify="flex-end" gap="lg">
-                    {/* Share Button */}
+                  <Flex justify="flex-end" gap="md">
+                    <Tooltip label="View">
+                      <ActionIcon color="blue" onClick={() => handleViewDocument(doc.key)}>
+                        <IconEye />
+                      </ActionIcon>
+                    </Tooltip>
                     <Tooltip label="Copy link">
-                      <ActionIcon color="blue" onClick={() => handleCopyLink(doc.url)}>
+                      <ActionIcon color="teal" onClick={() => handleCopyLink(doc.key)}>
                         <IconShare />
                       </ActionIcon>
                     </Tooltip>
-
-                    {/* Delete Button */}
                     <Tooltip label="Delete">
                       <ActionIcon color="red" onClick={() => handleDelete(doc.key)}>
                         <IconTrash />
@@ -105,7 +126,6 @@ const MyDocuments = () => {
         </tbody>
       </Table>
 
-      {/* Upload Document Modal */}
       {modalOpen && (
         <UploadDocumentModal opened={modalOpen} onClose={() => setModalOpen(false)} fetchDocuments={fetchDocuments} />
       )}

@@ -76,9 +76,13 @@ documentRouter.post("/document", async (req, res) => {
   }
 });
 
-// Generate Pre-Signed URL for Download
-documentRouter.get("/document/:key", async (req, res) => {
-  const { key } = req.params;
+documentRouter.get("/document", async (req, res) => {
+  const { key } = req.query;
+
+  if (!key) {
+    return res.status(400).json({ message: "Key is required" });
+  }
+
   try {
     const url = await getSignedUrl(
       s3Client,
@@ -86,7 +90,7 @@ documentRouter.get("/document/:key", async (req, res) => {
         Bucket: process.env.APP_AWS_BUCKET_NAME,
         Key: key,
       }),
-      { expiresIn: 60 * 5 }
+      { expiresIn: 60 * 5 } // 5 minutes
     );
     res.json({ url });
   } catch (error) {
@@ -124,7 +128,7 @@ documentRouter.delete("/document", async (req, res) => {
   }
 });
 
-// Get All Documents for a User
+// Updated Route: Get All Documents for a User (Without Signed URLs)
 documentRouter.get("/documents", async (req, res) => {
   const userId = req.user.id;
   if (req.user.type !== "STUDENT") {
@@ -133,25 +137,13 @@ documentRouter.get("/documents", async (req, res) => {
 
   try {
     const documents = await prisma.document.findMany({ where: { userId } });
-    const signedDocs = await Promise.all(
-      documents.map(async (doc) => {
-        const url = await getSignedUrl(
-          s3Client,
-          new GetObjectCommand({
-            Bucket: process.env.APP_AWS_BUCKET_NAME,
-            Key: doc.key,
-          }),
-          { expiresIn: 60 * 5 }
-        );
-        return { ...doc, url };
-      })
-    );
-    res.json({ documents: signedDocs });
+    res.json({ documents }); // Only sending document metadata (no signed URLs)
   } catch (error) {
     console.error("Error fetching documents:", error);
     res.status(500).json({ message: "Failed to retrieve documents" });
   }
 });
+
 
 documentRouter.post("/document/share", async (req, res) => {
   const { key } = req.body;
