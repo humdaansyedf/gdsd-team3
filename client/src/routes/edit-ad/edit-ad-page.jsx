@@ -110,7 +110,11 @@ export const EditAdPage = () => {
 
     const handleImageUpload = (uploadedUrl) => {
         form.setFieldValue("media", [...form.values.media, { url: uploadedUrl }]);
-        console.log(uploadedUrl);
+    };
+
+    const handleImageDelete = (deletedUrl) => {
+        const updatedMedia = form.values.media.filter((image) => image.url !== deletedUrl);
+        form.setFieldValue("media", updatedMedia);
     };
 
     const handleSubmit = async (values) => {
@@ -133,7 +137,6 @@ export const EditAdPage = () => {
         const payload = {
             ...updatedFields,
             status: "PENDING",
-            //availableFrom: new Date(values.availableFrom),
             availableFrom: values.availableFrom
                 ? values.availableFrom.toISOString().substring(0, 10) // Convert to YYYY-MM-DD
                 : null,
@@ -165,6 +168,7 @@ export const EditAdPage = () => {
                     <div>
                         <ImageUploader
                             onUpload={handleImageUpload}
+                            onDelete={handleImageDelete}
                             existingImages={form.values.media.map((media) => media.url)}
                         />
                         {form.errors.media && (

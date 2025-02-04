@@ -6,7 +6,7 @@ import { usePublicFileUpload } from "./fileUpload";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
 
-export const ImageUploader = ({ onUpload, existingImages = [] }) => {
+export const ImageUploader = ({ onUpload, onDelete, existingImages = [] }) => {
   const [images, setImages] = useState([]); // State to hold uploaded images
   const fileUploadMutation = usePublicFileUpload(); // Mutation hook for uploading images
   const [loading, setLoading] = useState(false); // Loading state for file upload
@@ -70,6 +70,9 @@ export const ImageUploader = ({ onUpload, existingImages = [] }) => {
         .then(() => {
           // Remove the image from the frontend state
           setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+          if (onDelete) {
+            onDelete(url);
+          }
         });
     } catch (error) {
       console.error("Failed to delete image:", error);

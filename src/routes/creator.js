@@ -239,7 +239,7 @@ creatorRouter.get("/property/:id", async (req, res) => {
 // Update a property of the landlord
 creatorRouter.put("/property/:id", async (req, res) => {
   const data = req.body; // Parse request body
-  const result = propertySchema.safeParse(data); // Validate request using Zod schema
+  const result = createPropertySchema.safeParse(data); // Validate request using Zod schema
 
   if (!result.success) {
     return res.status(400).json({
@@ -251,21 +251,14 @@ creatorRouter.put("/property/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const user = req.user;
 
-  // const where = {
-  //   id,
-  //   creatorId: user.id
-  // };
-  // console.log('console log: ',where);
-  // try {
-  //   const property = await prisma.property.update({
-  //     where,
-  //     data: {
-  //       ...result.data,
-  //     },
-  //     include: {
-  //       media: true,
-  //     }
-  //   })
+  if (!user || !user.id) {
+    return res.status(403).json({ message: "Unauthorized: No user ID found" });
+  }
+
+  if (!id) {
+    return res.status(400).json({ message: "Invalid property ID" });
+  }
+
   try {
     const { media, ...propertyData } = result.data;
     const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
@@ -274,58 +267,61 @@ creatorRouter.put("/property/:id", async (req, res) => {
         id,
         creatorId: user.id
       };
-    console.log('AF =',availableFrom);
-    console.log('PD =',propertyData);
+    console.log("Received Request Body:", req.body);
+    console.log("Updating Property:", where);
+    console.log("Available From:", availableFrom);
+    console.log("Property Data:", propertyData);
+    console.log("Media Data:", media);
     const isSublet = req.user.type === "STUDENT";
     console.log(media);
     const property = await prisma.$transaction(async (tx) => {
-      const property = await tx.property.update({
+      const updatedProperty = await tx.property.update({
         where,
         data: {
           ...propertyData,
           availableFrom,
           totalRent,
-          creatorId: user.id,
-          isSublet: isSublet,
+          isSublet,
         },
       });
-      // if (media.length > 0) {
-      //   const propertyMedia = media.map(({ url }) => {
-      //     const name = url.split("amazonaws.com/")[1];
-      //     return {
-      //       propertyId: property.id,
-      //       status: "PENDING",
-      //       type: "IMAGE",
-      //       url,
-      //       name,
-      //     };
-      //   });
-      //
-      //   await tx.propertyMedia.createMany({
-      //     data: propertyMedia,
-      //   });
-      //  }
 
-      return property;
+      console.log("Media Data Before Update:", media);
+      // Step 2: Handle Image Upload (Only if media is provided)
+      if (Array.isArray(media) && media.length > 0) {
+        console.log("Updating media for property:", id);
+
+        // Step 2a: Delete Old Images (Optional: If replacing images)
+        await tx.propertyMedia.deleteMany({
+          where: { propertyId: id },
+        });
+
+        // Step 2b: Add New Images
+        const propertyMedia = media.map(({ url }) => {
+          const name = url.split("amazonaws.com/")[1]; // Extract filename
+          return {
+            propertyId: updatedProperty.id,
+            status: "PENDING",
+            type: "IMAGE",
+            url,
+            name,
+          };
+        });
+
+        await tx.propertyMedia.createMany({
+          data: propertyMedia,
+        });
+      }
+
+      return updatedProperty;
     });
 
     res.json({
-      message: "Property updated",
+      message: "Property updated successfully",
       data: { id: property.id },
     });
   } catch (error) {
-    console.error("Property creation failed:", error);
-
-    if (data.media) {
-      for (const { url } of data.media) {
-        const key = url.split("amazonaws.com/")[1];
-        await deleteImageFromS3(key);
-      }
-    }
-
-    res.status(500).json({
-      message: error.message,
-    });
+    console.error("Property update failed:", error);
+    res.status(500).json({ message: error.message });
   }
 });
 
