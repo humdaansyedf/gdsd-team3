@@ -29,6 +29,7 @@ const PropertyDetail = React.lazy(() =>
   }))
 );
 const Profile = React.lazy(() => import("./profile/profile-page").then((mod) => ({ default: mod.Profile })));
+const ProfileEdit = React.lazy(() => import("./profile/profile-edit").then((mod) => ({ default: mod.ProfileEdit })));
 const Mymessages = React.lazy(() => import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages })));
 const MyDocuments = React.lazy(() => import("./my-documents/my-documents"));
 
@@ -132,6 +133,14 @@ export const App = () => {
               element={
                 <PrivateRoute>
                   <Profile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="profile/edit"
+              element={
+                <PrivateRoute>
+                  <ProfileEdit />
                 </PrivateRoute>
               }
             />

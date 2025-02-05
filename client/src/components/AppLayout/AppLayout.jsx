@@ -14,7 +14,6 @@ export function AppLayout() {
   const [searchQuery, setSearchQuery] = useState("");
   const [recentSearches, setRecentSearches] = useState([]);
 
-  // Load recent searches from localStorage when the component mounts
   useEffect(() => {
     const storedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
     setRecentSearches(storedSearches);
@@ -51,11 +50,11 @@ export function AppLayout() {
                 NeuAnfang
               </Anchor>
               <Group gap="xs" visibleFrom="sm">
-                {/* Updated Search Bar with Recent Searches */}
+                {}
                 <Autocomplete
                   placeholder="Search"
                   size="xs"
-                  data={recentSearches} // Shows recent searches
+                  data={recentSearches} 
                   value={searchQuery}
                   onChange={setSearchQuery}
                   onKeyDown={(event) => {

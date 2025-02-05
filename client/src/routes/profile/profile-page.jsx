@@ -27,8 +27,12 @@ export function Profile() {
           </Flex>
 
           <Group position="center">
+            <Button variant="filled" size="md" color="green" component={Link} to="/profile/edit">
+              Edit Profile
+            </Button>
+
             {user.type === "STUDENT" && (
-              <Button variant="outline" size="md" component={Link} to="/my-documents">
+              <Button variant="filled" size="md" color="blue" component={Link} to="/my-documents">
                 My Documents
               </Button>
             )}

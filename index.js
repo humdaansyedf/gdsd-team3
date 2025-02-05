@@ -13,6 +13,7 @@ import { authMiddleware, authRouter } from "./src/routes/auth.js";
 import { creatorRouter } from "./src/routes/creator.js";
 import { documentRouter } from "./src/routes/doc.js";
 import { fileRouter } from "./src/routes/file.js";
+import { profileRouter } from "./src/routes/profile.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { wishlistRouter } from "./src/routes/wishlist.js";
 
@@ -74,7 +75,7 @@ app.use("/api", authRouter, publicPropertyRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use("/api", propertyRouter, fileRouter, creatorRouter, wishlistRouter, documentRouter);
+app.use("/api", propertyRouter, fileRouter, creatorRouter, wishlistRouter, documentRouter, profileRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {

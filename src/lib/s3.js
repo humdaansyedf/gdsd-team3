@@ -1,4 +1,4 @@
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 // Initialize the S3 client
 const s3Client = new S3Client({
@@ -8,6 +8,24 @@ const s3Client = new S3Client({
     secretAccessKey: process.env.APP_AWS_SECRET_ACCESS_KEY,
   },
 });
+
+// Upload Function
+export const uploadObject = async ({ Bucket, Key, Body, ContentType }) => {
+  try {
+    const command = new PutObjectCommand({
+      Bucket,
+      Key,
+      Body,
+      ContentType,
+    });
+
+    await s3Client.send(command);
+    console.log(`File uploaded successfully to ${Bucket}/${Key}`);
+  } catch (error) {
+    console.error("Error uploading to S3:", error);
+    throw error;
+  }
+};
 
 // Function to delete an image from S3
 export const deleteImageFromS3 = async (key) => {

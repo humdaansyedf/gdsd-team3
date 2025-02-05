@@ -137,7 +137,7 @@ documentRouter.get("/documents", async (req, res) => {
 
   try {
     const documents = await prisma.document.findMany({ where: { userId } });
-    res.json({ documents }); // Only sending document metadata (no signed URLs)
+    res.json({ documents }); 
   } catch (error) {
     console.error("Error fetching documents:", error);
     res.status(500).json({ message: "Failed to retrieve documents" });
@@ -172,7 +172,7 @@ documentRouter.post("/document/share", async (req, res) => {
         Bucket: process.env.APP_AWS_BUCKET_NAME,
         Key: key,
       }),
-      { expiresIn: 60 * 60 } // 1-hour expiry
+      { expiresIn: 60 * 60 } 
     );
 
     res.json({ message: "Generated shareable URL", url: signedUrl });
