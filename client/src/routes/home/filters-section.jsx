@@ -159,8 +159,6 @@ const Filters = ({ onFilter, onReset }) => {
         <MultiSelect
           placeholder="Select amenities"
           checkIconPosition="right"
-          clearable
-          searchable
           data={AMENITIES}
           key={form.key("amenities")}
           {...form.getInputProps("amenities")}
