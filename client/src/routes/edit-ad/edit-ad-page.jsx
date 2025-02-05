@@ -65,6 +65,8 @@ export const EditAdPage = () => {
                 value && isNaN(Number(value))
                     ? "Year Built must be a valid year"
                     : null,
+            media: (value) =>
+                value.length === 0 ? "At least one image must be uploaded." : null,
         },
     });
 
@@ -73,19 +75,26 @@ export const EditAdPage = () => {
             try {
                 const response = await axios.get(`/api/property/${id}`);
                 const propertyData = response.data.data;
-
-                setInitialData(propertyData);
-
-                form.setValues({
+                const parsedData = {
                     ...propertyData,
-                    totalRent: propertyData.coldRent + (propertyData.additionalCosts || 0),
                     availableFrom: propertyData.availableFrom
-                        ? new Date(propertyData.availableFrom) // Convert string to Date object
+                        ? new Date(propertyData.availableFrom)
                         : null,
-                    yearBuilt: propertyData.yearBuilt
-                        ? new Date(propertyData.yearBuilt)
-                        : null,
-                });
+                    yearBuilt: propertyData.yearBuilt === "0000" ? null : propertyData.yearBuilt
+                };
+
+                form.setValues(parsedData);
+
+                // form.setValues({
+                //     ...propertyData,
+                //     totalRent: propertyData.coldRent + (propertyData.additionalCosts || 0),
+                //     availableFrom: propertyData.availableFrom
+                //         ? new Date(propertyData.availableFrom) // Convert string to Date object
+                //         : null,
+                //     yearBuilt: propertyData.yearBuilt
+                //         ? new Date(propertyData.yearBuilt).getFullYear().toString() // Extract year from Date
+                //         : null,
+                // });
 
                 setIsLoading(false);
             } catch (error) {
@@ -104,17 +113,33 @@ export const EditAdPage = () => {
                 form.setFieldValue("address1", place.formatted_address);
                 form.setFieldValue("latitude", place.geometry.location.lat());
                 form.setFieldValue("longitude", place.geometry.location.lng());
+
+                place.address_components.forEach((component) => {
+                    const types = component.types;
+
+                    if (types.includes("postal_code")) {
+                        form.setFieldValue("postcode", component.long_name);
+                    }
+                    if (types.includes("locality")) {
+                        form.setFieldValue("city", component.long_name);
+                    }
+                    if (types.includes("administrative_area_level_1")) {
+                        form.setFieldValue("state", component.long_name);
+                    }
+                })
             }
         }
     };
 
     const handleImageUpload = (uploadedUrl) => {
-        form.setFieldValue("media", [...form.values.media, { url: uploadedUrl }]);
+        form.setFieldValue("media", [...(form.values.media || []), { url: uploadedUrl }]);
+        //form.setFieldValue("media", [...form.values.media, { url: uploadedUrl }]);
     };
 
     const handleImageDelete = (deletedUrl) => {
         const updatedMedia = form.values.media.filter((image) => image.url !== deletedUrl);
         form.setFieldValue("media", updatedMedia);
+        console.log("Updated Media After Deletion:", updatedMedia);
     };
 
     const handleSubmit = async (values) => {
@@ -134,6 +159,7 @@ export const EditAdPage = () => {
             }
         });
 
+
         const payload = {
             ...updatedFields,
             status: "PENDING",
@@ -143,6 +169,9 @@ export const EditAdPage = () => {
             media: updatedFields.media
                 ? updatedFields.media.map((item) => ({ url: item.url }))
                 : initialData.media.map((item) => ({ url: item.url })),
+            yearBuilt: values.yearBuilt
+                ? values.yearBuilt.getFullYear().toString() // Keep valid year as string
+                : "0000", // Fallback value
         };
 
         try {
@@ -169,7 +198,7 @@ export const EditAdPage = () => {
                         <ImageUploader
                             onUpload={handleImageUpload}
                             onDelete={handleImageDelete}
-                            existingImages={form.values.media.map((media) => media.url)}
+                            existingImages={form.values.media ? form.values.media.map((media) => media.url) : []}
                         />
                         {form.errors.media && (
                             <Text size="xs" color="red" mt={4}>
@@ -329,13 +358,10 @@ export const EditAdPage = () => {
                                 maxDate={new Date()}
                                 valueFormat="YYYY"
                                 placeholder="YYYY"
-                                {...form.getInputProps("yearBuilt", {
-                                    type: "input",
-                                    onChange: (value) => {
-                                        // Ensure the value is either a valid year or empty
-                                        form.setFieldValue("yearBuilt", value ? value.getFullYear().toString() : "");
-                                    },
-                                })}
+                                value={form.values.yearBuilt ? new Date(`${form.values.yearBuilt}-01-01`) : null}
+                                onChange={(value) => {
+                                    form.setFieldValue("yearBuilt", value ? value.getFullYear().toString() : null);
+                                }}
                             />
                             <NumberInput
                                 label="Notice Period (months)"
@@ -382,7 +408,7 @@ export const EditAdPage = () => {
                                 {label: "Garden", field: "garden"},
                                 {label: "Parking", field: "parking"},
                                 {label: "Internet", field: "internet"},
-                                {label: "Cable TV", field: "cableTV"}
+                                {label: "Cable TV", field: "cableTv"}
                             ].map((amenity) => (
                                 <Checkbox
                                     key={amenity.field}
