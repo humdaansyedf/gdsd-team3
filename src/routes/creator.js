@@ -60,6 +60,7 @@ const createPropertySchema = propertySchema.extend({
     .array()
     .min(1)
     .max(15),
+  creatorComment: z.string().optional(),
 });
 
 // Create a new property

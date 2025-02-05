@@ -150,6 +150,10 @@ model Property {
   internet       Boolean @default(false)
   cableTv        Boolean @default(false)
 
+  // Comments
+  adminComment   String?
+  creatorComment String?
+
   // Relations
   creatorId Int
   user      User @relation("LandlordProperties", fields: [creatorId], references: [id])
