@@ -62,6 +62,7 @@ export const CreateAdPage = () => {
     parking: false,
     internet: false,
     cableTv: false,
+    creatorComment: "",
     media: [], // Image URLs
   });
 
@@ -176,6 +177,7 @@ export const CreateAdPage = () => {
       parking: formData.parking,
       internet: formData.internet,
       cableTv: formData.cableTv,
+      creatorComment: formData.creatorComment,
       media: formData.media,
     };
 
@@ -427,6 +429,16 @@ export const CreateAdPage = () => {
             <Checkbox label="Cable TV" checked={formData.cableTv} onChange={() => handleCheckboxChange("cableTv")} />
           </SimpleGrid>
         </Paper>
+
+        <Textarea
+          label="Creator comment"
+          placeholder="Add any additional comments for the admin"
+          error={errors.description}
+          autosize
+          minRows={3}
+          value={formData.description}
+          onChange={(e) => handleInputChange("description", e.target.value)}
+        />
 
         <Button fullWidth color="green" onClick={handleSubmit} radius="md" size="lg" my="xl">
           Submit for review
