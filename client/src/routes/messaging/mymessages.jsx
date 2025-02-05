@@ -109,6 +109,19 @@ export function Mymessages() {
           },
         ]);
       }
+
+      //for open chats, mark received message as read
+      if (data.userId === selectedUserId) {
+        markNotificationsAsRead({
+          propertyId: activePropertyId,
+          currentUserId,
+          selectedUserId: data.userId,
+        });
+
+        setNotifications((prev) =>
+          prev.filter((n) => n.senderId !== data.userId)
+        );
+      }
     };
 
     const handleNewNotification = (notificationData) => {
