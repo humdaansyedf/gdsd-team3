@@ -4,9 +4,24 @@ import { prisma } from "../prisma/index.js";
 export const publicPropertyRouter = Router();
 export const propertyRouter = Router();
 
+const AMENITIES = [
+  "pets",
+  "smoking",
+  "kitchen",
+  "furnished",
+  "balcony",
+  "cellar",
+  "washingMachine",
+  "elevator",
+  "garden",
+  "parking",
+  "internet",
+  "cableTv",
+];
+
 // Route to get multiple properties
 publicPropertyRouter.post("/public/property/search", async (req, res) => {
-  const { title, pets, smoking, minPrice, maxPrice, availableFrom, searchRadius, page = 1 } = req.body;
+  const { title, amenities, minPrice, maxPrice, availableFrom, searchRadius, page = 1 } = req.body;
   const limit = 50;
   const offset = (page - 1) * limit;
   try {
@@ -20,12 +35,12 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       };
     }
 
-    if (pets) {
-      where.pets = true;
-    }
-
-    if (smoking) {
-      where.smoking = true;
+    if (amenities) {
+      for (const amenity of amenities) {
+        if (AMENITIES.includes(amenity)) {
+          where[amenity] = true;
+        }
+      }
     }
 
     if (minPrice || maxPrice) {

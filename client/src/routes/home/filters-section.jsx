@@ -1,8 +1,8 @@
 import {
   Button,
-  Checkbox,
   Drawer,
   Flex,
+  MultiSelect,
   NumberInput,
   Paper,
   Select,
@@ -16,17 +16,67 @@ import { useForm } from "@mantine/form";
 import classes from "./home-style.module.css";
 import { useSearchParams } from "react-router-dom";
 
+const AMENITIES = [
+  {
+    label: "Pets Allowed",
+    value: "pets",
+  },
+  {
+    label: "Smoking Allowed",
+    value: "smoking",
+  },
+  {
+    label: "Kitchen",
+    value: "kitchen",
+  },
+  {
+    label: "Furnished",
+    value: "furnished",
+  },
+  {
+    label: "Balcony",
+    value: "balcony",
+  },
+  {
+    label: "Cellar",
+    value: "cellar",
+  },
+  {
+    label: "Washing Machine",
+    value: "washingMachine",
+  },
+  {
+    label: "Elevator",
+    value: "elevator",
+  },
+  {
+    label: "Garden",
+    value: "garden",
+  },
+  {
+    label: "Parking",
+    value: "parking",
+  },
+  {
+    label: "Internet",
+    value: "internet",
+  },
+  {
+    label: "Cable TV",
+    value: "cableTv",
+  },
+];
+
 const Filters = ({ onFilter, onReset }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const initialValues = {
     title: searchParams.get("title") || "",
-    pets: searchParams.get("pets") === "true" || false,
-    smoking: searchParams.get("smoking") === "true" || false,
     minPrice: searchParams.get("minPrice") || 0,
     maxPrice: searchParams.get("maxPrice") || 5000,
     availableFrom: searchParams.get("availableFrom") || "",
     searchRadius: searchParams.get("searchRadius") || "whole area",
+    amenities: searchParams.get("amenities") ? searchParams.get("amenities").split(",") : [],
   };
 
   const form = useForm({
@@ -39,14 +89,14 @@ const Filters = ({ onFilter, onReset }) => {
       gap="sm"
       component="form"
       onSubmit={form.onSubmit((values) => {
+        console.log(values);
         const params = new URLSearchParams();
         if (values.title) params.set("title", values.title);
-        if (values.pets) params.set("pets", values.pets);
-        if (values.smoking) params.set("smoking", values.smoking);
         if (values.minPrice !== 0) params.set("minPrice", values.minPrice);
         if (values.maxPrice !== 5000) params.set("maxPrice", values.maxPrice);
         if (values.availableFrom) params.set("availableFrom", values.availableFrom);
         if (values.searchRadius !== "whole area") params.set("searchRadius", values.searchRadius);
+        if (values.amenities && values.amenities.length) params.set("amenities", values.amenities.join(","));
 
         setSearchParams(params);
         if (onFilter) {
@@ -86,7 +136,12 @@ const Filters = ({ onFilter, onReset }) => {
 
       <Stack gap={4}>
         <Title order={4}>Earliest available:</Title>
-        <DateInput minDate={new Date()} key={form.key("availableFrom")} {...form.getInputProps("availableFrom")} />
+        <DateInput
+          placeholder="Select date"
+          minDate={new Date()}
+          key={form.key("availableFrom")}
+          {...form.getInputProps("availableFrom")}
+        />
       </Stack>
 
       <Stack gap={4}>
@@ -100,15 +155,16 @@ const Filters = ({ onFilter, onReset }) => {
       </Stack>
 
       <Stack gap={4}>
-        <Title order={4}>Additional:</Title>
-        <Stack gap={8}>
-          <Checkbox label="Pets Allowed" key={form.key("pets")} {...form.getInputProps("pets", { type: "checkbox" })} />
-          <Checkbox
-            label="Smoking Allowed"
-            key={form.key("smoking")}
-            {...form.getInputProps("smoking", { type: "checkbox" })}
-          />
-        </Stack>
+        <Title order={4}>Amenities:</Title>
+        <MultiSelect
+          placeholder="Select amenities"
+          checkIconPosition="right"
+          clearable
+          searchable
+          data={AMENITIES}
+          key={form.key("amenities")}
+          {...form.getInputProps("amenities")}
+        />
       </Stack>
 
       <Flex gap="xs" mt="xs">
