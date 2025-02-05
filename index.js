@@ -13,6 +13,7 @@ import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { creatorRouter } from "./src/routes/creator.js";
 import { wishlistRouter } from "./src/routes/wishlist.js";
 import { chatHandlers } from "./chatHandlers.js";
+import { chatRouter } from "./src/routes/chat.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,17 +29,12 @@ const io = new Server(server, {
   },
 });
 
-// Socket.IO logic
 // Socket.IO Connection
 io.on("connection", (socket) => {
-  // console.log('A user connected:', socket.id);
-
   // Handle chat-related events
   chatHandlers(io, socket);
 
-  socket.on("disconnect", () => {
-    // console.log('A user disconnected:', socket.id);
-  });
+  socket.on("disconnect", () => {});
 });
 
 // Disable some headers
@@ -64,7 +60,14 @@ app.use("/api", authRouter, publicPropertyRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use("/api", propertyRouter, fileRouter, creatorRouter, wishlistRouter);
+app.use(
+  "/api",
+  propertyRouter,
+  fileRouter,
+  creatorRouter,
+  wishlistRouter,
+  chatRouter
+);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
