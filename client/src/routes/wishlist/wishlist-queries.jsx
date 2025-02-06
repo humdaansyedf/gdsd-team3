@@ -1,13 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Fetch wishlist data
 export const useWishlist = () => {
   return useQuery({
     queryKey: ["wishlist"],
     queryFn: async () => {
       const response = await fetch(`/api/wishlist`, {
         method: "GET",
-        credentials: "include", // Include cookies for authentication
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
       });
 
@@ -17,18 +16,16 @@ export const useWishlist = () => {
 
       const data = await response.json();
 
-      // Ensure each property has an image
       return data.map((item) => ({
         ...item.property,
         media: item.property.media.length > 0
           ? item.property.media[0].url
-          : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png", // Default image
+          : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
       }));
     },
   });
 };
 
-// Add property to wishlist
 export const useAddToWishlist = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -45,12 +42,11 @@ export const useAddToWishlist = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["wishlist"]); // Refresh wishlist data
+      queryClient.invalidateQueries(["wishlist"]);
     },
   });
 };
 
-// Remove property from wishlist
 export const useRemoveFromWishlist = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -66,7 +62,7 @@ export const useRemoveFromWishlist = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["wishlist"]); // Refresh wishlist data
+      queryClient.invalidateQueries(["wishlist"]);
     },
   });
 };
