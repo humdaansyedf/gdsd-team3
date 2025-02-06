@@ -66,15 +66,17 @@ export function AppLayout() {
                     >
                       Messages
                     </Button>
-                    <Button
-                      component={Link}
-                      variant="subtle"
-                      size="compact-sm"
-                      to="/wishlist"
-                      leftSection={<IconHeart size={16} />}
-                    >
-                      Wishlist
-                    </Button>
+                    {user.type === "STUDENT" && (
+                      <Button
+                        component={Link}
+                        variant="subtle"
+                        size="compact-sm"
+                        to="/wishlist"
+                        leftSection={<IconHeart size={16} />}
+                      >
+                        Wishlist
+                      </Button>
+                    )}
                     <Button
                       component={Link}
                       variant="subtle"
