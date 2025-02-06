@@ -5,7 +5,7 @@ import { Alert, Title } from "@mantine/core";
 
 export const WishlistPage = () => {
   const { user, isLoading } = useAuth();
-  const { data: wishlist, isLoading: wishlistLoading } = useWishlist(); // Use React Query
+  const { data: wishlist, isLoading: wishlistLoading } = useWishlist();
 
   if (isLoading || wishlistLoading) return <p>Loading...</p>;
 
