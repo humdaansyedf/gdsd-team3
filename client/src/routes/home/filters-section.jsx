@@ -84,18 +84,18 @@ const Filters = ({ onFilter, onReset }) => {
     initialValues: initialValues,
     validate: {
       title: (value) => (value.length > 40 ? "Title must be less than 40 characters" : null),
-      minPrice: (value, values) => {
-        if (value > values.maxPrice) {
-          return "Min. Price must be less than Max. Price";
-        }
-        return value < 0 ? "Min. Price must be a positive number" : null;
-      },
-      maxPrice: (value, values) => {
-        if (value < values.minPrice) {
-          return "Max. Price must be greater than Min. Price";
-        }
-        return value > 5000 ? "Max. Price must be less than 5000" : null;
-      },
+      // minPrice: (value, values) => {
+      //   if (value > values.maxPrice) {
+      //     return "Min. Price must be less than Max. Price";
+      //   }
+      //   return value < 0 ? "Min. Price must be a positive number" : null;
+      // },
+      // maxPrice: (value, values) => {
+      //   if (value < values.minPrice) {
+      //     return "Max. Price must be greater than Min. Price";
+      //   }
+      //   return value > 5000 ? "Max. Price must be less than 5000" : null;
+      // },
     },
   });
 
