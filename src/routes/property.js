@@ -4,18 +4,24 @@ import { prisma } from "../prisma/index.js";
 export const publicPropertyRouter = Router();
 export const propertyRouter = Router();
 
+const AMENITIES = [
+  "pets",
+  "smoking",
+  "kitchen",
+  "furnished",
+  "balcony",
+  "cellar",
+  "washingMachine",
+  "elevator",
+  "garden",
+  "parking",
+  "internet",
+  "cableTv",
+];
+
 // Route to get multiple properties
 publicPropertyRouter.post("/public/property/search", async (req, res) => {
-  const {
-    title,
-    pets,
-    smoking,
-    minPrice,
-    maxPrice,
-    availableFrom,
-    searchRadius,
-    page = 1,
-  } = req.body;
+  const { title, amenities, minPrice, maxPrice, availableFrom, searchRadius, page = 1 } = req.body;
   const limit = 50;
   const offset = (page - 1) * limit;
   try {
@@ -29,12 +35,12 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       };
     }
 
-    if (pets) {
-      where.pets = true;
-    }
-
-    if (smoking) {
-      where.smoking = true;
+    if (amenities) {
+      for (const amenity of amenities) {
+        if (AMENITIES.includes(amenity)) {
+          where[amenity] = true;
+        }
+      }
     }
 
     if (minPrice || maxPrice) {
@@ -86,6 +92,10 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       include: {
         media: true,
       },
+      omit: {
+        creatorComment: true,
+        adminComment: true,
+      },
     });
 
     // If no properties are found, return all properties
@@ -95,6 +105,10 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
         skip: offset,
         include: {
           media: true,
+        },
+        omit: {
+          creatorComment: true,
+          adminComment: true,
         },
       });
     }
@@ -106,11 +120,9 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
 
         return {
           ...property,
-          media: featuredMedia
-            ? featuredMedia.url
-            : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+          media: featuredMedia ? featuredMedia.url : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
         };
-      }),
+      })
     );
   } catch (error) {
     console.log(error);
@@ -128,6 +140,10 @@ publicPropertyRouter.get("/public/property/:id", async (req, res) => {
     },
     include: {
       media: true,
+    },
+    omit: {
+      creatorComment: true,
+      adminComment: true,
     },
   });
 

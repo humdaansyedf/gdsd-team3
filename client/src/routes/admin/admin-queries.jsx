@@ -46,13 +46,13 @@ export const useAdminProperty = (id) => {
 export const useAdminPropertyUpdateStatus = (id) => {
   const queryClient = useQueryClient();
   const updateStatusMutation = useMutation({
-    mutationFn: async (status) => {
+    mutationFn: async ({ status, adminComment }) => {
       const response = await fetch(`/api/admin/property/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status, adminComment }),
       });
 
       queryClient.refetchQueries({
