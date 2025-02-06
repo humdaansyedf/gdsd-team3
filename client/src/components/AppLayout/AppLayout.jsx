@@ -1,6 +1,7 @@
 import { Anchor, AppShell, Burger, Group, Button, TextInput, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLayoutGrid, IconMessage, IconUserCircle, IconSearch, IconHeart } from "@tabler/icons-react";
+import { Footer } from "../Footer/Footer.jsx";
 
 import classes from "./AppLayout.module.css";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -150,7 +151,8 @@ export function AppLayout() {
         <AppShell.Main>
           <Outlet />
         </AppShell.Main>
-        <AppShell.Footer></AppShell.Footer>
+        <Footer />
+        
       </AppShell>
     </>
   );
