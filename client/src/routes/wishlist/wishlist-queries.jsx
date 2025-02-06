@@ -1,9 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../../lib/auth-context";
 
 export const useWishlist = () => {
+  const { user } = useAuth();
+
   return useQuery({
     queryKey: ["wishlist"],
+    enabled: !!user && user.type === "STUDENT",
     queryFn: async () => {
+      if (!user || user.type !== "STUDENT") {
+        return [];
+      }
+
       const response = await fetch(`/api/wishlist`, {
         method: "GET",
         credentials: "include",
@@ -23,9 +31,11 @@ export const useWishlist = () => {
           : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
       }));
     },
+    initialData: [],
   });
 };
 
+// Add property to wishlist
 export const useAddToWishlist = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -42,11 +52,12 @@ export const useAddToWishlist = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["wishlist"]);
+      queryClient.invalidateQueries(["wishlist"]); // Refresh wishlist data
     },
   });
 };
 
+// Remove property from wishlist
 export const useRemoveFromWishlist = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -62,7 +73,7 @@ export const useRemoveFromWishlist = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["wishlist"]);
+      queryClient.invalidateQueries(["wishlist"]); // Refresh wishlist data
     },
   });
 };
