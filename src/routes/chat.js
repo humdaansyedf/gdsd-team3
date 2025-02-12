@@ -38,40 +38,6 @@ chatRouter.get(
   }
 );
 
-// route to mark notifications as read
-chatRouter.post("/notifications/mark-read", async (req, res) => {
-  let { currentUserId, selectedUserId, propertyId } = req.body;
-
-  currentUserId = parseInt(currentUserId);
-  selectedUserId = parseInt(selectedUserId);
-  propertyId = parseInt(propertyId);
-  try {
-    const chat = await getChatByParticipants(
-      propertyId,
-      currentUserId,
-      selectedUserId
-    );
-
-    if (!chat) return res.status(404).json({ error: "Chat not found" });
-
-    //update message seen status
-    await prisma.message.updateMany({
-      where: { chatid: chat.id, userid: selectedUserId, seenAt: null },
-      data: { seenAt: new Date() },
-    });
-
-    //update readAt times
-    await prisma.notification.updateMany({
-      where: { userId: currentUserId, chatId: chat.id, readAt: null },
-      data: { readAt: new Date() },
-    });
-
-    res.json({ message: "Notifications marked as read" });
-  } catch (error) {
-    res.status(500).json({ error: "Could not mark notifications as read" });
-  }
-});
-
 // route to get users the current user has chatted with
 chatRouter.get("/chats/users", async (req, res) => {
   const currentUserId = parseInt(req.query.currentUserId);
@@ -104,40 +70,41 @@ chatRouter.get("/chats/users", async (req, res) => {
 
     res.json(users);
   } catch (error) {
-    res.status(500).json({ error: "Could not fetch chat data" });
+    res.status(500).json({ error: "Could not fetch users list" });
   }
 });
 
 //route to get unread messages for this user
 chatRouter.get("/messages/unread", async (req, res) => {
   const currentUserId = parseInt(req.query.currentUserId);
-
-  const unreadMessagesList = await prisma.message.findMany({
-    where: {
-      userid: { not: currentUserId },
-      seenAt: null,
-      chat: {
-        participants: {
-          some: { userid: currentUserId },
+  try {
+    const unreadMessagesList = await prisma.message.findMany({
+      where: {
+        userid: { not: currentUserId },
+        seenAt: null,
+        chat: {
+          participants: {
+            some: { userid: currentUserId },
+          },
         },
       },
-    },
-    select: {
-      chatid: true,
-      userid: true,
-      content: true,
-      createdAt: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      select: {
+        chatid: true,
+        userid: true,
+        content: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
 
-  const unreadMessages = unreadMessagesList.map((unreadMessage) => ({
-    senderId: unreadMessage.userid,
-    content: unreadMessage.content,
-    createdAt: unreadMessage.createdAt,
-  }));
+    const unreadMessages = unreadMessagesList.map((unreadMessage) => ({
+      senderId: unreadMessage.userid,
+      content: unreadMessage.content,
+      createdAt: unreadMessage.createdAt,
+    }));
 
-  console.log(unreadMessages);
-
-  res.json(unreadMessages);
+    res.json(unreadMessages);
+  } catch (error) {
+    res.status(500).json({ error: "Could not fetch unread mesages" });
+  }
 });

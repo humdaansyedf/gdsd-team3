@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Fetch users current user has chatted with
+// fetch users current user has chatted with
 export const useChatUsers = (currentUserId) => {
   return useQuery({
     queryKey: ["chatUsers", currentUserId],
@@ -22,6 +22,7 @@ export const useChatHistory = (propertyId, currentUserId, selectedUserId) => {
   return useQuery({
     queryKey: ["chatHistory", propertyId, currentUserId, selectedUserId],
     queryFn: async () => {
+      console.log("hiiii", propertyId, currentUserId, selectedUserId);
       if (!propertyId || !currentUserId || !selectedUserId) return [];
       const response = await fetch(
         `/api/chats/${propertyId}/${currentUserId}/${selectedUserId}`
@@ -32,23 +33,6 @@ export const useChatHistory = (propertyId, currentUserId, selectedUserId) => {
       return response.json();
     },
     enabled: !!propertyId && !!currentUserId && !!selectedUserId, // Only run when IDs are available
-  });
-};
-
-export const useMarkNotificationsAsRead = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ propertyId, currentUserId, selectedUserId }) => {
-      await fetch(`/api/notifications/mark-read`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ propertyId, currentUserId, selectedUserId }),
-      });
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries(["chatUsers", variables.currentUserId]);
-    },
   });
 };
 

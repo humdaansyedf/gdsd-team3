@@ -13,8 +13,13 @@ import {
   UnstyledButton,
   Indicator,
 } from "@mantine/core";
-import { IconArrowLeft, IconSend } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import {
+  IconArrowLeft,
+  IconSend,
+  IconChecks,
+  IconCheck,
+} from "@tabler/icons-react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import io from "socket.io-client";
 import { useAuth } from "../../lib/auth-context";
@@ -22,7 +27,6 @@ import classes from "./mymessages.module.css";
 import {
   useChatUsers,
   useChatHistory,
-  useMarkNotificationsAsRead,
   useUnreadMessages,
 } from "./mymessages-queries.jsx";
 
@@ -31,106 +35,101 @@ const socket = io();
 
 export function Mymessages() {
   const { state } = useLocation(); // Contains propertyId, otherUserId from propertyDetailsPage
-  const { propertyId, selectedUserId: initialSelectedUserId } = state || {}; // Ensure state is destructured safely
-
+  const { propertyId, selectedUserId: initialSelectedUserId } = state || {};
   const [selectedUserId, setSelectedUserId] = useState(
     initialSelectedUserId || null
-  ); // Initialize selectedUserId from state
-  const [activePropertyId, setActivePropertyId] = useState(propertyId || null); // Initialize activePropertyId from state
+  );
+
+  const [activePropertyId, setActivePropertyId] = useState(propertyId || null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [users, setUsers] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [selectedUser, setSelectedUser] = useState({ name: null });
 
-  const auth = useAuth(); // Logged-in user's details
+  // Logged-in user's details
+  const auth = useAuth();
   const currentUserId = auth?.user?.id;
 
-  // fetch users that the current user has chatted with
-  const {
-    data: fetchedUsers = [],
-    isLoading: loadingUsers,
-    error: usersError,
-  } = useChatUsers(currentUserId);
+  const { data: fetchedUsers = [] } = useChatUsers(currentUserId);
+  const { data: fetchedMessages = [] } = useChatHistory(
+    activePropertyId,
+    currentUserId,
+    selectedUserId
+  );
+  const { data: fetchedUnreadMessages = [] } = useUnreadMessages(currentUserId);
 
-  // sync with local
+  //Syncing above variables with local changes
   useEffect(() => {
-    setUsers(fetchedUsers);
-  }, [fetchedUsers]);
+    //fetch users list, unread messages and join notifications room, upon user login.
+    if (currentUserId) {
+      setUsers(fetchedUsers);
+      setNotifications(fetchedUnreadMessages);
+      socket.emit("join_notifications", {
+        currentUserId,
+      });
+    }
+  }, [currentUserId, fetchedUsers, fetchedUnreadMessages]);
 
-  // fetch chat history for the selected user and property
-  const {
-    data: fetchedMessages = [],
-    isLoading: loadingMessages,
-    error: messagesError,
-  } = useChatHistory(activePropertyId, currentUserId, selectedUserId);
-
-  // sync with local
   useEffect(() => {
+    //fetch chat history for particular chat-depends on propertyId change
     if (fetchedMessages) {
+      // console.log("fetched messages", fetchedMessages);
       const transformedMessages = fetchedMessages.map((msg) => ({
         ...msg,
         align: msg.userid === currentUserId ? "right" : "left",
       }));
-      setMessages(transformedMessages);
+      //to avoid infinite renders
+      if (JSON.stringify(transformedMessages) !== JSON.stringify(messages)) {
+        setMessages(transformedMessages);
+      }
     }
-  }, [fetchedMessages, currentUserId]);
-
-  //fetch unread messages
-  const {
-    data: fetchedUnreadMessages = [],
-    isLoading: loadingUnreadMessages,
-    error: Error,
-  } = useUnreadMessages(currentUserId);
-
-  //sync with local
-  useEffect(() => {
-    setNotifications(fetchedUnreadMessages);
-  }, [fetchedUnreadMessages]);
-
-  console.log("fetchedUnreadMessages", users);
-
-  // mark notifications as read using a mutation
-  const { mutate: markNotificationsAsRead } = useMarkNotificationsAsRead();
+  }, [fetchedMessages, activePropertyId]);
 
   useEffect(() => {
     if (!currentUserId) return;
 
     const handleReceiveMessage = (data) => {
-      console.log("received nessage", data);
-      // data: { id, chatId, userId, content, createdAt }
-      if (data.userId !== currentUserId) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            sender: data.userId,
-            content: data.content,
-            align: "left",
-            createdAt: data.createdAt,
-          },
-        ]);
-      }
+      const isActiveChat = data.senderId === selectedUserId;
 
-      //for open chats, mark received message as read
-      if (data.userId === selectedUserId) {
-        markNotificationsAsRead({
+      // add to messages
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: data.id,
+          senderId: data.senderId,
+          content: data.content,
+          align: "left",
+          createdAt: data.createdAt,
+          seenAt: data.seenAt,
+        },
+      ]);
+
+      //update last message
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === selectedUserId
+            ? { ...user, lastMessage: data.content }
+            : user
+        )
+      );
+
+      if (isActiveChat) {
+        socket.emit("mark_notifications_as_read", {
           propertyId: activePropertyId,
-          currentUserId,
-          selectedUserId: data.userId,
+          currentUserId: currentUserId,
+          selectedUserId: selectedUserId,
         });
-
-        setNotifications((prev) =>
-          prev.filter((n) => n.senderId !== data.userId)
-        );
       }
     };
 
     const handleNewNotification = (notificationData) => {
-      // notificationData: { chatId, senderId, messageId, content, createdAt }
-      console.log("notifications", notificationData);
+      console.log("notification received", notificationData);
+      // if not in active chat - update notification count
       if (notificationData.senderId !== selectedUserId) {
         setNotifications((prev) => [notificationData, ...prev]);
       }
-
+      //update last message when notif received-important when chat not open
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id === notificationData.senderId
@@ -140,31 +139,56 @@ export function Mymessages() {
       );
     };
 
+    const handleMessagesMarkedAsRead = ({ seenAt, senderId }) => {
+      //update messages with seenAt time
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.senderId === senderId ? { ...msg, seenAt } : msg
+        )
+      );
+      //update notifications count
+      setNotifications((prev) => prev.filter((n) => n.senderId !== senderId));
+    };
+
+    //for socket errors
+    const handleError = (errorMessage) => {
+      console.error("Socket error:", errorMessage);
+    };
+
     socket.on("receive_message", handleReceiveMessage);
     socket.on("new_notification", handleNewNotification);
-
-    socket.emit("join_room", {
-      propertyId: activePropertyId,
-      currentUserId,
-      selectedUserId,
-    });
+    socket.on("messages_marked_as_read", handleMessagesMarkedAsRead);
+    socket.on("error", handleError);
 
     return () => {
       socket.off("receive_message", handleReceiveMessage);
       socket.off("new_notification", handleNewNotification);
+      socket.off("messages_marked_as_read", handleMessagesMarkedAsRead);
+      socket.off("error", handleError);
     };
-  }, [currentUserId, activePropertyId, selectedUserId]);
+  }, [auth?.user?.id, activePropertyId, selectedUserId]);
 
   const handleUserClick = (user) => {
-    setSelectedUserId(user.id);
+    //reset messages state
     setMessages([]);
+
+    //join/create a chatroom
+    socket.emit("join_room", {
+      propertyId: user.propertyId,
+      currentUserId,
+      selectedUserId: user.id,
+    });
+    setSelectedUser({ name: user.name }); //to display selected user name
+    // console.log("selected user", selectedUser);
+    setSelectedUserId(user.id); //important to fetch chat data
 
     const updatedPropertyId = user.propertyId || activePropertyId;
     setActivePropertyId(updatedPropertyId);
 
-    markNotificationsAsRead({
+    //mark all messages read -internally marks only updates seen status for unread messages
+    socket.emit("mark_notifications_as_read", {
       propertyId: updatedPropertyId,
-      currentUserId,
+      currentUserId: currentUserId,
       selectedUserId: user.id,
     });
     setNotifications((prev) => prev.filter((n) => n.senderId !== user.id));
@@ -183,20 +207,28 @@ export function Mymessages() {
 
     socket.emit("send_message", messageData);
 
+    //add to messages
     setMessages((prevMessages) => [
       ...prevMessages,
       {
-        sender: currentUserId,
+        senderId: currentUserId,
         content: messageContent,
         align: "right",
         createdAt: new Date(),
       },
     ]);
 
+    //update last message for sender
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === selectedUserId
+          ? { ...user, lastMessage: messageContent }
+          : user
+      )
+    );
+
     setNewMessage("");
   };
-
-  const selectedUser = users.find((user) => user.id === selectedUserId);
 
   return (
     <Container
@@ -246,113 +278,87 @@ export function Mymessages() {
         )}
 
         {selectedUserId && (
-          <Group p="sm" gap="xs" style={{ borderBottom: "1px solid #e5e5e5" }}>
-            <ActionIcon
-              variant="subtle"
-              color="green"
-              size="lg"
-              onClick={() => setSelectedUserId(null)}
+          <>
+            <Group
+              p="sm"
+              gap="xs"
+              style={{ borderBottom: "1px solid #e5e5e5" }}
             >
-              <IconArrowLeft />
-            </ActionIcon>
-            <Title order={3}>{selectedUser.name}</Title>
-          </Group>
-        )}
-
-        <ScrollArea>
-          <Stack p="xs">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                style={{
-                  position: "relative",
-                  maxWidth: "70%",
-                  marginLeft: message.align === "right" ? "auto" : undefined,
-                  marginRight: message.align === "left" ? "auto" : undefined,
-                }}
+              <ActionIcon
+                variant="subtle"
+                color="green"
+                size="lg"
+                onClick={() => setSelectedUserId(null)}
               >
-                <Group
-                  align={message.align === "right" ? "flex-end" : "flex-start"}
-                  style={{
-                    justifyContent:
-                      message.align === "right" ? "flex-end" : "flex-start",
-                  }}
-                >
-                  {message.align === "left" && <Avatar radius="xl" />}
-                  <Paper
-                    withBorder
-                    p="xs"
-                    bg={message.align === "right" ? "green.1" : "gray.1"}
+                <IconArrowLeft />
+              </ActionIcon>
+              <Title order={3}>{selectedUser.name}</Title>
+            </Group>
+
+            <ScrollArea style={{ height: "70vh" }}>
+              <Stack p="xs">
+                {messages.map((message, index) => (
+                  <Group
+                    key={message.id} //was index
+                    align="center"
+                    justify={
+                      message.align === "right" ? "flex-end" : "flex-start"
+                    }
                   >
-                    <Text size="sm">{message.content}</Text>
-                  </Paper>
-                </Group>
+                    {message.align === "left" && <Avatar radius="xl" />}
 
-                <Text
-                  size="xs"
-                  c="dimmed"
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: message.align === "left" ? "100%" : undefined,
-                    right: message.align === "right" ? "100%" : undefined,
-                    marginLeft: message.align === "left" ? 8 : undefined,
-                    marginRight: message.align === "right" ? 8 : undefined,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {new Date(message.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  })}
-                </Text>
+                    <Stack gap={2} style={{ maxWidth: "80%" }}>
+                      <Paper
+                        withBorder
+                        p="xs"
+                        bg={message.align === "right" ? "green.1" : "gray.1"}
+                        style={{
+                          marginLeft: message.align === "right" ? "auto" : 0,
+                          marginRight: message.align === "left" ? "auto" : 0,
+                        }}
+                      >
+                        <Text size="sm">{message.content}</Text>
+                      </Paper>
 
-                {message.align === "right" && message.seenAt && (
-                  <Text
-                    size="xs"
-                    style={{
-                      position: "absolute",
-                      bottom: 0,
-                      left: -48,
-                      color: "gray",
-                    }}
-                  >
-                    ✔
-                  </Text>
-                )}
-              </div>
-            ))}
-          </Stack>
-        </ScrollArea>
+                      <Group gap="xs">
+                        <Text size="xs" c="dimmed">
+                          {new Date(message.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          })}
+                        </Text>
+                        {message.align === "right" &&
+                          (message.seenAt ? (
+                            <IconChecks size={14} color="green" />
+                          ) : (
+                            <IconCheck size={14} color="gray" />
+                          ))}
+                      </Group>
+                    </Stack>
+                  </Group>
+                ))}
+              </Stack>
+            </ScrollArea>
 
-        {selectedUserId && (
-          <Group
-            mt="auto"
-            p="sm"
-            gap="xs"
-            style={{ borderTop: "1px solid #e5e5e5" }}
-          >
-            <TextInput
-              placeholder="Type your message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  handleSendMessage();
-                }
-              }}
-              style={{ flex: 1 }}
-            />
-            <ActionIcon
-              variant="filled"
-              color="green"
-              size="lg"
-              onClick={handleSendMessage}
-            >
-              <IconSend />
-            </ActionIcon>
-          </Group>
+            <Group p="sm" gap="xs" style={{ borderTop: "1px solid #e5e5e5" }}>
+              <TextInput
+                placeholder="Type your message..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                style={{ flex: 1 }}
+              />
+              <ActionIcon
+                variant="filled"
+                color="green"
+                size="lg"
+                onClick={handleSendMessage}
+              >
+                <IconSend />
+              </ActionIcon>
+            </Group>
+          </>
         )}
       </Paper>
     </Container>

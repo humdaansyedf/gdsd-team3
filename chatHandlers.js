@@ -25,6 +25,16 @@ export const chatHandlers = (io, socket) => {
     }
   );
 
+  socket.on("join_notifications", ({ currentUserId }) => {
+    try {
+      const notificationsRoom = `notifications_${currentUserId}`;
+      socket.join(notificationsRoom);
+      // console.log(`User ${currentUserId} joined notifications room`);
+    } catch (error) {
+      socket.emit("error", "Could not join notifications room");
+    }
+  });
+
   socket.on(
     "send_message",
     async ({ propertyId, currentUserId, selectedUserId, content }) => {
@@ -75,26 +85,71 @@ export const chatHandlers = (io, socket) => {
           },
         });
 
+        //send notification
+        socket.to(`notifications_${selectedUserId}`).emit("new_notification", {
+          type: "message",
+          chatId: chat.id,
+          senderId: currentUserId,
+          content,
+          createdAt: message.createdAt,
+        });
+
         //send message
         socket.broadcast.to(chatId).emit("receive_message", {
           id: message.id,
           chatId: chatId,
-          userId: currentUserId,
+          senderId: currentUserId,
           content: content,
           createdAt: message.createdAt,
+          seenAt: null,
         });
 
-        console.log("sending notifs");
-        //send notification
-        socket.to(chatId).emit("new_notification", {
-          chatId: chatId,
-          senderId: currentUserId,
-          messageId: message.id,
-          content: content,
-          createdAt: message.createdAt,
+        // console.log("sending notifs to", selectedUserId, content);
+      } catch (error) {
+        // console.log("sending notifs", error);
+        socket.emit("error", "Could not send message");
+      }
+    }
+  );
+
+  socket.on(
+    "mark_notifications_as_read",
+    async ({ currentUserId, selectedUserId, propertyId }) => {
+      try {
+        let chat = await getChatByParticipants(
+          propertyId,
+          currentUserId,
+          selectedUserId
+        );
+
+        //update messages table
+        await prisma.message.updateMany({
+          where: {
+            chatid: chat.id,
+            userid: selectedUserId,
+            seenAt: null,
+          },
+          data: {
+            seenAt: new Date(),
+          },
+        });
+
+        //update readAt times in notification table
+        await prisma.notification.updateMany({
+          where: {
+            userId: currentUserId,
+            chatId: chat.id,
+            readAt: { equals: null },
+          },
+          data: { readAt: new Date() },
+        });
+
+        socket.broadcast.to(chat.id).emit("messages_marked_as_read", {
+          seenAt: new Date(),
+          senderId: selectedUserId,
         });
       } catch (error) {
-        socket.emit("error", "Could not send message");
+        socket.emit("error", "Could not mark notifications as read", error);
       }
     }
   );

@@ -7,7 +7,7 @@ export const getChatByParticipants = async (
 ) => {
   return await prisma.chat.findFirst({
     where: {
-      propertyId,
+      propertyId: propertyId,
       AND: [
         { participants: { some: { userid: currentUserId } } },
         { participants: { some: { userid: selectedUserId } } },
