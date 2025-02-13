@@ -159,15 +159,15 @@ const Filters = ({ onFilter, onReset }) => {
         />
       </Stack>
 
-      <Stack gap={4}>
-        <Title order={4}>Search radius:</Title>
-        <Select
-          placeholder="Whole area"
-          data={["Whole area", "+5km", "+10km", "+20km", "+100km", "200km"]}
-          key={form.key("searchRadius")}
-          {...form.getInputProps("searchRadius")}
-        />
-      </Stack>
+      {/*<Stack gap={4}>*/}
+      {/*  <Title order={4}>Search radius:</Title>*/}
+      {/*  <Select*/}
+      {/*    placeholder="Whole area"*/}
+      {/*    data={["Whole area", "+5km", "+10km", "+20km", "+100km", "200km"]}*/}
+      {/*    key={form.key("searchRadius")}*/}
+      {/*    {...form.getInputProps("searchRadius")}*/}
+      {/*  />*/}
+      {/*</Stack>*/}
 
       <Stack gap={4}>
         <Title order={4}>Amenities:</Title>

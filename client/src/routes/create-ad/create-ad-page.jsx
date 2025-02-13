@@ -67,6 +67,7 @@ export const CreateAdPage = () => {
       parking: false,
       internet: false,
       cableTv: false,
+      creatorComment: "",
       media: [], // Image URLs
     },
 
@@ -364,6 +365,13 @@ export const CreateAdPage = () => {
               ))}
             </SimpleGrid>
           </Paper>
+          <Textarea
+              label="Creator comment"
+              placeholder="Add any additional comments for the admin"
+              autosize
+              minRows={3}
+              {...form.getInputProps("creatorComment")}
+          />
           <Button fullWidth color="green" type="submit" radius="md" size="lg" my="xl">
             Submit for review
           </Button>
