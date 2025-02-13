@@ -24,6 +24,51 @@ import { DateInput, YearPickerInput } from "@mantine/dates";
 const libraries = ["places"];
 
 export const CreateAdPage = () => {
+  const [formData, setFormData] = useState({
+    title: "",
+    propertyType: "",
+    description: "",
+    latitude: null,
+    longitude: null,
+    address1: null,
+    address2: null,
+    city: null,
+    state: null,
+    postcode: null,
+    totalRent: 0,
+    coldRent: 0,
+    additionalCosts: 0,
+    heatingIncludedInAdditionalCosts: false,
+    deposit: 0,
+    numberOfRooms: 1,
+    numberOfBeds: 0,
+    numberOfBaths: 0,
+    totalFloors: null,
+    floorNumber: null,
+    livingSpaceSqm: null,
+    yearBuilt: null,
+    availableFrom: null,
+    minimumLeaseTermInMonths: null,
+    maximumLeaseTermInMonths: null,
+    noticePeriodInMonths: null,
+    pets: false,
+    smoking: false,
+    kitchen: false,
+    furnished: false,
+    balcony: false,
+    cellar: false,
+    washingMachine: false,
+    elevator: false,
+    garden: false,
+    parking: false,
+    internet: false,
+    cableTv: false,
+    creatorComment: "",
+    media: [], // Image URLs
+  });
+
+  const [errors, setErrors] = useState({});
+  const autocompleteRef = useRef(null);
   const navigate = useNavigate();
   const autocompleteRef = useRef(null);
  // const [initialData, setInitialData] = useState({});
@@ -172,6 +217,46 @@ export const CreateAdPage = () => {
       yearBuilt: values.yearBuilt
           ? values.yearBuilt.getFullYear().toString() // Keep valid year as string
           : "0000", // Fallback value
+      title: formData.title,
+      propertyType: formData.propertyType,
+      description: formData.description,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      address1: formData.address1,
+      address2: formData.address2 || "",
+      city: formData.city || "",
+      state: formData.state || "",
+      postcode: formData.postcode || "",
+      totalRent: formData.totalRent,
+      coldRent: formData.coldRent,
+      additionalCosts: formData.additionalCosts,
+      heatingIncludedInAdditionalCosts: formData.heatingIncludedInAdditionalCosts,
+      deposit: formData.deposit,
+      numberOfRooms: formData.numberOfRooms,
+      numberOfBeds: formData.numberOfBeds,
+      numberOfBaths: formData.numberOfBaths,
+      totalFloors: formData.totalFloors,
+      floorNumber: formData.floorNumber,
+      livingSpaceSqm: formData.livingSpaceSqm,
+      yearBuilt: formData.yearBuilt,
+      availableFrom: formData.availableFrom,
+      minimumLeaseTermInMonths: formData.minimumLeaseTermInMonths,
+      maximumLeaseTermInMonths: formData.maximumLeaseTermInMonths,
+      noticePeriodInMonths: formData.noticePeriodInMonths,
+      pets: formData.pets,
+      smoking: formData.smoking,
+      kitchen: formData.kitchen,
+      furnished: formData.furnished,
+      balcony: formData.balcony,
+      cellar: formData.cellar,
+      washingMachine: formData.washingMachine,
+      elevator: formData.elevator,
+      garden: formData.garden,
+      parking: formData.parking,
+      internet: formData.internet,
+      cableTv: formData.cableTv,
+      creatorComment: formData.creatorComment,
+      media: formData.media,
     };
 
     try {
@@ -412,7 +497,6 @@ export const CreateAdPage = () => {
                   ))}
                 </SimpleGrid>
               </Paper>
-
               <Button
                   fullWidth
                   color="green"

@@ -1,13 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../../lib/auth-context";
 
-// Fetch wishlist data
 export const useWishlist = () => {
+  const { user } = useAuth();
+
   return useQuery({
     queryKey: ["wishlist"],
+    enabled: !!user && user.type === "STUDENT",
     queryFn: async () => {
+      if (!user || user.type !== "STUDENT") {
+        return [];
+      }
+
       const response = await fetch(`/api/wishlist`, {
         method: "GET",
-        credentials: "include", // Include cookies for authentication
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
       });
 
@@ -17,14 +24,14 @@ export const useWishlist = () => {
 
       const data = await response.json();
 
-      // Ensure each property has an image
       return data.map((item) => ({
         ...item.property,
         media: item.property.media.length > 0
           ? item.property.media[0].url
-          : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png", // Default image
+          : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
       }));
     },
+    initialData: [],
   });
 };
 
