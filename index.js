@@ -6,7 +6,6 @@ import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Server } from "socket.io";
-import { chatHandlers } from "./chatHandlers.js";
 import { IS_DEV } from "./src/lib/utils.js";
 import { adminRouter } from "./src/routes/admin.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
@@ -25,11 +24,12 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 
-
-app.use(cors({
-  origin: IS_DEV ? ["http://localhost:5173"] : false, // Allow client origin in development
-  credentials: true,  // Allow cookies/auth headers
-}));
+app.use(
+  cors({
+    origin: IS_DEV ? ["http://localhost:5173"] : false, // Allow client origin in development
+    credentials: true, // Allow cookies/auth headers
+  })
+);
 
 const server = createServer(app);
 // Initialize Socket.IO
@@ -45,8 +45,6 @@ io.on("connection", (socket) => {
   chatHandlers(io, socket);
   socket.on("disconnect", () => {});
 });
-
-
 
 // Disable some headers
 app.set("etag", false);
@@ -71,16 +69,7 @@ app.use("/api", authRouter, publicPropertyRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use(
-  "/api",
-  propertyRouter,
-  fileRouter,
-  creatorRouter,
-  wishlistRouter,
-  chatRouter,
-  documentRouter, 
-  profileRouter
-);
+app.use("/api", propertyRouter, fileRouter, creatorRouter, wishlistRouter, chatRouter, documentRouter, profileRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
