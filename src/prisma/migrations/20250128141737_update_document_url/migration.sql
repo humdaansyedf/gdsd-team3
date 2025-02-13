@@ -6,7 +6,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `document` ADD COLUMN `url` VARCHAR(191) NOT NULL;
+ALTER TABLE `Document` ADD COLUMN `url` VARCHAR(191) NOT NULL;
 
 -- CreateIndex
 CREATE UNIQUE INDEX `Document_url_key` ON `Document`(`url`);

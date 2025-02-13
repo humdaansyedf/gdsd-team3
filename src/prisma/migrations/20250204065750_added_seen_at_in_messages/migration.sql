@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `message` ADD COLUMN `seenAt` DATETIME(3) NULL;
+ALTER TABLE `Message` ADD COLUMN `seenAt` DATETIME(3) NULL;
