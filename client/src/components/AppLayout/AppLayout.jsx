@@ -3,12 +3,13 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconHeart, IconLayoutGrid, IconMessage, IconSearch, IconUserCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Footer } from "../Footer/Footer.jsx";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/auth-context";
 import classes from "./AppLayout.module.css";
 
 export function AppLayout() {
   const { user } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const [opened, { toggle }] = useDisclosure();
 
@@ -33,6 +34,8 @@ export function AppLayout() {
     }
   };
 
+  const isMessagesPage = location.pathname.includes("/messages");
+
   return (
     <>
       <AppShell
@@ -55,7 +58,7 @@ export function AppLayout() {
                 <Autocomplete
                   placeholder="Search"
                   size="xs"
-                  data={recentSearches} 
+                  data={recentSearches}
                   value={searchQuery}
                   onChange={setSearchQuery}
                   onKeyDown={(event) => {
@@ -65,7 +68,7 @@ export function AppLayout() {
                   }}
                   leftSection={<IconSearch size={16} />}
                 />
-                
+
                 {user ? (
                   <>
                     <Button
@@ -170,8 +173,7 @@ export function AppLayout() {
         <AppShell.Main>
           <Outlet />
         </AppShell.Main>
-        <Footer />
-        
+        {isMessagesPage ? null : <Footer />}
       </AppShell>
     </>
   );
