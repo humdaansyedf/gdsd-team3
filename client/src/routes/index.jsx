@@ -1,9 +1,9 @@
 import { Container, Loader } from "@mantine/core";
 import * as React from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
-import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
-import { AdminAuthProvider } from "../lib/admin-auth-provider";
 import { AppLayout } from "../components/AppLayout/AppLayout.jsx";
+import { AdminAuthProvider } from "../lib/admin-auth-provider";
+import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
 import { Footer } from "../components/Footer/Footer.jsx";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
@@ -35,7 +35,9 @@ const PropertyDetail = React.lazy(() =>
   }))
 );
 const Profile = React.lazy(() => import("./profile/profile-page").then((mod) => ({ default: mod.Profile })));
+const ProfileEdit = React.lazy(() => import("./profile/profile-edit").then((mod) => ({ default: mod.ProfileEdit })));
 const Mymessages = React.lazy(() => import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages })));
+const MyDocuments = React.lazy(() => import("./my-documents/my-documents"));
 
 const AdminDashboard = React.lazy(() =>
   import("./admin/admin-dashboard-page").then((mod) => ({
@@ -141,6 +143,14 @@ export const App = () => {
               }
             />
             <Route
+              path="profile/edit"
+              element={
+                <PrivateRoute>
+                  <ProfileEdit />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="messages"
               element={
                 <PrivateRoute>
@@ -164,6 +174,14 @@ export const App = () => {
                       </PrivateRoute>
                   }
               />
+            <Route
+              path="my-documents"
+              element={
+                <PrivateRoute userType="STUDENT"> 
+                  <MyDocuments />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="property/submission-confirmation"
               element={

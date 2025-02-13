@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
-import { ActionIcon, SimpleGrid, Badge, Button, Card, Flex, Image, Text, Title, Tooltip } from "@mantine/core";
+import { ActionIcon, Badge, Button, Card, Flex, Image, Text, Title, Tooltip } from "@mantine/core";
 import { IconArrowRight, IconDog, IconSmoking } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
+import "./grid-view.css";
 
 const PropertyCard = ({ property }) => {
   return (
@@ -65,19 +66,11 @@ const PropertyCard = ({ property }) => {
 
 export const GridView = ({ properties }) => {
   return (
-    <SimpleGrid
-      cols={{
-        base: 1,
-        xs: 2,
-        md: 3,
-        lg: 4,
-      }}
-      gap="md"
-    >
+    <div className="property-grid">
       {properties.map((property) => (
         <PropertyCard key={property.id} property={property} />
       ))}
-    </SimpleGrid>
+    </div>
   );
 };
 

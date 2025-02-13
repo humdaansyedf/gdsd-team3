@@ -1,27 +1,37 @@
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
+import { chatHandlers } from "./chatHandlers.js";
 import { IS_DEV } from "./src/lib/utils.js";
-import { fileRouter } from "./src/routes/file.js";
 import { adminRouter } from "./src/routes/admin.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
-import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { creatorRouter } from "./src/routes/creator.js";
+import { documentRouter } from "./src/routes/doc.js";
+import { fileRouter } from "./src/routes/file.js";
+import { profileRouter } from "./src/routes/profile.js";
+import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { wishlistRouter } from "./src/routes/wishlist.js";
-import { chatHandlers } from "./chatHandlers.js";
 import { chatRouter } from "./src/routes/chat.js";
+import { chatHandlers } from "./chatHandlers.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const port = process.env.PORT || 3000;
 
 const app = express();
-const server = createServer(app);
 
+
+app.use(cors({
+  origin: IS_DEV ? ["http://localhost:5173"] : false, // Allow client origin in development
+  credentials: true,  // Allow cookies/auth headers
+}));
+
+const server = createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
@@ -33,9 +43,10 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   // Handle chat-related events
   chatHandlers(io, socket);
-
   socket.on("disconnect", () => {});
 });
+
+
 
 // Disable some headers
 app.set("etag", false);
@@ -66,7 +77,9 @@ app.use(
   fileRouter,
   creatorRouter,
   wishlistRouter,
-  chatRouter
+  chatRouter,
+  documentRouter, 
+  profileRouter
 );
 
 // Error handling middleware

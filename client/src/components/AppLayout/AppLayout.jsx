@@ -1,20 +1,34 @@
-import { Anchor, AppShell, Burger, Group, Button, TextInput, Stack } from "@mantine/core";
+import { Anchor, AppShell, Autocomplete, Burger, Button, Group, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLayoutGrid, IconMessage, IconUserCircle, IconSearch, IconHeart } from "@tabler/icons-react";
+import { IconHeart, IconLayoutGrid, IconMessage, IconSearch, IconUserCircle } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 import { Footer } from "../Footer/Footer.jsx";
-
-import classes from "./AppLayout.module.css";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/auth-context";
+import classes from "./AppLayout.module.css";
 
 export function AppLayout() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [opened, { toggle }] = useDisclosure();
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [recentSearches, setRecentSearches] = useState([]);
+
+  useEffect(() => {
+    const storedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
+    setRecentSearches(storedSearches);
+  }, []);
+
   const handleSearch = (value) => {
     if (value.trim() !== "") {
       const query = value.trim().replace(/\s+/g, "+");
+
+      // Save search to recent searches (keep only 5)
+      const updatedSearches = [value, ...recentSearches.filter((s) => s !== value)].slice(0, 5);
+      localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+      setRecentSearches(updatedSearches);
+
       navigate(`/?title=${query}`);
     }
   };
@@ -37,16 +51,21 @@ export function AppLayout() {
                 NeuAnfang
               </Anchor>
               <Group gap="xs" visibleFrom="sm">
-                <TextInput
+                {}
+                <Autocomplete
                   placeholder="Search"
                   size="xs"
-                  leftSection={<IconSearch size={16} />}
+                  data={recentSearches} 
+                  value={searchQuery}
+                  onChange={setSearchQuery}
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
-                      handleSearch(event.target.value);
+                      handleSearch(searchQuery);
                     }
                   }}
+                  leftSection={<IconSearch size={16} />}
                 />
+                
                 {user ? (
                   <>
                     <Button
