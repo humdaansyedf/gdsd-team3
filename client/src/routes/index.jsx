@@ -4,6 +4,7 @@ import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
 import { AdminAuthProvider } from "../lib/admin-auth-provider";
 import { AppLayout } from "../components/AppLayout/AppLayout.jsx";
+import { Footer } from "../components/Footer/Footer.jsx";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
 const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
