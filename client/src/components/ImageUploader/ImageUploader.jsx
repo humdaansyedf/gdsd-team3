@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Text, Image, SimpleGrid, Loader, ActionIcon, Group } from "@mantine/core";
 import { IconTrash, IconUpload } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
@@ -6,10 +6,17 @@ import { usePublicFileUpload } from "./fileUpload";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
 
-export const ImageUploader = ({ onUpload }) => {
+export const ImageUploader = ({ onUpload, onDelete, existingImages = [] }) => {
   const [images, setImages] = useState([]); // State to hold uploaded images
   const fileUploadMutation = usePublicFileUpload(); // Mutation hook for uploading images
   const [loading, setLoading] = useState(false); // Loading state for file upload
+
+  // Preload existing images on component mount
+  useEffect(() => {
+    if (existingImages && existingImages.length > 0) {
+      setImages(existingImages.map((url) => ({ name: "", url })));
+    }
+  }, [existingImages]);
 
   // Handle file uploads (using dropzone or manual selection)
   const handleFilesUpload = async (files) => {
@@ -63,6 +70,9 @@ export const ImageUploader = ({ onUpload }) => {
         .then(() => {
           // Remove the image from the frontend state
           setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+          if (onDelete) {
+            onDelete(url);
+          }
         });
     } catch (error) {
       console.error("Failed to delete image:", error);
