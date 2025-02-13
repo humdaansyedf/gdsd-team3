@@ -361,6 +361,7 @@ async function createProperties() {
       deposit: 2000,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      creatorComment: "alles gut, bitte genehmigen",
     },
     {
       id: 13,
@@ -384,6 +385,7 @@ async function createProperties() {
       deposit: 3800,
       numberOfBeds: 2,
       numberOfBaths: 2,
+      creatorComment: "All documents are attached. Please review and approve.",
     },
     {
       id: 14,
@@ -407,6 +409,7 @@ async function createProperties() {
       deposit: 2200,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      creatorComment: "Please let me know if you need any additional information.",
     },
     // DRAFT
     {
@@ -501,6 +504,7 @@ async function createProperties() {
       deposit: 4000,
       numberOfBeds: 2,
       numberOfBaths: 2,
+      adminComment: "Property is too expensive for the area.",
     },
     {
       id: 19,
@@ -524,6 +528,7 @@ async function createProperties() {
       deposit: 1900,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      adminComment: "Property is too small for the price.",
     },
     {
       id: 20,
@@ -547,6 +552,7 @@ async function createProperties() {
       deposit: 3000,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      adminComment: "Property is not suitable for pets.",
     },
   ];
 

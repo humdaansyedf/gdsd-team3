@@ -4,6 +4,7 @@ import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { AppLayout } from "../components/AppLayout/AppLayout.jsx";
 import { AdminAuthProvider } from "../lib/admin-auth-provider";
 import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
+import { Footer } from "../components/Footer/Footer.jsx";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
 const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
@@ -17,6 +18,11 @@ const CreateAdPage = React.lazy(() =>
   import("./create-ad/create-ad-page.jsx").then((mod) => ({
     default: mod.CreateAdPage,
   }))
+);
+const EditAdPage = React.lazy(() =>
+    import("./edit-ad/edit-ad-page.jsx").then((mod) => ({
+        default: mod.EditAdPage,
+    }))
 );
 const AdConfirmation = React.lazy(() =>
   import("./ad-confirmation/ad-confirmation-page.jsx").then((mod) => ({
@@ -160,6 +166,14 @@ export const App = () => {
                 </PrivateRoute>
               }
             />
+              <Route
+                  path="property/:id/edit"
+                  element={
+                      <PrivateRoute>
+                          <EditAdPage />
+                      </PrivateRoute>
+                  }
+              />
             <Route
               path="my-documents"
               element={

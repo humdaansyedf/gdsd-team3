@@ -2,6 +2,7 @@ import { Anchor, AppShell, Autocomplete, Burger, Button, Group, Stack } from "@m
 import { useDisclosure } from "@mantine/hooks";
 import { IconHeart, IconLayoutGrid, IconMessage, IconSearch, IconUserCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { Footer } from "../Footer/Footer.jsx";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/auth-context";
 import classes from "./AppLayout.module.css";
@@ -85,15 +86,17 @@ export function AppLayout() {
                     >
                       Messages
                     </Button>
-                    <Button
-                      component={Link}
-                      variant="subtle"
-                      size="compact-sm"
-                      to="/wishlist"
-                      leftSection={<IconHeart size={16} />}
-                    >
-                      Wishlist
-                    </Button>
+                    {user.type === "STUDENT" && (
+                      <Button
+                        component={Link}
+                        variant="subtle"
+                        size="compact-sm"
+                        to="/wishlist"
+                        leftSection={<IconHeart size={16} />}
+                      >
+                        Wishlist
+                      </Button>
+                    )}
                     <Button
                       component={Link}
                       variant="subtle"
@@ -167,7 +170,8 @@ export function AppLayout() {
         <AppShell.Main>
           <Outlet />
         </AppShell.Main>
-        <AppShell.Footer></AppShell.Footer>
+        <Footer />
+        
       </AppShell>
     </>
   );
