@@ -1,4 +1,15 @@
-import { Avatar, Badge, Button, Container, FileInput, Group, Notification, Paper, Stack, TextInput } from "@mantine/core";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Container,
+  FileInput,
+  Group,
+  Notification,
+  Paper,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 import { IconCheck, IconPencil, IconX } from "@tabler/icons-react";
 import axios from "axios";
 import { useState } from "react";
@@ -25,25 +36,22 @@ export function ProfileEdit() {
     const formDataToSend = new FormData();
     Object.keys(formData).forEach((key) => formDataToSend.append(key, formData[key]));
     if (profilePicture) formDataToSend.append("profilePicture", profilePicture);
-  
+
     try {
-      await axios.put("http://localhost:3000/api/profile", formDataToSend, {
+      await axios.put("/api/profile", formDataToSend, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
       setNotification({ type: "success", message: "Profile updated successfully!" });
       setTimeout(() => {
-      navigate("/profile");
-      setTimeout(() => window.location.reload(), 1); 
-    }, 1500);
-      
+        navigate("/profile");
+        setTimeout(() => window.location.reload(), 1);
+      }, 1500);
     } catch (error) {
       console.error("Error updating profile:", error);
       setNotification({ type: "error", message: "Failed to update profile." });
     }
-    
   };
-  
 
   return (
     <Container size="xs" mt="xl">
@@ -52,9 +60,9 @@ export function ProfileEdit() {
           <div style={{ position: "relative" }}>
             <Avatar size="xl" src={user.profilePicture} alt="Profile" />
             <Badge
-              style={{ position: "absolute", bottom: 0, right: 5, cursor: "pointer"}}
+              style={{ position: "absolute", bottom: 0, right: 5, cursor: "pointer" }}
               variant="filled"
-              color="green"  
+              color="green"
               p={2}
               onClick={() => document.getElementById("file-input").click()}
             >
@@ -73,7 +81,9 @@ export function ProfileEdit() {
           <TextInput label="Edit Address" name="address" value={formData.address} onChange={handleChange} />
 
           <Group position="center">
-            <Button color="green" onClick={handleSubmit}>Done</Button>
+            <Button color="green" onClick={handleSubmit}>
+              Done
+            </Button>
           </Group>
 
           {notification && (

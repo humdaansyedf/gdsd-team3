@@ -18,7 +18,7 @@ const MyDocuments = () => {
 
   const fetchDocuments = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/documents", {
+      const response = await axios.get("/api/documents", {
         withCredentials: true,
       });
       setDocuments(response.data.documents);
@@ -29,7 +29,7 @@ const MyDocuments = () => {
 
   const handleDelete = async (key) => {
     try {
-      await axios.delete("http://localhost:3000/api/document", {
+      await axios.delete("/api/document", {
         data: { key },
         withCredentials: true,
       });
@@ -41,7 +41,7 @@ const MyDocuments = () => {
 
   const handleViewDocument = async (key) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/document`, {
+      const response = await axios.get(`/api/document`, {
         params: { key }, // Pass the key as a query parameter
         withCredentials: true,
       });
@@ -58,7 +58,7 @@ const MyDocuments = () => {
 
   const handleCopyLink = async (key) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/document`, {
+      const response = await axios.get(`/api/document`, {
         params: { key }, // Pass the key as a query parameter
         withCredentials: true,
       });
@@ -77,7 +77,9 @@ const MyDocuments = () => {
   return (
     <Container>
       <Flex justify="space-between" align="center" mt="md" mb="md">
-        <Text size="xl" weight={600}>My Documents</Text>
+        <Text size="xl" weight={600}>
+          My Documents
+        </Text>
         <Button size="sm" onClick={() => setModalOpen(true)} leftIcon={<IconUpload />}>
           Upload Document
         </Button>

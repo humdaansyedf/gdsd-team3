@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import {
   Button,
   TextInput,
@@ -164,43 +164,6 @@ export const CreateAdPage = () => {
       yearBuilt: values.yearBuilt
         ? values.yearBuilt.getFullYear().toString() // Keep valid year as string
         : "0000", // Fallback value
-      title: values.title,
-      propertyType: values.propertyType,
-      description: values.description,
-      latitude: values.latitude,
-      longitude: values.longitude,
-      address1: values.address1,
-      address2: values.address2 || "",
-      city: values.city || "",
-      state: values.state || "",
-      postcode: values.postcode || "",
-      totalRent: values.totalRent,
-      coldRent: values.coldRent,
-      additionalCosts: values.additionalCosts,
-      heatingIncludedInAdditionalCosts: values.heatingIncludedInAdditionalCosts,
-      deposit: values.deposit,
-      numberOfRooms: values.numberOfRooms,
-      numberOfBeds: values.numberOfBeds,
-      numberOfBaths: values.numberOfBaths,
-      totalFloors: values.totalFloors,
-      floorNumber: values.floorNumber,
-      livingSpaceSqm: values.livingSpaceSqm,
-      minimumLeaseTermInMonths: values.minimumLeaseTermInMonths,
-      maximumLeaseTermInMonths: values.maximumLeaseTermInMonths,
-      noticePeriodInMonths: values.noticePeriodInMonths,
-      pets: values.pets,
-      smoking: values.smoking,
-      kitchen: values.kitchen,
-      furnished: values.furnished,
-      balcony: values.balcony,
-      cellar: values.cellar,
-      washingMachine: values.washingMachine,
-      elevator: values.elevator,
-      garden: values.garden,
-      parking: values.parking,
-      internet: values.internet,
-      cableTv: values.cableTv,
-      creatorComment: values.creatorComment,
     };
 
     try {
