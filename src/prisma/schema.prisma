@@ -79,6 +79,7 @@ model User {
   participatedChats ChatParticipant[]
   messages          Message[]
   wishlists         Wishlist[]
+  notifications Notification[]
 }
 
 model Session {
@@ -201,6 +202,7 @@ model Chat {
 
   participants ChatParticipant[]
   messages     Message[]
+  notifications Notification[]
 }
 
 model ChatParticipant {
@@ -219,10 +221,26 @@ model Message {
   userid    Int
   content   String
   createdAt DateTime @default(now())
+  seenAt    DateTime?
 
   chat Chat @relation(fields: [chatid], references: [id])
   user User @relation(fields: [userid], references: [id])
+  notifications Notification[]
 }
+
+model Notification {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  chatId     Int?      
+  messageId  Int?      
+  createdAt  DateTime  @default(now())
+  readAt     DateTime? 
+
+  user       User      @relation(fields: [userId], references: [id])
+  chat       Chat?     @relation(fields: [chatId], references: [id])
+  message    Message?  @relation(fields: [messageId], references: [id])
+}
+
 
 // Admin Models
 model Admin {
