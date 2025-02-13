@@ -418,7 +418,13 @@ export const EditAdPage = () => {
                             ))}
                         </SimpleGrid>
                     </Paper>
-
+                    <Textarea
+                        label="Creator comment"
+                        placeholder="Add any additional comments for the admin"
+                        autosize
+                        minRows={3}
+                        {...form.getInputProps("creatorComment")}
+                    />
                     <Button
                         fullWidth
                         color="green"
