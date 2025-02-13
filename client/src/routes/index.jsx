@@ -1,9 +1,9 @@
 import { Container, Loader } from "@mantine/core";
 import * as React from "react";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
-import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
-import { AdminAuthProvider } from "../lib/admin-auth-provider";
 import { AppLayout } from "../components/AppLayout/AppLayout.jsx";
+import { AdminAuthProvider } from "../lib/admin-auth-provider";
+import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
 const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
@@ -19,9 +19,9 @@ const CreateAdPage = React.lazy(() =>
   }))
 );
 const EditAdPage = React.lazy(() =>
-    import("./edit-ad/edit-ad-page.jsx").then((mod) => ({
-        default: mod.EditAdPage,
-    }))
+  import("./edit-ad/edit-ad-page.jsx").then((mod) => ({
+    default: mod.EditAdPage,
+  }))
 );
 const AdConfirmation = React.lazy(() =>
   import("./ad-confirmation/ad-confirmation-page.jsx").then((mod) => ({
@@ -34,7 +34,9 @@ const PropertyDetail = React.lazy(() =>
   }))
 );
 const Profile = React.lazy(() => import("./profile/profile-page").then((mod) => ({ default: mod.Profile })));
+const ProfileEdit = React.lazy(() => import("./profile/profile-edit").then((mod) => ({ default: mod.ProfileEdit })));
 const Mymessages = React.lazy(() => import("./messaging/mymessages").then((mod) => ({ default: mod.Mymessages })));
+const MyDocuments = React.lazy(() => import("./my-documents/my-documents"));
 
 const AdminDashboard = React.lazy(() =>
   import("./admin/admin-dashboard-page").then((mod) => ({
@@ -140,6 +142,14 @@ export const App = () => {
               }
             />
             <Route
+              path="profile/edit"
+              element={
+                <PrivateRoute>
+                  <ProfileEdit />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="messages"
               element={
                 <PrivateRoute>
@@ -155,14 +165,22 @@ export const App = () => {
                 </PrivateRoute>
               }
             />
-              <Route
-                  path="property/:id/edit"
-                  element={
-                      <PrivateRoute>
-                          <EditAdPage />
-                      </PrivateRoute>
-                  }
-              />
+            <Route
+              path="property/:id/edit"
+              element={
+                <PrivateRoute>
+                  <EditAdPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="my-documents"
+              element={
+                <PrivateRoute userType="STUDENT">
+                  <MyDocuments />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="property/submission-confirmation"
               element={

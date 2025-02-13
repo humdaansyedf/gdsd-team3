@@ -79,6 +79,8 @@ model User {
   participatedChats ChatParticipant[]
   messages          Message[]
   wishlists         Wishlist[]
+  notifications     Notification[]
+  documents         Document[]
 }
 
 model Session {
@@ -149,6 +151,10 @@ model Property {
   internet       Boolean @default(false)
   cableTv        Boolean @default(false)
 
+  // Comments
+  adminComment   String?
+  creatorComment String?
+
   // Relations
   creatorId Int
   user      User @relation("LandlordProperties", fields: [creatorId], references: [id])
@@ -195,8 +201,9 @@ model Chat {
 
   property Property @relation(fields: [propertyId], references: [id])
 
-  participants ChatParticipant[]
-  messages     Message[]
+  participants  ChatParticipant[]
+  messages      Message[]
+  notifications Notification[]
 }
 
 model ChatParticipant {
@@ -210,14 +217,41 @@ model ChatParticipant {
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   chatid    Int
   userid    Int
   content   String
+  createdAt DateTime  @default(now())
+  seenAt    DateTime?
+
+  chat          Chat           @relation(fields: [chatid], references: [id])
+  user          User           @relation(fields: [userid], references: [id])
+  notifications Notification[]
+}
+
+model Notification {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  chatId    Int?
+  messageId Int?
+  createdAt DateTime  @default(now())
+  readAt    DateTime?
+
+  user    User     @relation(fields: [userId], references: [id])
+  chat    Chat?    @relation(fields: [chatId], references: [id])
+  message Message? @relation(fields: [messageId], references: [id])
+}
+
+//Student Document Uploads
+model Document {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  fileName  String
+  key       String   @unique
+  url       String   @db.Text
   createdAt DateTime @default(now())
 
-  chat Chat @relation(fields: [chatid], references: [id])
-  user User @relation(fields: [userid], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // Admin Models

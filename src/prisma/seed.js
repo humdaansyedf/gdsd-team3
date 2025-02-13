@@ -1,7 +1,7 @@
 // prisma/seed.ts
-import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 import { hash } from "@node-rs/argon2";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -16,6 +16,7 @@ async function clearDatabase() {
   await prisma.user.deleteMany();
   await prisma.adminSession.deleteMany();
   await prisma.admin.deleteMany();
+  await prisma.document.deleteMany();
 }
 
 async function createUsers() {
@@ -360,6 +361,7 @@ async function createProperties() {
       deposit: 2000,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      creatorComment: "alles gut, bitte genehmigen",
     },
     {
       id: 13,
@@ -383,6 +385,7 @@ async function createProperties() {
       deposit: 3800,
       numberOfBeds: 2,
       numberOfBaths: 2,
+      creatorComment: "All documents are attached. Please review and approve.",
     },
     {
       id: 14,
@@ -406,6 +409,7 @@ async function createProperties() {
       deposit: 2200,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      creatorComment: "Please let me know if you need any additional information.",
     },
     // DRAFT
     {
@@ -500,6 +504,7 @@ async function createProperties() {
       deposit: 4000,
       numberOfBeds: 2,
       numberOfBaths: 2,
+      adminComment: "Property is too expensive for the area.",
     },
     {
       id: 19,
@@ -523,6 +528,7 @@ async function createProperties() {
       deposit: 1900,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      adminComment: "Property is too small for the price.",
     },
     {
       id: 20,
@@ -546,6 +552,7 @@ async function createProperties() {
       deposit: 3000,
       numberOfBeds: 1,
       numberOfBaths: 1,
+      adminComment: "Property is not suitable for pets.",
     },
   ];
 
@@ -646,6 +653,52 @@ async function createAdmin() {
       passwordHash: passwordHash,
     },
   });
+}
+
+async function createStudentDocuments() {
+  const s3BucketName = process.env.APP_AWS_BUCKET_NAME; 
+  const s3Region = process.env.APP_AWS_REGION; 
+  const baseS3Url = `https://${s3BucketName}.s3.${s3Region}.amazonaws.com`;
+
+  const documents = [
+    {
+      userId: 4, // Student 1
+      fileName: "resume_student1.pdf",
+      key: "user/4/1706300000-resume_student1.pdf",
+      url: `${baseS3Url}/user/4/1706300000-resume_student1.pdf`,
+      createdAt: new Date("2024-12-01T10:00:00Z"),
+    },
+    {
+      userId: 4, // Student 1
+      fileName: "transcript_student1.pdf",
+      key: "user/4/1706300500-transcript_student1.pdf",
+      url: `${baseS3Url}/user/4/1706300500-transcript_student1.pdf`,
+      createdAt: new Date("2024-12-02T15:30:00Z"),
+    },
+    {
+      userId: 5, // Student 2
+      fileName: "internship_certificate.pdf",
+      key: "user/5/1706301000-internship_certificate.pdf",
+      url: `${baseS3Url}/user/5/1706301000-internship_certificate.pdf`,
+      createdAt: new Date("2024-11-20T09:15:00Z"),
+    },
+    {
+      userId: 6, // Student 3
+      fileName: "cover_letter.pdf",
+      key: "user/6/1706301500-cover_letter.pdf",
+      url: `${baseS3Url}/user/6/1706301500-cover_letter.pdf`,
+      createdAt: new Date("2024-11-25T14:45:00Z"),
+    },
+    {
+      userId: 6, // Student 3
+      fileName: "project_report.pdf",
+      key: "user/6/1706302000-project_report.pdf",
+      url: `${baseS3Url}/user/6/1706302000-project_report.pdf`,
+      createdAt: new Date("2024-12-05T11:10:00Z"),
+    },
+  ];
+
+  await prisma.document.createMany({ data: documents });
 }
 
 async function main() {

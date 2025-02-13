@@ -4,31 +4,27 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { deleteImageFromS3 } from "../lib/s3.js";
 
-// Initialize S3 Client
 const s3Client = new S3Client({
-  region: process.env.APP_AWS_REGION, // AWS region
+  region: process.env.APP_AWS_REGION,
   credentials: {
-    accessKeyId: process.env.APP_AWS_ACCESS_KEY_ID, // AWS access key
-    secretAccessKey: process.env.APP_AWS_SECRET_ACCESS_KEY, // AWS secret key
+    accessKeyId: process.env.APP_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.APP_AWS_SECRET_ACCESS_KEY,
   },
 });
 
-// Allowed file types
 const ALLOWED_FILE_TYPES = ["png", "jpg", "jpeg"];
 
-// Create Express Router
 export const fileRouter = express.Router();
 
-// Zod schema to validate incoming requests
 const uploadFileSchema = z.object({
   name: z
     .string()
-    .min(2) // Ensure file name is at least 2 characters
+    .min(2)
     .refine(
       (val) => {
         const parts = val.split(".");
         const extension = parts[parts.length - 1].toLowerCase();
-        return ALLOWED_FILE_TYPES.includes(extension); // Validate file extension
+        return ALLOWED_FILE_TYPES.includes(extension);
       },
       {
         message: `Invalid file type. Allowed file types are: ${ALLOWED_FILE_TYPES.join(", ")}`,
@@ -36,10 +32,9 @@ const uploadFileSchema = z.object({
     ),
 });
 
-// Add the endpoint to the router
 fileRouter.post("/file", async (req, res) => {
-  const data = req.body; // Parse request body
-  const result = uploadFileSchema.safeParse(data); // Validate request using Zod schema
+  const data = req.body;
+  const result = uploadFileSchema.safeParse(data);
 
   if (!result.success) {
     return res.status(400).json({
@@ -49,17 +44,16 @@ fileRouter.post("/file", async (req, res) => {
   }
 
   const { name } = result.data;
-  const key = `${Date.now()}-${name}`; // Generate unique file key
+  const key = `${Date.now()}-${name}`;
 
   try {
-    // Generate signed URL for PUT request
     const url = await getSignedUrl(
       s3Client,
       new PutObjectCommand({
-        Bucket: process.env.APP_AWS_BUCKET_NAME, // S3 bucket name
-        Key: `public/${key}`, // File key
+        Bucket: process.env.APP_AWS_BUCKET_NAME,
+        Key: `public/${key}`,
       }),
-      { expiresIn: 60 * 5 }, // URL expiration time (5 minutes)
+      { expiresIn: 60 * 5 },
     );
 
     res.json({
@@ -75,14 +69,14 @@ fileRouter.post("/file", async (req, res) => {
 });
 
 fileRouter.delete("/file", async (req, res) => {
-  const { key } = req.body; // Get the S3 key from request body
+  const { key } = req.body;
 
   if (!key) {
     return res.status(400).json({ message: "S3 key is required" });
   }
 
   try {
-    await deleteImageFromS3(key); // Call S3 deletion function
+    await deleteImageFromS3(key);
     res.json({ message: "File deleted successfully" });
   } catch (error) {
     console.error("Error deleting file:", error);

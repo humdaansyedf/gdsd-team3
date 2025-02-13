@@ -4,10 +4,8 @@ import { authMiddleware } from "./auth.js";
 
 export const wishlistRouter = Router();
 
-// Middleware to ensure only authenticated users can access these routes
 wishlistRouter.use(authMiddleware);
 
-// Get user's wishlist
 wishlistRouter.get("/wishlist", async (req, res) => {
   if (req.user.type !== "STUDENT") {
     return res.status(403).json({ message: "Only students can access wishlist" });
@@ -18,7 +16,7 @@ wishlistRouter.get("/wishlist", async (req, res) => {
       where: { userId: req.user.id },
       include: {
         property: {
-          include: { media: true }, // Ensure media is included
+          include: { media: true },
         },
       },
     });
@@ -30,7 +28,6 @@ wishlistRouter.get("/wishlist", async (req, res) => {
   }
 });
 
-// Add property to wishlist
 wishlistRouter.post("/wishlist", async (req, res) => {
   const { propertyId } = req.body;
 
@@ -49,7 +46,6 @@ wishlistRouter.post("/wishlist", async (req, res) => {
   }
 });
 
-// Remove property from wishlist
 wishlistRouter.delete("/wishlist/:propertyId", async (req, res) => {
   const { propertyId } = req.params;
 
