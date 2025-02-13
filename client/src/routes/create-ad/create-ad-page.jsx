@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import { useRef, useState } from "react";
 import {
   Button,
   TextInput,
@@ -24,54 +24,9 @@ import { DateInput, YearPickerInput } from "@mantine/dates";
 const libraries = ["places"];
 
 export const CreateAdPage = () => {
-  const [formData, setFormData] = useState({
-    title: "",
-    propertyType: "",
-    description: "",
-    latitude: null,
-    longitude: null,
-    address1: null,
-    address2: null,
-    city: null,
-    state: null,
-    postcode: null,
-    totalRent: 0,
-    coldRent: 0,
-    additionalCosts: 0,
-    heatingIncludedInAdditionalCosts: false,
-    deposit: 0,
-    numberOfRooms: 1,
-    numberOfBeds: 0,
-    numberOfBaths: 0,
-    totalFloors: null,
-    floorNumber: null,
-    livingSpaceSqm: null,
-    yearBuilt: null,
-    availableFrom: null,
-    minimumLeaseTermInMonths: null,
-    maximumLeaseTermInMonths: null,
-    noticePeriodInMonths: null,
-    pets: false,
-    smoking: false,
-    kitchen: false,
-    furnished: false,
-    balcony: false,
-    cellar: false,
-    washingMachine: false,
-    elevator: false,
-    garden: false,
-    parking: false,
-    internet: false,
-    cableTv: false,
-    creatorComment: "",
-    media: [], // Image URLs
-  });
-
-  const [errors, setErrors] = useState({});
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
-  const autocompleteRef = useRef(null);
- // const [initialData, setInitialData] = useState({});
+  // const [initialData, setInitialData] = useState({});
 
   // Initialize form with Mantine
   const form = useForm({
@@ -117,39 +72,24 @@ export const CreateAdPage = () => {
 
     validate: {
       title: (value) =>
-          value?.trim().length < 5 || value.trim().length > 100
-              ? "Title must be between 5 and 100 characters."
-              : null,
+        value?.trim().length < 5 || value.trim().length > 100 ? "Title must be between 5 and 100 characters." : null,
       propertyType: (value) => (!value ? "Property Type is required" : null),
       description: (value) =>
-          value?.trim().length < 10 || value.trim().length > 2000
-              ? "Description must be between 10 and 2000 characters."
-              : null,
-      address1: (value) =>
-          !value || !value.trim() ? "Address is required" : null,
-      coldRent: (value) =>
-          value <= 0 ? "Cold Rent must be greater than 0" : null,
-      totalRent: (value) =>
-          value <= 0 ? "Total Rent must be greater than 0" : null,
-      additionalCosts: (value) =>
-          value < 0 ? "Additional Costs cannot be negative" : null,
+        value?.trim().length < 10 || value.trim().length > 2000
+          ? "Description must be between 10 and 2000 characters."
+          : null,
+      address1: (value) => (!value || !value.trim() ? "Address is required" : null),
+      coldRent: (value) => (value <= 0 ? "Cold Rent must be greater than 0" : null),
+      totalRent: (value) => (value <= 0 ? "Total Rent must be greater than 0" : null),
+      additionalCosts: (value) => (value < 0 ? "Additional Costs cannot be negative" : null),
       deposit: (value) => (value < 0 ? "Deposit cannot be negative" : null),
-      numberOfRooms: (value) =>
-          value < 1 ? "Number of Rooms must be at least 1" : null,
-      numberOfBeds: (value) =>
-          value < 0 ? "Number of Beds cannot be negative" : null,
-      numberOfBaths: (value) =>
-          value < 0 ? "Number of Baths cannot be negative" : null,
-      livingSpaceSqm: (value) =>
-          value <= 0 ? "Living Space must be greater than 0" : null,
-      availableFrom: (value) =>
-          !value ? "Available From date is required" : null,
-      yearBuilt: (value) =>
-          value && isNaN(Number(value))
-              ? "Year Built must be a valid year"
-              : null,
-      media: (value) =>
-          value.length === 0 ? "At least one image must be uploaded." : null,
+      numberOfRooms: (value) => (value < 1 ? "Number of Rooms must be at least 1" : null),
+      numberOfBeds: (value) => (value < 0 ? "Number of Beds cannot be negative" : null),
+      numberOfBaths: (value) => (value < 0 ? "Number of Baths cannot be negative" : null),
+      livingSpaceSqm: (value) => (value <= 0 ? "Living Space must be greater than 0" : null),
+      availableFrom: (value) => (!value ? "Available From date is required" : null),
+      yearBuilt: (value) => (value && isNaN(Number(value)) ? "Year Built must be a valid year" : null),
+      media: (value) => (value.length === 0 ? "At least one image must be uploaded." : null),
     },
   });
 
@@ -175,7 +115,7 @@ export const CreateAdPage = () => {
           if (types.includes("administrative_area_level_1")) {
             form.setFieldValue("state", component.long_name);
           }
-        })
+        });
       }
     }
   };
@@ -199,64 +139,68 @@ export const CreateAdPage = () => {
     }, {});
 
     // Add fields that are required by the backend but not included in the updatedFields
-    const requiredFields = ["status", "propertyType", "title", "description", "numberOfRooms", "coldRent", "availableFrom", "longitude", "latitude"];
+    const requiredFields = [
+      "status",
+      "propertyType",
+      "title",
+      "description",
+      "numberOfRooms",
+      "coldRent",
+      "availableFrom",
+      "longitude",
+      "latitude",
+    ];
     requiredFields.forEach((field) => {
       if (!(field in updatedFields)) {
         updatedFields[field] = values[field];
       }
     });
 
-
     const payload = {
       ...updatedFields,
       status: "PENDING",
       availableFrom: values.availableFrom.toISOString().substring(0, 10),
-      media: updatedFields.media
-          ? updatedFields.media.map((item) => ({ url: item.url }))
-          : [],
+      media: updatedFields.media ? updatedFields.media.map((item) => ({ url: item.url })) : [],
       yearBuilt: values.yearBuilt
-          ? values.yearBuilt.getFullYear().toString() // Keep valid year as string
-          : "0000", // Fallback value
-      title: formData.title,
-      propertyType: formData.propertyType,
-      description: formData.description,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-      address1: formData.address1,
-      address2: formData.address2 || "",
-      city: formData.city || "",
-      state: formData.state || "",
-      postcode: formData.postcode || "",
-      totalRent: formData.totalRent,
-      coldRent: formData.coldRent,
-      additionalCosts: formData.additionalCosts,
-      heatingIncludedInAdditionalCosts: formData.heatingIncludedInAdditionalCosts,
-      deposit: formData.deposit,
-      numberOfRooms: formData.numberOfRooms,
-      numberOfBeds: formData.numberOfBeds,
-      numberOfBaths: formData.numberOfBaths,
-      totalFloors: formData.totalFloors,
-      floorNumber: formData.floorNumber,
-      livingSpaceSqm: formData.livingSpaceSqm,
-      yearBuilt: formData.yearBuilt,
-      availableFrom: formData.availableFrom,
-      minimumLeaseTermInMonths: formData.minimumLeaseTermInMonths,
-      maximumLeaseTermInMonths: formData.maximumLeaseTermInMonths,
-      noticePeriodInMonths: formData.noticePeriodInMonths,
-      pets: formData.pets,
-      smoking: formData.smoking,
-      kitchen: formData.kitchen,
-      furnished: formData.furnished,
-      balcony: formData.balcony,
-      cellar: formData.cellar,
-      washingMachine: formData.washingMachine,
-      elevator: formData.elevator,
-      garden: formData.garden,
-      parking: formData.parking,
-      internet: formData.internet,
-      cableTv: formData.cableTv,
-      creatorComment: formData.creatorComment,
-      media: formData.media,
+        ? values.yearBuilt.getFullYear().toString() // Keep valid year as string
+        : "0000", // Fallback value
+      title: values.title,
+      propertyType: values.propertyType,
+      description: values.description,
+      latitude: values.latitude,
+      longitude: values.longitude,
+      address1: values.address1,
+      address2: values.address2 || "",
+      city: values.city || "",
+      state: values.state || "",
+      postcode: values.postcode || "",
+      totalRent: values.totalRent,
+      coldRent: values.coldRent,
+      additionalCosts: values.additionalCosts,
+      heatingIncludedInAdditionalCosts: values.heatingIncludedInAdditionalCosts,
+      deposit: values.deposit,
+      numberOfRooms: values.numberOfRooms,
+      numberOfBeds: values.numberOfBeds,
+      numberOfBaths: values.numberOfBaths,
+      totalFloors: values.totalFloors,
+      floorNumber: values.floorNumber,
+      livingSpaceSqm: values.livingSpaceSqm,
+      minimumLeaseTermInMonths: values.minimumLeaseTermInMonths,
+      maximumLeaseTermInMonths: values.maximumLeaseTermInMonths,
+      noticePeriodInMonths: values.noticePeriodInMonths,
+      pets: values.pets,
+      smoking: values.smoking,
+      kitchen: values.kitchen,
+      furnished: values.furnished,
+      balcony: values.balcony,
+      cellar: values.cellar,
+      washingMachine: values.washingMachine,
+      elevator: values.elevator,
+      garden: values.garden,
+      parking: values.parking,
+      internet: values.internet,
+      cableTv: values.cableTv,
+      creatorComment: values.creatorComment,
     };
 
     try {
@@ -270,245 +214,198 @@ export const CreateAdPage = () => {
   };
 
   return (
-      <Container px={0}>
-        <Title order={2}>Create Property Listing</Title>
-          <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-            <Stack mt="lg" gap="lg">
-              <div>
-                <ImageUploader
-                    onUpload={handleImageUpload}
-                    onDelete={handleImageDelete}
-                />
-                {form.errors.media && (
-                    <Text size="xs" color="red" mt={4}>
-                      {form.errors.media}
-                    </Text>
-                )}
-            </div>
+    <Container px={0}>
+      <Title order={2}>Create Property Listing</Title>
+      <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+        <Stack mt="lg" gap="lg">
+          <div>
+            <ImageUploader onUpload={handleImageUpload} onDelete={handleImageDelete} />
+            {form.errors.media && (
+              <Text size="xs" color="red" mt={4}>
+                {form.errors.media}
+              </Text>
+            )}
+          </div>
 
-              <SimpleGrid cols={{base: 1, sm: 2}}>
-                <TextInput
-                    label="Ad Title"
-                    placeholder="Enter Ad Title"
-                    withAsterisk
-                    {...form.getInputProps("title")}
-                />
-                <Select
-                    label="Property Type"
-                    placeholder="Select Property Type"
-                    withAsterisk
-                    data={[
-                      {value: "APARTMENT", label: "Apartment"},
-                      {value: "HOUSE", label: "House"},
-                      {value: "STUDIO", label: "Studio"},
-                      {value: "ROOM", label: "Room"},
-                      {value: "SHARED_ROOM", label: "Shared Room"},
-                    ]}
-                    {...form.getInputProps("propertyType")}
-                />
-              </SimpleGrid>
+          <SimpleGrid cols={{ base: 1, sm: 2 }}>
+            <TextInput label="Ad Title" placeholder="Enter Ad Title" withAsterisk {...form.getInputProps("title")} />
+            <Select
+              label="Property Type"
+              placeholder="Select Property Type"
+              withAsterisk
+              data={[
+                { value: "APARTMENT", label: "Apartment" },
+                { value: "HOUSE", label: "House" },
+                { value: "STUDIO", label: "Studio" },
+                { value: "ROOM", label: "Room" },
+                { value: "SHARED_ROOM", label: "Shared Room" },
+              ]}
+              {...form.getInputProps("propertyType")}
+            />
+          </SimpleGrid>
 
-              <Textarea
-                  label="Description"
-                  placeholder="Enter Description"
-                  withAsterisk
-                  autosize
-                  minRows={3}
-                  {...form.getInputProps("description")}
+          <Textarea
+            label="Description"
+            placeholder="Enter Description"
+            withAsterisk
+            autosize
+            minRows={3}
+            {...form.getInputProps("description")}
+          />
+
+          <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={libraries}>
+            <Autocomplete
+              options={{ componentRestrictions: { country: "de" } }}
+              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+              onPlaceChanged={handlePlaceChanged}
+            >
+              <TextInput label="Address" withAsterisk {...form.getInputProps("address1")} />
+            </Autocomplete>
+          </LoadScriptNext>
+
+          <SimpleGrid
+            cols={{
+              base: 1,
+              sm: 2,
+            }}
+          >
+            <Group grow align="start">
+              <NumberInput
+                label="Cold Rent (€)"
+                min={0}
+                description="Base rent"
+                withAsterisk
+                {...form.getInputProps("coldRent")}
               />
+              <NumberInput
+                label="Deposit (€)"
+                min={0}
+                description="Base rent"
+                withAsterisk
+                {...form.getInputProps("deposit")}
+              />
+            </Group>
 
-              <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={libraries}>
-                <Autocomplete
-                    options={{componentRestrictions: {country: "de"}}}
-                    onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
-                    onPlaceChanged={handlePlaceChanged}
-                >
-                  <TextInput label="Address" withAsterisk {...form.getInputProps("address1")} />
-                </Autocomplete>
-              </LoadScriptNext>
-
-              <SimpleGrid
-                  cols={{
-                    base: 1,
-                    sm: 2
-                  }}
-              >
-                <Group grow align="start">
-                  <NumberInput
-                      label="Cold Rent (€)"
-                      min={0}
-                      description="Base rent"
-                      withAsterisk
-                      {...form.getInputProps("coldRent")}
-                  />
-                  <NumberInput
-                      label="Deposit (€)"
-                      min={0}
-                      description="Base rent"
-                      withAsterisk
-                      {...form.getInputProps("deposit")}
-                  />
-                </Group>
-
-                <Stack gap="xs">
-                  <Group grow align="start">
-                    <NumberInput
-                        label="Additional Costs (€)"
-                        description="e.g. Heating, Water, etc."
-                        min={0}
-                        {...form.getInputProps("additionalCosts")}
-                    />
-                    <NumberInput
-                        label="Total Rent (€)"
-                        withAsterisk
-                        readOnly
-                        description="Cold Rent + Additional Costs."
-                        value={form.values.coldRent + (form.values.additionalCosts || 0)}
-                    />
-                  </Group>
-                  <Checkbox
-                      label="Heating included in Additional Costs"
-                      {...form.getInputProps("heatingIncludedInAdditionalCosts", {
-                        type: "checkbox",
-                      })}
-                  />
-                </Stack>
-              </SimpleGrid>
-
-              <SimpleGrid
-                  cols={{
-                    base: 1,
-                    sm: 2
-                  }}
-              >
-                <DateInput
-                    label="Available From"
-                    minDate={new Date()}
-                    valueFormat="YYYY-MM-DD"
-                    placeholder="YYYY-MM-DD"
-                    withAsterisk
-                    value={form.values.availableFrom} // Ensure value is a Date object
-                    onChange={(value) => {
-                      form.setFieldValue("availableFrom", value); // Set the raw Date object
-                    }}
-                    error={form.errors.availableFrom}
+            <Stack gap="xs">
+              <Group grow align="start">
+                <NumberInput
+                  label="Additional Costs (€)"
+                  description="e.g. Heating, Water, etc."
+                  min={0}
+                  {...form.getInputProps("additionalCosts")}
                 />
-                <Group grow align="start">
-                  <NumberInput
-                      label="Rooms"
-                      min={1}
-                      withAsterisk
-                      {...form.getInputProps("numberOfRooms")}
-                  />
-                  <NumberInput
-                      label="Beds"
-                      min={0}
-                      withAsterisk
-                      {...form.getInputProps("numberOfBeds")}
-                  />
-                  <NumberInput
-                      min={0}
-                      label="Baths"
-                      withAsterisk
-                      {...form.getInputProps("numberOfBaths")}
-                  />
-                </Group>
-                <Group grow align="start">
-                  <NumberInput
-                      min={1}
-                      label="Total Floors"
-                      {...form.getInputProps("totalFloors")}
-                  />
-                  <NumberInput
-                      min={0}
-                      label="Floor Number"
-                      {...form.getInputProps("floorNumber")}
-                  />
-                  <NumberInput
-                      min={0}
-                      label="Living Space (sqm)"
-                      withAsterisk
-                      {...form.getInputProps("livingSpaceSqm")}
-                  />
-                </Group>
-                <Group grow align="start">
-                  <YearPickerInput
-                      label="Year Built"
-                      maxDate={new Date()}
-                      valueFormat="YYYY"
-                      placeholder="YYYY"
-                      value={form.values.yearBuilt ? new Date(`${form.values.yearBuilt}-01-01`) : null}
-                      onChange={(value) => {
-                        form.setFieldValue("yearBuilt", value ? value.getFullYear().toString() : null);
-                      }}
-                  />
-                  <NumberInput
-                      label="Notice Period (months)"
-                      min={0}
-                      {...form.getInputProps("noticePeriodInMonths")}
-                  />
-                </Group>
-                <Group grow align="start">
-                  <NumberInput
-                      label="Minimum Lease Term (months)"
-                      min={0}
-                      {...form.getInputProps("minimumLeaseTermInMonths")}
-                  />
-                  <NumberInput
-                      label="Maximum Lease Term (months)"
-                      min={0}
-                      {...form.getInputProps("maximumLeaseTermInMonths")}
-                  />
-                </Group>
-              </SimpleGrid>
-
-              <Paper p="sm" withBorder>
-                <Title order={6} mb="xs">
-                  Amenities
-                </Title>
-                <SimpleGrid
-                    cols={{
-                      base: 1,
-                      xs: 2,
-                      sm: 3,
-                      md: 4,
-                      lg: 5,
-                    }}
-                >
-                  {[
-                    {label: "Pets Allowed", field: "pets"},
-                    {label: "Smoking Allowed", field: "smoking"},
-                    {label: "Kitchen", field: "kitchen"},
-                    {label: "Furnished", field: "furnished"},
-                    {label: "Balcony", field: "balcony"},
-                    {label: "Cellar", field: "cellar"},
-                    {label: "Washing Machine", field: "washingMachine"},
-                    {label: "Elevator", field: "elevator"},
-                    {label: "Garden", field: "garden"},
-                    {label: "Parking", field: "parking"},
-                    {label: "Internet", field: "internet"},
-                    {label: "Cable TV", field: "cableTv"}
-                  ].map((amenity) => (
-                      <Checkbox
-                          key={amenity.field}
-                          label={amenity.label}
-                          {...form.getInputProps(amenity.field, {type: "checkbox"})}
-                      />
-                  ))}
-                </SimpleGrid>
-              </Paper>
-              <Button
-                  fullWidth
-                  color="green"
-                  type="submit"
-                  radius="md"
-                  size="lg"
-                  my="xl"
-              >
-                Submit for review
-              </Button>
+                <NumberInput
+                  label="Total Rent (€)"
+                  withAsterisk
+                  readOnly
+                  description="Cold Rent + Additional Costs."
+                  value={form.values.coldRent + (form.values.additionalCosts || 0)}
+                />
+              </Group>
+              <Checkbox
+                label="Heating included in Additional Costs"
+                {...form.getInputProps("heatingIncludedInAdditionalCosts", {
+                  type: "checkbox",
+                })}
+              />
             </Stack>
-          </form>
-      </Container>
+          </SimpleGrid>
+
+          <SimpleGrid
+            cols={{
+              base: 1,
+              sm: 2,
+            }}
+          >
+            <DateInput
+              label="Available From"
+              minDate={new Date()}
+              valueFormat="YYYY-MM-DD"
+              placeholder="YYYY-MM-DD"
+              withAsterisk
+              value={form.values.availableFrom} // Ensure value is a Date object
+              onChange={(value) => {
+                form.setFieldValue("availableFrom", value); // Set the raw Date object
+              }}
+              error={form.errors.availableFrom}
+            />
+            <Group grow align="start">
+              <NumberInput label="Rooms" min={1} withAsterisk {...form.getInputProps("numberOfRooms")} />
+              <NumberInput label="Beds" min={0} withAsterisk {...form.getInputProps("numberOfBeds")} />
+              <NumberInput min={0} label="Baths" withAsterisk {...form.getInputProps("numberOfBaths")} />
+            </Group>
+            <Group grow align="start">
+              <NumberInput min={1} label="Total Floors" {...form.getInputProps("totalFloors")} />
+              <NumberInput min={0} label="Floor Number" {...form.getInputProps("floorNumber")} />
+              <NumberInput min={0} label="Living Space (sqm)" withAsterisk {...form.getInputProps("livingSpaceSqm")} />
+            </Group>
+            <Group grow align="start">
+              <YearPickerInput
+                label="Year Built"
+                maxDate={new Date()}
+                valueFormat="YYYY"
+                placeholder="YYYY"
+                value={form.values.yearBuilt ? new Date(`${form.values.yearBuilt}-01-01`) : null}
+                onChange={(value) => {
+                  form.setFieldValue("yearBuilt", value ? value.getFullYear().toString() : null);
+                }}
+              />
+              <NumberInput label="Notice Period (months)" min={0} {...form.getInputProps("noticePeriodInMonths")} />
+            </Group>
+            <Group grow align="start">
+              <NumberInput
+                label="Minimum Lease Term (months)"
+                min={0}
+                {...form.getInputProps("minimumLeaseTermInMonths")}
+              />
+              <NumberInput
+                label="Maximum Lease Term (months)"
+                min={0}
+                {...form.getInputProps("maximumLeaseTermInMonths")}
+              />
+            </Group>
+          </SimpleGrid>
+
+          <Paper p="sm" withBorder>
+            <Title order={6} mb="xs">
+              Amenities
+            </Title>
+            <SimpleGrid
+              cols={{
+                base: 1,
+                xs: 2,
+                sm: 3,
+                md: 4,
+                lg: 5,
+              }}
+            >
+              {[
+                { label: "Pets Allowed", field: "pets" },
+                { label: "Smoking Allowed", field: "smoking" },
+                { label: "Kitchen", field: "kitchen" },
+                { label: "Furnished", field: "furnished" },
+                { label: "Balcony", field: "balcony" },
+                { label: "Cellar", field: "cellar" },
+                { label: "Washing Machine", field: "washingMachine" },
+                { label: "Elevator", field: "elevator" },
+                { label: "Garden", field: "garden" },
+                { label: "Parking", field: "parking" },
+                { label: "Internet", field: "internet" },
+                { label: "Cable TV", field: "cableTv" },
+              ].map((amenity) => (
+                <Checkbox
+                  key={amenity.field}
+                  label={amenity.label}
+                  {...form.getInputProps(amenity.field, { type: "checkbox" })}
+                />
+              ))}
+            </SimpleGrid>
+          </Paper>
+          <Button fullWidth color="green" type="submit" radius="md" size="lg" my="xl">
+            Submit for review
+          </Button>
+        </Stack>
+      </form>
+    </Container>
   );
 };
