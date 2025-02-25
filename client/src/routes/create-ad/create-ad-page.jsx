@@ -1,25 +1,26 @@
-import { useRef } from "react";
 import {
   Button,
+  Checkbox,
+  Container,
+  Flex,
+  Group,
+  NumberInput,
+  Paper,
+  Select,
+  SimpleGrid,
+  Stack,
+  Text,
   TextInput,
   Textarea,
-  NumberInput,
-  Select,
-  Checkbox,
-  Group,
-  Container,
   Title,
-  Stack,
-  SimpleGrid,
-  Paper,
-  Text,
 } from "@mantine/core";
-import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
-import { useForm } from "@mantine/form";
-import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { DateInput, YearPickerInput } from "@mantine/dates";
+import { useForm } from "@mantine/form";
+import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
+import axios from "axios";
+import { useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
 
 const libraries = ["places"];
 
@@ -179,7 +180,18 @@ export const CreateAdPage = () => {
 
   return (
     <Container px={0}>
-      <Title order={2}>Create Property Listing</Title>
+      <Flex justify="space-between" align="center" mb={0}>
+        <Title order={2}>Create Property Listing</Title>
+         <Button
+                 component={Link} to="/floor-planner"
+                 variant="gradient"
+                 radius="xl"
+                 gradient={{ from: 'rgb(217, 255, 200)', to: 'rgba(80, 191, 40, 1)', deg: 347 }}
+                >
+                 Floor Planner ✨
+          </Button>
+      </Flex>
+
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Stack mt="lg" gap="lg">
           <div>
