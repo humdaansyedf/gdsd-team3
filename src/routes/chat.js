@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../prisma/index.js";
 import { authMiddleware } from "./auth.js";
-import { getChatByParticipants } from "../../chatUtils.js";
+import { getChatByParticipants } from "../lib/chatUtils.js";
 
 export const chatRouter = Router();
 chatRouter.use(authMiddleware);
@@ -15,7 +15,6 @@ chatRouter.get(
     currentUserId = parseInt(currentUserId);
     selectedUserId = parseInt(selectedUserId);
     propertyId = parseInt(propertyId);
-    // console.log("fetching chats", currentUserId, selectedUserId, propertyId);
     try {
       const chat = await getChatByParticipants(
         propertyId,
@@ -42,7 +41,7 @@ chatRouter.get(
 chatRouter.get("/chats/users", async (req, res) => {
   const currentUserId = parseInt(req.query.currentUserId);
 
-  // console.log("Fetching users for:", { currentUserId });
+  console.log("Fetching users for:", { currentUserId });
   try {
     const chatrooms = await prisma.chatParticipant.findMany({
       where: { userid: currentUserId },
@@ -54,6 +53,7 @@ chatRouter.get("/chats/users", async (req, res) => {
               where: { userid: { not: currentUserId } },
               include: { user: true },
             },
+            property: true,
           },
         },
       },
@@ -64,12 +64,13 @@ chatRouter.get("/chats/users", async (req, res) => {
       id: chatroom.chat.participants[0].user.id,
       name: chatroom.chat.participants[0].user.name,
       propertyId: chatroom.chat.propertyId,
+      propertyTitle: chatroom.chat.property.title,
       lastMessage: chatroom.chat.messages[0]?.content || "No messages",
       lastMessageAt: chatroom.chat.lastMessageAt,
     }));
-
     res.json(users);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Could not fetch users list" });
   }
 });
@@ -77,6 +78,7 @@ chatRouter.get("/chats/users", async (req, res) => {
 //route to get unread messages for this user
 chatRouter.get("/messages/unread", async (req, res) => {
   const currentUserId = parseInt(req.query.currentUserId);
+  console.log("entered unread route", currentUserId);
   try {
     const unreadMessagesList = await prisma.message.findMany({
       where: {
@@ -89,18 +91,26 @@ chatRouter.get("/messages/unread", async (req, res) => {
         },
       },
       select: {
+        id: true,
         chatid: true,
         userid: true,
         content: true,
         createdAt: true,
+        chat: {
+          select: {
+            propertyId: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
 
     const unreadMessages = unreadMessagesList.map((unreadMessage) => ({
+      messageId: unreadMessage.id,
       senderId: unreadMessage.userid,
       content: unreadMessage.content,
       createdAt: unreadMessage.createdAt,
+      propertyId: unreadMessage.chat.propertyId,
     }));
 
     res.json(unreadMessages);

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 // fetch users current user has chatted with
 export const useChatUsers = (currentUserId) => {
@@ -22,7 +22,6 @@ export const useChatHistory = (propertyId, currentUserId, selectedUserId) => {
   return useQuery({
     queryKey: ["chatHistory", propertyId, currentUserId, selectedUserId],
     queryFn: async () => {
-      console.log("hiiii", propertyId, currentUserId, selectedUserId);
       if (!propertyId || !currentUserId || !selectedUserId) return [];
       const response = await fetch(
         `/api/chats/${propertyId}/${currentUserId}/${selectedUserId}`
@@ -50,6 +49,7 @@ export const useUnreadMessages = (currentUserId) => {
         throw new Error("Failed to fetch unread messages");
       }
       const data = await response.json();
+      console.log("unread:", data);
       return data;
     },
   });

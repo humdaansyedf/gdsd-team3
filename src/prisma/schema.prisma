@@ -81,6 +81,7 @@ model User {
   wishlists         Wishlist[]
   notifications     Notification[]
   documents         Document[]
+  interactions      Interaction[]
 }
 
 model Session {
@@ -163,6 +164,7 @@ model Property {
   media     PropertyMedia[]
   chats     Chat[]
   wishlists Wishlist[]
+  interactions   Interaction[]
 }
 
 model PropertyMedia {
@@ -273,3 +275,17 @@ model AdminSession {
   deviceInfo String?
   admin      Admin     @relation(fields: [adminId], references: [id])
 }
+
+model Interaction {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  propertyId    Int
+  type          String    // 'view', 'wishlist'
+  timestamp     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+  property      Property   @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+   @@unique([userId, propertyId, type])
+}
+

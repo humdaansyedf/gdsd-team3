@@ -1,4 +1,4 @@
-import { prisma } from "./src/prisma/index.js";
+import { prisma } from "../prisma/index.js";
 import { getChatByParticipants } from "./chatUtils.js";
 
 export const chatHandlers = (io, socket) => {
@@ -26,8 +26,10 @@ export const chatHandlers = (io, socket) => {
   );
 
   socket.on("join_notifications", ({ currentUserId }) => {
+    //for fix- added pId
     try {
       const notificationsRoom = `notifications_${currentUserId}`;
+
       socket.join(notificationsRoom);
       // console.log(`User ${currentUserId} joined notifications room`);
     } catch (error) {
@@ -85,28 +87,38 @@ export const chatHandlers = (io, socket) => {
           },
         });
 
-        //send notification
+        //send notification - for fix
         socket.to(`notifications_${selectedUserId}`).emit("new_notification", {
           type: "message",
           chatId: chat.id,
+          messageId: message.id,
+          propertyId: propertyId,
           senderId: currentUserId,
           content,
           createdAt: message.createdAt,
         });
 
-        //send message
-        socket.broadcast.to(chatId).emit("receive_message", {
+        //send message  -new fix
+        // socket.broadcast.to(chatId).emit("receive_message", {
+        //   id: message.id,
+        //   chatId: chatId,
+        //   senderId: currentUserId,
+        //   content: content,
+        //   createdAt: message.createdAt,
+        //   seenAt: null,
+        // });
+
+        socket.to(chatId).emit("receive_message", {
           id: message.id,
           chatId: chatId,
+          messageId: message.id,
+          propertyId: propertyId,
           senderId: currentUserId,
           content: content,
           createdAt: message.createdAt,
           seenAt: null,
         });
-
-        // console.log("sending notifs to", selectedUserId, content);
       } catch (error) {
-        // console.log("sending notifs", error);
         socket.emit("error", "Could not send message");
       }
     }

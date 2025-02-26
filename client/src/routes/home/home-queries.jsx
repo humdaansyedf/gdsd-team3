@@ -1,16 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
+import { useAuth } from "../../lib/auth-context";
 
 export const usePropertySearch = () => {
+  const { user } = useAuth();
+  const isStudent = user && user.type === "STUDENT";
   let [searchParams] = useSearchParams();
 
   const filters = {
     title: searchParams.get("title") || "",
-    minPrice: searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : 0,
-    maxPrice: searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : 999999,
+    minPrice: searchParams.get("minPrice")
+      ? Number(searchParams.get("minPrice"))
+      : 0,
+    maxPrice: searchParams.get("maxPrice")
+      ? Number(searchParams.get("maxPrice"))
+      : 999999,
     availableFrom: searchParams.get("availableFrom") || "",
     searchRadius: searchParams.get("searchRadius") || "whole area",
-    amenities: searchParams.get("amenities") ? searchParams.get("amenities").split(",") : [],
+    amenities: searchParams.get("amenities")
+      ? searchParams.get("amenities").split(",")
+      : [],
   };
 
   const query = useQuery({
@@ -20,6 +29,7 @@ export const usePropertySearch = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(isStudent ? { "X-User-Id": user.id } : {}), //sending for recs
         },
         body: JSON.stringify({
           ...filters,

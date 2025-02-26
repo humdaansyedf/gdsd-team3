@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../prisma/index.js";
+import { addInteraction } from "../lib/interaction.js";
+import { getUserRecommendations } from "../lib/recommendationService.js";
 
 export const publicPropertyRouter = Router();
 export const propertyRouter = Router();
@@ -21,10 +23,27 @@ const AMENITIES = [
 
 // Route to get multiple properties
 publicPropertyRouter.post("/public/property/search", async (req, res) => {
-  const { title, amenities, minPrice, maxPrice, availableFrom, searchRadius, page = 1 } = req.body;
+  const {
+    title,
+    amenities,
+    minPrice,
+    maxPrice,
+    availableFrom,
+    searchRadius,
+    page = 1,
+  } = req.body;
+  const userId = req.headers["x-user-id"];
   const limit = 50;
   const offset = (page - 1) * limit;
   try {
+    const isSearching =
+      (title && title.trim() !== "") ||
+      (amenities && amenities.length > 0) ||
+      (minPrice && minPrice > 0) ||
+      (maxPrice && maxPrice < 999999) ||
+      (availableFrom && availableFrom.trim() !== "") ||
+      (searchRadius && searchRadius !== "whole area");
+
     const where = {
       status: "ACTIVE",
     };
@@ -98,29 +117,59 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       },
     });
 
-    // If no properties are found, return all properties
-    if (properties.length === 0) {
+    // If no search results, return all properties (fallback)
+    if (properties.length === 0 && isSearching) {
       properties = await prisma.property.findMany({
         take: limit,
         skip: offset,
-        include: {
-          media: true,
-        },
-        omit: {
-          creatorComment: true,
-          adminComment: true,
-        },
+        include: { media: true },
+        omit: { creatorComment: true, adminComment: true },
       });
     }
 
-    res.json(
-      properties.map((property) => {
-        // Get the first media item as the featured image
-        const featuredMedia = property.media[0];
+    // fetch recommendations when user browsing
+    let recommendedProperties = [];
+    if (userId && !isSearching) {
+      recommendedProperties = await getUserRecommendations(userId);
+    }
+    // converting to a set
+    const recommendedPropertyIds = new Set(
+      recommendedProperties.map((p) => p.propertyId)
+    );
+    // Format function to structure properties
+    const formatProperty = (property, isRecommended = false) => ({
+      ...property,
+      isRecommended,
+    });
 
+    // Format all properties
+    let formattedProperties = properties.map((property) =>
+      formatProperty(property, recommendedPropertyIds.has(property.id))
+    );
+
+    // Blend recommended properties *only if browsing normally*
+    if (!isSearching && recommendedProperties.length > 0) {
+      const formattedRecommended = recommendedProperties.map((p) =>
+        formatProperty(p.property, true)
+      );
+
+      // Remove duplicate recommended properties from normal search results
+      formattedProperties = formattedProperties.filter(
+        (property) => !recommendedPropertyIds.has(property.id)
+      );
+
+      // Blend recommendations into top
+      formattedProperties = [...formattedRecommended, ...formattedProperties];
+    }
+
+    res.json(
+      formattedProperties.map((property) => {
+        const featuredMedia = property.media[0];
         return {
           ...property,
-          media: featuredMedia ? featuredMedia.url : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+          media: featuredMedia
+            ? featuredMedia.url
+            : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
         };
       })
     );
@@ -133,6 +182,8 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
 // Route to get a single property
 publicPropertyRouter.get("/public/property/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const userId = req.headers["x-user-id"];
+  // console.log("in backend:", userId);
   const property = await prisma.property.findUnique({
     where: {
       id,
@@ -140,6 +191,11 @@ publicPropertyRouter.get("/public/property/:id", async (req, res) => {
     },
     include: {
       media: true,
+      user: {
+        select: {
+          name: true, // Only fetch the creator's name
+        },
+      },
     },
     omit: {
       creatorComment: true,
@@ -153,5 +209,21 @@ publicPropertyRouter.get("/public/property/:id", async (req, res) => {
   }
 
   res.json(property);
+
+  if (userId) {
+    //recording interaction
+    setImmediate(async () => {
+      try {
+        addInteraction(parseInt(userId), id, "view");
+        // console.log("added view");
+      } catch (error) {
+        console.error(
+          "Warning: Error recording interaction (background):",
+          error
+        );
+      }
+    });
+  }
+
   return;
 });

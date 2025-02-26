@@ -1,4 +1,14 @@
-import { ActionIcon, Badge, Button, Card, Flex, Image, Text, Title, Tooltip } from "@mantine/core";
+import {
+  ActionIcon,
+  Badge,
+  Button,
+  Card,
+  Flex,
+  Image,
+  Text,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 import { IconArrowRight, IconDog, IconSmoking } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
@@ -7,6 +17,20 @@ import "./grid-view.css";
 const PropertyCard = ({ property }) => {
   return (
     <Card withBorder p="md" shadow="sm">
+      {property.isRecommended && (
+        <Badge
+          variant="gradient"
+          gradient={{ from: "teal", to: "lime", deg: 105 }}
+          style={{
+            position: "absolute",
+            top: 10,
+            left: 10,
+            zIndex: 10,
+          }}
+        >
+          Recommended
+        </Badge>
+      )}
       <Card.Section>
         <Image
           src={property.media}

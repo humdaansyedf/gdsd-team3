@@ -16,7 +16,15 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconCalendar, IconCheck, IconMapPin, IconMessage, IconPhotoOff, IconShare, IconX } from "@tabler/icons-react";
+import {
+  IconCalendar,
+  IconCheck,
+  IconMapPin,
+  IconMessage,
+  IconPhotoOff,
+  IconShare,
+  IconX,
+} from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useClipboard } from "@mantine/hooks";
 import { Carousel } from "@mantine/carousel";
@@ -65,17 +73,16 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
 
   const handleMessageClick = () => {
     if (data && data.creatorId) {
-      console.log(data.creatorId);
-      console.log("Navigating to /messages with state:", {
-        propertyId: data.id,
-        selectedUserId: data.creatorId,
-      });
-
       navigate(`/messages`, {
-        state: { propertyId: data.id, selectedUserId: data.creatorId },
+        state: {
+          propertyId: data.id,
+          selectedUserId: data.creatorId,
+          selectedUsername: data.user.name,
+          propertyTitle: data.title,
+        },
       });
     } else {
-      alert("Unable to retrieve owner information.");
+      console.log("Unable to retrieve owner information.");
     }
   };
 
@@ -107,7 +114,7 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
     <Container px={0}>
       <Paper radius="sm" style={{ overflow: "hidden" }}>
         {data.media.length > 0 ? (
-          <Carousel loop height={400} bg="gray.2">
+          <Carousel withIndicators loop height={400} bg="gray.2">
             {data.media.map((media) => (
               <Carousel.Slide key={media.id}>
                 <Image
@@ -157,18 +164,30 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
           {data.createdAt && (
             <Group align="center" gap={4}>
               <IconCalendar size={14} />
-              <Text size="sm">{dayjs(Date.createdAt).format("MMMM D, YYYY")}</Text>
+              <Text size="sm">
+                {dayjs(Date.createdAt).format("MMMM D, YYYY")}
+              </Text>
             </Group>
           )}
         </Stack>
         {!isAdmin && (
           <Button.Group mt="lg">
             {user && user.id !== data.creatorId && (
-              <Button variant="outline" size="md" onClick={handleMessageClick} rightSection={<IconMessage size={16} />}>
+              <Button
+                variant="outline"
+                size="md"
+                onClick={handleMessageClick}
+                rightSection={<IconMessage size={16} />}
+              >
                 Message
               </Button>
             )}
-            <Button variant="outline" size="md" onClick={handleShareClick} rightSection={<IconShare size={16} />}>
+            <Button
+              variant="outline"
+              size="md"
+              onClick={handleShareClick}
+              rightSection={<IconShare size={16} />}
+            >
               Share
             </Button>
           </Button.Group>
@@ -184,7 +203,10 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
         >
           <Stack gap="xs">
             <PropertyStat label="Property type" value={data.propertyType} />
-            <PropertyStat label="Available from" value={dayjs(data.availableFrom).format("MMMM D, YYYY")} />
+            <PropertyStat
+              label="Available from"
+              value={dayjs(data.availableFrom).format("MMMM D, YYYY")}
+            />
             {data.livingSpaceSqm && (
               <PropertyStat
                 label="Living space"
@@ -195,24 +217,51 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
                 }
               />
             )}
-            {data.numberOfRooms && <PropertyStat label="Rooms" value={`${data.numberOfRooms}`} />}
-            {data.numberOfBeds && <PropertyStat label="Beds" value={`${data.numberOfBeds}`} />}
-            {data.numberOfBaths && <PropertyStat label="Baths" value={`${data.numberOfBaths}`} />}
-            {data.totalFloors && <PropertyStat label="Total floors" value={`${data.totalFloors}`} />}
-            {data.floorNumber && <PropertyStat label="Floor" value={`${data.floorNumber}`} />}
+            {data.numberOfRooms && (
+              <PropertyStat label="Rooms" value={`${data.numberOfRooms}`} />
+            )}
+            {data.numberOfBeds && (
+              <PropertyStat label="Beds" value={`${data.numberOfBeds}`} />
+            )}
+            {data.numberOfBaths && (
+              <PropertyStat label="Baths" value={`${data.numberOfBaths}`} />
+            )}
+            {data.totalFloors && (
+              <PropertyStat
+                label="Total floors"
+                value={`${data.totalFloors}`}
+              />
+            )}
+            {data.floorNumber && (
+              <PropertyStat label="Floor" value={`${data.floorNumber}`} />
+            )}
             {data.minimumLeaseTermInMonths && (
-              <PropertyStat label="Minimum lease term" value={`${data.minimumLeaseTermInMonths} months`} />
+              <PropertyStat
+                label="Minimum lease term"
+                value={`${data.minimumLeaseTermInMonths} months`}
+              />
             )}
             {data.maximumLeaseTermInMonths && (
-              <PropertyStat label="Maximum lease term" value={`${data.maximumLeaseTermInMonths} months`} />
+              <PropertyStat
+                label="Maximum lease term"
+                value={`${data.maximumLeaseTermInMonths} months`}
+              />
             )}
             {data.noticePeriodInMonths && (
-              <PropertyStat label="Notice period" value={`${data.noticePeriodInMonths} months`} />
+              <PropertyStat
+                label="Notice period"
+                value={`${data.noticePeriodInMonths} months`}
+              />
             )}
           </Stack>
           <Stack gap="xs">
             <PropertyStat label="Cold rent" value={`${data.coldRent} €`} />
-            {data.additionalCosts && <PropertyStat label="Additional costs" value={`${data.additionalCosts} €`} />}
+            {data.additionalCosts && (
+              <PropertyStat
+                label="Additional costs"
+                value={`${data.additionalCosts} €`}
+              />
+            )}
             {data.additionalCosts && (
               <PropertyStat
                 label="Heating included in additional costs"
@@ -220,7 +269,9 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
               />
             )}
             <PropertyStat label="Total rent" value={`${data.totalRent} €`} />
-            {data.deposit && <PropertyStat label="Deposit" value={`${data.deposit} €`} />}
+            {data.deposit && (
+              <PropertyStat label="Deposit" value={`${data.deposit} €`} />
+            )}
           </Stack>
         </SimpleGrid>
       </Paper>
@@ -243,7 +294,10 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
           <PropertyBooleanStat label="Furnished" value={data.furnished} />
           <PropertyBooleanStat label="Balcony" value={data.balcony} />
           <PropertyBooleanStat label="Cellar" value={data.cellar} />
-          <PropertyBooleanStat label="Washing Machine" value={data.washingMachine} />
+          <PropertyBooleanStat
+            label="Washing Machine"
+            value={data.washingMachine}
+          />
           <PropertyBooleanStat label="Elevator" value={data.elevator} />
           <PropertyBooleanStat label="Garden" value={data.garden} />
           <PropertyBooleanStat label="Parking" value={data.parking} />

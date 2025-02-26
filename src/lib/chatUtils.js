@@ -1,4 +1,4 @@
-import { prisma } from "./src/prisma/index.js";
+import { prisma } from "../prisma/index.js";
 
 export const getChatByParticipants = async (
   propertyId,
