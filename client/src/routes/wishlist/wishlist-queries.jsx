@@ -26,6 +26,7 @@ export const useWishlist = () => {
 
       return data.map((item) => ({
         ...item.property,
+        note: item.note,
         media: item.property.media.length > 0
           ? item.property.media[0].url
           : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
@@ -73,6 +74,35 @@ export const useRemoveFromWishlist = () => {
       }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries(["wishlist"]); // Refresh wishlist data
+    },
+  });
+};
+
+export const useUpdatePropertyNote = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ propertyId, note }) => {
+      const response = await fetch(`/api/wishlist/${propertyId}/note`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ note }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json(); // Log the error response
+        console.error("Failed to update note:", errorData);
+        throw new Error("Failed to update property note");
+      }
+
+      return response.json(); // Ensure response is properly returned
+    },
+    onSuccess: (data) => {
+      console.log("Note updated successfully:", data);
       queryClient.invalidateQueries(["wishlist"]); // Refresh wishlist data
     },
   });

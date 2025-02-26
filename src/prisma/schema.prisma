@@ -186,6 +186,7 @@ model Wishlist {
   userId     Int
   propertyId Int
   createdAt  DateTime @default(now())
+  note       String?
 
   user     User     @relation(fields: [userId], references: [id])
   property Property @relation(fields: [propertyId], references: [id])

@@ -46,6 +46,50 @@ wishlistRouter.post("/wishlist", async (req, res) => {
   }
 });
 
+wishlistRouter.patch("/wishlist/:propertyId/note", async (req, res) => {
+  const { propertyId } = req.params;
+  const { note } = req.body;
+
+  // Only students can update the note
+  if (req.user.type !== "STUDENT") {
+    return res
+      .status(403)
+      .json({ message: "Only students can update wishlist notes" });
+  }
+
+  // propertyId in your DB is likely an integer
+  const propertyIdNum = Number(propertyId);
+
+  try {
+    // Update the note field for the matching wishlist entry
+    const updated = await prisma.wishlist.updateMany({
+      where: {
+        userId: req.user.id,
+        propertyId: propertyIdNum,
+      },
+      data: { note },
+    });
+
+    // updateMany returns count of rows updated
+    if (updated.count === 0) {
+      return res
+        .status(404)
+        .json({ message: "No wishlist entry found to update" });
+    }
+
+    res.json({
+      message: "Wishlist note updated successfully",
+      note: note,
+    });
+  } catch (error) {
+    console.error("Error updating wishlist note:", error);
+    res.status(500).json({
+      message: "Error updating wishlist note",
+      error: error.message,
+    });
+  }
+});
+
 wishlistRouter.delete("/wishlist/:propertyId", async (req, res) => {
   const { propertyId } = req.params;
 
