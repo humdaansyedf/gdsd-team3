@@ -1,19 +1,7 @@
 import { prisma } from "../prisma/index.js";
 
-const AMENITIES = [
-  "pets",
-  "smoking",
-  "kitchen",
-  "furnished",
-  "balcony",
-  "cellar",
-  "washingMachine",
-  "elevator",
-  "garden",
-  "parking",
-  "internet",
-  "cableTv",
-];
+const RECOMMENDATIONS = 3;
+const SIMILARITY_THRESHOLD = 0.55;
 
 export const getUserRecommendations = async (userId) => {
   userId = parseInt(userId);
@@ -33,7 +21,7 @@ export const getUserRecommendations = async (userId) => {
     preferenceBasedProperties,
     collaborativeProperties
   );
-
+  console.log("combinedProperties", combinedProperties);
   return combinedProperties;
 };
 
@@ -62,6 +50,7 @@ export const getPreferenceBasedRecommendations = async (userId) => {
 
   let recommendedProperties = await prisma.property.findMany({
     where: {
+      status: "ACTIVE",
       id: { notIn: Array.from(interactedPropertyIds) },
       totalRent: {
         lte: userPreferences.totalRent * 1.15,
@@ -75,7 +64,7 @@ export const getPreferenceBasedRecommendations = async (userId) => {
       pets: userPreferences.pets,
       smoking: userPreferences.smoking,
       furnished: userPreferences.furnished,
-      availableFrom: { gte: new Date() }, // Available now or in future
+      availableFrom: { gte: new Date() },
     },
     include: { media: true },
     omit: { creatorComment: true, adminComment: true },
@@ -87,6 +76,7 @@ export const getPreferenceBasedRecommendations = async (userId) => {
 
     recommendedProperties = await prisma.property.findMany({
       where: {
+        status: "ACTIVE",
         id: { notIn: Array.from(interactedPropertyIds) },
         totalRent: {
           lte: userPreferences.totalRent * 1.2,
@@ -98,13 +88,6 @@ export const getPreferenceBasedRecommendations = async (userId) => {
       omit: { creatorComment: true, adminComment: true },
     });
   }
-
-  //debugging
-  // const recommendedPropertyIds = new Set(
-  //   recommendedProperties.map((property) => property.id)
-  // );
-  // console.log("preference based:", recommendedPropertyIds);
-
   return recommendedProperties;
 };
 
@@ -172,7 +155,7 @@ export const recommendProperties = async (userId, interactionMatrix) => {
   let maxSimilarityScore = 0;
 
   for (let [otherUserId, similarity] of sortedSimilarUsers) {
-    if (similarity > 0.55) {
+    if (similarity > SIMILARITY_THRESHOLD) {
       const properties = interactionMatrix[otherUserId];
       for (let propertyId in properties) {
         if (!interactionMatrix[userId]?.[propertyId]) {
@@ -202,7 +185,7 @@ export const recommendProperties = async (userId, interactionMatrix) => {
   // console.log("sortedSimilarUsers:", sortedSimilarUsers);
 
   const properties = await prisma.property.findMany({
-    where: { id: { in: Array.from(recommendedProperties) } },
+    where: { status: "ACTIVE", id: { in: Array.from(recommendedProperties) } },
     include: { media: true },
     omit: { creatorComment: true, adminComment: true },
   });
@@ -235,10 +218,13 @@ function mergeRecommendations(preferenceProperties, collaborativeProperties) {
     }
   });
 
-  return Array.from(combined.values())
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3) //sending top 3
-    .map(({ score, ...rest }) => rest);
+  //to get properties
+  // return Array.from(combined.values())
+  //   .sort((a, b) => b.score - a.score)
+  //   .slice(0, 3) //sending top 3
+  //   .map(({ score, ...rest }) => rest);
+
+  return Array.from(combined.keys()).slice(0, RECOMMENDATIONS); //sending top 3
 }
 
 //utility functions
@@ -248,5 +234,5 @@ function getAverage(values) {
 
 function getPreferredValue(properties, key) {
   const preferenceCount = properties.filter((p) => p[key]).length;
-  return preferenceCount > properties.length / 2; // More than half indicate preference for this feature
+  return preferenceCount > properties.length / 2;
 }

@@ -117,7 +117,7 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       },
     });
 
-    // If no search results, return all properties (fallback)
+    // If no properties are found, return all properties
     if (properties.length === 0 && isSearching) {
       properties = await prisma.property.findMany({
         take: limit,
@@ -127,40 +127,20 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       });
     }
 
-    // fetch recommendations when user browsing
-    let recommendedProperties = [];
+    let recommendedPropertyIds = [];
     if (userId && !isSearching) {
-      recommendedProperties = await getUserRecommendations(userId);
+      recommendedPropertyIds = await getUserRecommendations(userId);
     }
-    // converting to a set
-    const recommendedPropertyIds = new Set(
-      recommendedProperties.map((p) => p.propertyId)
-    );
-    // Format function to structure properties
-    const formatProperty = (property, isRecommended = false) => ({
+
+    let formattedProperties = properties.map((property) => ({
       ...property,
-      isRecommended,
-    });
+      isRecommended: recommendedPropertyIds.includes(property.id),
+    }));
 
-    // Format all properties
-    let formattedProperties = properties.map((property) =>
-      formatProperty(property, recommendedPropertyIds.has(property.id))
-    );
-
-    // Blend recommended properties *only if browsing normally*
-    if (!isSearching && recommendedProperties.length > 0) {
-      const formattedRecommended = recommendedProperties.map((p) =>
-        formatProperty(p.property, true)
-      );
-
-      // Remove duplicate recommended properties from normal search results
-      formattedProperties = formattedProperties.filter(
-        (property) => !recommendedPropertyIds.has(property.id)
-      );
-
-      // Blend recommendations into top
-      formattedProperties = [...formattedRecommended, ...formattedProperties];
-    }
+    // recommended properties on top
+    const recommended = formattedProperties.filter((p) => p.isRecommended);
+    const nonRecommended = formattedProperties.filter((p) => !p.isRecommended);
+    formattedProperties = [...recommended, ...nonRecommended];
 
     res.json(
       formattedProperties.map((property) => {
