@@ -9,14 +9,14 @@ import {
   Group,
   Image,
   Loader,
-  Paper,
+  Paper, Rating,
   SimpleGrid,
   Stack,
   Text,
   ThemeIcon,
-  Title,
+  Title, Tooltip,
 } from "@mantine/core";
-import { IconCalendar, IconCheck, IconMapPin, IconMessage, IconPhotoOff, IconShare, IconX } from "@tabler/icons-react";
+import { IconCalendar, IconCheck, IconMapPin, IconMessage, IconPhotoOff, IconShare, IconX,  IconInfoCircle} from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useClipboard } from "@mantine/hooks";
 import { Carousel } from "@mantine/carousel";
@@ -62,7 +62,15 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const clipboard = useClipboard();
+  const labels = [
+    { text: "Rather high price"},
+    { text: "Higher price"},
+    { text: "Good price"},
+    { text: "Very good price"},
+    { text: "Excellent price"},
+  ];
 
+  const infoTooltip = "This rating is calculated based on the estimated price range for similar properties.";
   const handleMessageClick = () => {
     if (data && data.creatorId) {
       console.log(data.creatorId);
@@ -142,10 +150,26 @@ export const PropertyDetailView = ({ data, isAdmin = false }) => {
           )}
           <WishlistButton propertyId={data.id} />
         </Group>
+        <Group>
         <Badge variant="light" size="xl" radius="sm" mt="sm">
           {data.totalRent} €
         </Badge>
 
+          {data.priceRating > 0 && (
+        <Stack align="left" gap="0">
+          <Group mt="sm">
+        <Rating value={data.priceRating} readOnly count={5} color="green"/>
+        <Tooltip label={infoTooltip} withArrow>
+          <IconInfoCircle size={18} color="gray" style={{ cursor: "pointer" }} />
+        </Tooltip>
+      </Group>
+      <Text weight={600} size="sm" c="dimmed">
+        {labels[data.priceRating - 1].text}
+      </Text>
+        </Stack>
+          )}
+
+        </Group>
         <Stack gap={4} mt="sm" c="gray.7">
           {showMap && data.address1 && (
             <Group align="center" gap={4}>

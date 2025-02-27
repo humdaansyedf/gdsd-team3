@@ -20,6 +20,8 @@ import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { DateInput, YearPickerInput } from "@mantine/dates";
+import { PriceRecommendationModal } from "../../components/PriceRecommendationModal/PriceRecommendationModal.jsx";
+import {useDisclosure} from "@mantine/hooks";
 
 const libraries = ["places"];
 
@@ -29,6 +31,9 @@ export const EditAdPage = () => {
     const [initialData, setInitialData] = useState({});
     const autocompleteRef = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
+    const [recommendedPrice, setRecommendedPrice] = useState(null);
+    const [finalPayload, setFinalPayload] = useState(null); // Store predicted price
 
     const form = useForm({
         initialValues: {}, // Initialized dynamically after fetching
@@ -82,19 +87,7 @@ export const EditAdPage = () => {
                         : null,
                     yearBuilt: propertyData.yearBuilt === "0000" ? null : propertyData.yearBuilt
                 };
-
                 form.setValues(parsedData);
-
-                // form.setValues({
-                //     ...propertyData,
-                //     totalRent: propertyData.coldRent + (propertyData.additionalCosts || 0),
-                //     availableFrom: propertyData.availableFrom
-                //         ? new Date(propertyData.availableFrom) // Convert string to Date object
-                //         : null,
-                //     yearBuilt: propertyData.yearBuilt
-                //         ? new Date(propertyData.yearBuilt).getFullYear().toString() // Extract year from Date
-                //         : null,
-                // });
 
                 setIsLoading(false);
             } catch (error) {
@@ -102,7 +95,6 @@ export const EditAdPage = () => {
                 alert("Failed to load property data. Please try again later.");
             }
         };
-
         fetchPropertyData();
     }, [id]);
 
@@ -142,6 +134,27 @@ export const EditAdPage = () => {
         console.log("Updated Media After Deletion:", updatedMedia);
     };
 
+    const fetchRecommendedPrice = async (values) => {
+        const payload = {
+            balcony: values.balcony,
+            hasKitchen: values.kitchen,
+            lift: values.elevator,
+            livingSpace: values.livingSpaceSqm,
+            noRooms: values.numberOfRooms,
+            numberOfYear: values.yearBuilt ? 2025 - parseInt(values.yearBuilt) : 1920
+        };
+
+        try {
+            const response = await axios.post("https://gdsdteam3.live/predict-rent", payload);
+            console.log("Prediction Response:", response.data);
+            setRecommendedPrice(response.data.predicted_price);
+            form.setFieldValue("recommendedPrice", response.data.predicted_price);
+        } catch (error) {
+            console.error("Prediction Error:", error);
+            alert("Failed to predict price. Please try again.");
+        }
+    };
+
     const handleSubmit = async (values) => {
         // Only include fields that have changed or are not null/undefined
         const updatedFields = Object.keys(values).reduce((acc, key) => {
@@ -170,20 +183,26 @@ export const EditAdPage = () => {
                 ? updatedFields.media.map((item) => ({ url: item.url }))
                 : initialData.media.map((item) => ({ url: item.url })),
             yearBuilt: values.yearBuilt
-                ? values.yearBuilt.getFullYear().toString() // Keep valid year as string
+                ? new Date(values.yearBuilt).getFullYear().toString() // Keep valid year as string
                 : "0000", // Fallback value
         };
+        await fetchRecommendedPrice(values);
+        setFinalPayload(payload);
+        openModal();
+    };
 
+    const submitAfterConfirmation = async (payload) => {
         try {
-            console.log("Payload for submission:", payload);
+            console.log("Final Payload for Submission:", payload);
             await axios.put(`/api/property/${id}`, payload);
+            closeModal();
             navigate("/property/submission-confirmation");
+            window.scrollTo({ top: 0, behavior: "smooth" });
         } catch (error) {
             console.error(error);
             alert("Failed to update property. Please try again.");
         }
     };
-
 
     if (isLoading) {
         return <p>Loading...</p>;
@@ -201,7 +220,7 @@ export const EditAdPage = () => {
                             existingImages={form.values.media ? form.values.media.map((media) => media.url) : []}
                         />
                         {form.errors.media && (
-                            <Text size="xs" color="red" mt={4}>
+                            <Text size="xs" c="red" mt={4}>
                                 {form.errors.media}
                             </Text>
                         )}
@@ -435,6 +454,14 @@ export const EditAdPage = () => {
                     >
                         Submit for review
                     </Button>
+                    <PriceRecommendationModal
+                        isOpen={isModalOpen}
+                        onClose={closeModal}
+                        recommendedPrice={recommendedPrice}
+                        form={form}
+                        setFinalPayload={setFinalPayload}
+                        submitAfterConfirmation={submitAfterConfirmation}
+                    />
                 </Stack>
             </form>
         </Container>

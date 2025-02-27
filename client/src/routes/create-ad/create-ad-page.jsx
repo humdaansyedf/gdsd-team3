@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import {useRef, useState} from "react";
 import {
   Button,
   TextInput,
@@ -14,21 +14,24 @@ import {
   Paper,
   Text,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { Autocomplete, LoadScriptNext } from "@react-google-maps/api";
 import { useForm } from "@mantine/form";
 import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DateInput, YearPickerInput } from "@mantine/dates";
+import { PriceRecommendationModal } from "../../components/PriceRecommendationModal/PriceRecommendationModal.jsx";
 
 const libraries = ["places"];
 
 export const CreateAdPage = () => {
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
-  // const [initialData, setInitialData] = useState({});
+  const [recommendedPrice, setRecommendedPrice] = useState(null);
+  const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
+  const [finalPayload, setFinalPayload] = useState(null); // Store predicted price
 
-  // Initialize form with Mantine
   const form = useForm({
     initialValues: {
       title: "",
@@ -68,7 +71,8 @@ export const CreateAdPage = () => {
       internet: false,
       cableTv: false,
       creatorComment: "",
-      media: [], // Image URLs
+      media: [],
+      recommendedPrice: 0
     },
 
     validate: {
@@ -130,6 +134,27 @@ export const CreateAdPage = () => {
     form.setFieldValue("media", updatedMedia);
   };
 
+  const fetchRecommendedPrice = async (values) => {
+    const payload = {
+      balcony: values.balcony,
+      hasKitchen: values.kitchen,
+      lift: values.elevator,
+      livingSpace: values.livingSpaceSqm,
+      noRooms: values.numberOfRooms,
+      numberOfYear: values.yearBuilt ? 2025 - parseInt(values.yearBuilt) : 1920
+    };
+
+    try {
+      const response = await axios.post("https://gdsdteam3.live/predict-rent", payload);
+      console.log("Prediction Response:", response.data);
+      setRecommendedPrice(response.data.predicted_price);
+      form.setFieldValue("recommendedPrice", response.data.predicted_price);
+    } catch (error) {
+      console.error("Prediction Error:", error);
+      alert("Failed to predict price. Please try again.");
+    }
+  };
+
   const handleSubmit = async (values) => {
     // Only include fields that have changed or are not null/undefined
     const updatedFields = Object.keys(values).reduce((acc, key) => {
@@ -163,14 +188,21 @@ export const CreateAdPage = () => {
       availableFrom: values.availableFrom.toISOString().substring(0, 10),
       media: updatedFields.media ? updatedFields.media.map((item) => ({ url: item.url })) : [],
       yearBuilt: values.yearBuilt
-        ? values.yearBuilt.getFullYear().toString() // Keep valid year as string
+        ? new Date(values.yearBuilt).getFullYear().toString() // Keep valid year as string
         : "0000", // Fallback value
     };
+    await fetchRecommendedPrice(values);
+    setFinalPayload(payload);
+    openModal();
+  };
 
+  const submitAfterConfirmation = async (payload) => {
     try {
-      console.log("Submitting Payload:", payload);
+      console.log("Final Payload for Submission:", payload);
       await axios.post("/api/property", payload);
+      closeModal();
       navigate("/property/submission-confirmation");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error("Failed to create property:", error);
       alert("Failed to create property. Please try again.");
@@ -185,7 +217,7 @@ export const CreateAdPage = () => {
           <div>
             <ImageUploader onUpload={handleImageUpload} onDelete={handleImageDelete} />
             {form.errors.media && (
-              <Text size="xs" color="red" mt={4}>
+              <Text size="xs" c="red" mt={4}>
                 {form.errors.media}
               </Text>
             )}
@@ -375,6 +407,14 @@ export const CreateAdPage = () => {
           <Button fullWidth color="green" type="submit" radius="md" size="lg" my="xl">
             Submit for review
           </Button>
+          <PriceRecommendationModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              recommendedPrice={recommendedPrice}
+              form={form}
+              setFinalPayload={setFinalPayload}
+              submitAfterConfirmation={submitAfterConfirmation}
+          />
         </Stack>
       </form>
     </Container>
