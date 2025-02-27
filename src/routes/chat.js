@@ -19,7 +19,7 @@ chatRouter.get(
       const chat = await getChatByParticipants(
         propertyId,
         currentUserId,
-        selectedUserId
+        selectedUserId,
       );
 
       if (!chat) return res.json([]); // No chat found
@@ -34,7 +34,7 @@ chatRouter.get(
     } catch (error) {
       res.status(500).json({ error: "Could not fetch chat history" });
     }
-  }
+  },
 );
 
 // route to get users the current user has chatted with

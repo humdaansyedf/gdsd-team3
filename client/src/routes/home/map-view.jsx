@@ -1,6 +1,20 @@
 import { useState } from "react";
-import { APIProvider, Map, Marker, InfoWindow } from "@vis.gl/react-google-maps";
-import { Paper, Button, Image, Text, Badge, ActionIcon, Flex, Tooltip } from "@mantine/core";
+import {
+  APIProvider,
+  Map,
+  Marker,
+  InfoWindow,
+} from "@vis.gl/react-google-maps";
+import {
+  Paper,
+  Button,
+  Image,
+  Text,
+  Badge,
+  ActionIcon,
+  Flex,
+  Tooltip,
+} from "@mantine/core";
 import { IconArrowRight, IconDog, IconSmoking } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { WishlistButton } from "../../components/WishlistButton/WishlistButton";

@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Text, Image, SimpleGrid, Loader, ActionIcon, Group } from "@mantine/core";
+import {
+  Text,
+  Image,
+  SimpleGrid,
+  Loader,
+  ActionIcon,
+  Group,
+} from "@mantine/core";
 import { IconTrash, IconUpload } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { usePublicFileUpload } from "./fileUpload";
@@ -54,7 +61,7 @@ export const ImageUploader = ({ onUpload, onDelete, existingImages = [] }) => {
           onSettled: () => {
             setLoading(false);
           },
-        }
+        },
       );
     }
   };
@@ -82,17 +89,32 @@ export const ImageUploader = ({ onUpload, onDelete, existingImages = [] }) => {
   return (
     <div>
       {/* Dropzone for selecting files */}
-      <Dropzone accept={IMAGE_MIME_TYPE} onDrop={handleFilesUpload} multiple disabled={loading}>
-        <Group justify="center" gap="xs" mih={120} style={{ pointerEvents: "none" }}>
+      <Dropzone
+        accept={IMAGE_MIME_TYPE}
+        onDrop={handleFilesUpload}
+        multiple
+        disabled={loading}
+      >
+        <Group
+          justify="center"
+          gap="xs"
+          mih={120}
+          style={{ pointerEvents: "none" }}
+        >
           {loading ? (
             <Loader />
           ) : (
             <>
-              <IconUpload size={40} color="var(--mantine-color-dimmed)" stroke={1.5} />
+              <IconUpload
+                size={40}
+                color="var(--mantine-color-dimmed)"
+                stroke={1.5}
+              />
               <div>
                 <Text inline>Drag images here or click to select files</Text>
                 <Text size="xs" c="dimmed" inline mt={7}>
-                  Attach as many files as you like, each file should not exceed 5mb
+                  Attach as many files as you like, each file should not exceed
+                  5mb
                 </Text>
               </div>
             </>

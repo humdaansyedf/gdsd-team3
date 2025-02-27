@@ -17,20 +17,6 @@ import "./grid-view.css";
 const DefaultPropertyCard = ({ property }) => {
   return (
     <Card withBorder p="md" shadow="sm">
-      {property.isRecommended && (
-        <Badge
-          variant="gradient"
-          gradient={{ from: "teal", to: "lime", deg: 105 }}
-          style={{
-            position: "absolute",
-            top: 10,
-            left: 10,
-            zIndex: 10,
-          }}
-        >
-          Recommended
-        </Badge>
-      )}
       <Card.Section>
         <Image
           src={property.media}
@@ -41,6 +27,20 @@ const DefaultPropertyCard = ({ property }) => {
             objectFit: "cover",
           }}
         />
+        {property.isRecommended && (
+          <Badge
+            variant="gradient"
+            gradient={{ from: "teal", to: "lime", deg: 105 }}
+            style={{
+              position: "absolute",
+              top: 10,
+              left: 10,
+              zIndex: 10,
+            }}
+          >
+            Recommended
+          </Badge>
+        )}
       </Card.Section>
       <Title mt="sm" order={4}>
         {property.title}

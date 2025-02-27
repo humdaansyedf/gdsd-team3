@@ -34,7 +34,9 @@ export function ProfileEdit() {
 
   const handleSubmit = async () => {
     const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => formDataToSend.append(key, formData[key]));
+    Object.keys(formData).forEach((key) =>
+      formDataToSend.append(key, formData[key]),
+    );
     if (profilePicture) formDataToSend.append("profilePicture", profilePicture);
 
     try {
@@ -42,7 +44,10 @@ export function ProfileEdit() {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setNotification({ type: "success", message: "Profile updated successfully!" });
+      setNotification({
+        type: "success",
+        message: "Profile updated successfully!",
+      });
       setTimeout(() => {
         navigate("/profile");
         setTimeout(() => window.location.reload(), 1);
@@ -60,7 +65,12 @@ export function ProfileEdit() {
           <div style={{ position: "relative" }}>
             <Avatar size="xl" src={user.profilePicture} alt="Profile" />
             <Badge
-              style={{ position: "absolute", bottom: 0, right: 5, cursor: "pointer" }}
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 5,
+                cursor: "pointer",
+              }}
               variant="filled"
               color="green"
               p={2}
@@ -76,9 +86,24 @@ export function ProfileEdit() {
             />
           </div>
 
-          <TextInput label="Edit Name" name="name" value={formData.name} onChange={handleChange} />
-          <TextInput label="Edit Phone" name="phone" value={formData.phone} onChange={handleChange} />
-          <TextInput label="Edit Address" name="address" value={formData.address} onChange={handleChange} />
+          <TextInput
+            label="Edit Name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+          <TextInput
+            label="Edit Phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+          />
+          <TextInput
+            label="Edit Address"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+          />
 
           <Group position="center">
             <Button color="green" onClick={handleSubmit}>
@@ -88,7 +113,13 @@ export function ProfileEdit() {
 
           {notification && (
             <Notification
-              icon={notification.type === "success" ? <IconCheck size={18} /> : <IconX size={18} />}
+              icon={
+                notification.type === "success" ? (
+                  <IconCheck size={18} />
+                ) : (
+                  <IconX size={18} />
+                )
+              }
               color={notification.type === "success" ? "green" : "red"}
               onClose={() => setNotification(null)}
             >

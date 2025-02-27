@@ -1,4 +1,12 @@
-import { ActionIcon, Button, Container, Flex, Table, Text, Tooltip } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Container,
+  Flex,
+  Table,
+  Text,
+  Tooltip,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconEye, IconShare, IconTrash, IconUpload } from "@tabler/icons-react";
 import axios from "axios";
@@ -80,7 +88,11 @@ const MyDocuments = () => {
         <Text size="xl" weight={600}>
           My Documents
         </Text>
-        <Button size="sm" onClick={() => setModalOpen(true)} leftIcon={<IconUpload />}>
+        <Button
+          size="sm"
+          onClick={() => setModalOpen(true)}
+          leftIcon={<IconUpload />}
+        >
           Upload Document
         </Button>
       </Flex>
@@ -88,8 +100,12 @@ const MyDocuments = () => {
       <Table withBorder withColumnBorders>
         <thead>
           <tr>
-            <th style={{ textAlign: "left", padding: "12px" }}>Document Name</th>
-            <th style={{ textAlign: "right", padding: "12px", width: "250px" }}>Actions</th>
+            <th style={{ textAlign: "left", padding: "12px" }}>
+              Document Name
+            </th>
+            <th style={{ textAlign: "right", padding: "12px", width: "250px" }}>
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -100,17 +116,26 @@ const MyDocuments = () => {
                 <td style={{ textAlign: "right", padding: "12px" }}>
                   <Flex justify="flex-end" gap="md">
                     <Tooltip label="View">
-                      <ActionIcon color="blue" onClick={() => handleViewDocument(doc.key)}>
+                      <ActionIcon
+                        color="blue"
+                        onClick={() => handleViewDocument(doc.key)}
+                      >
                         <IconEye />
                       </ActionIcon>
                     </Tooltip>
                     <Tooltip label="Copy link">
-                      <ActionIcon color="teal" onClick={() => handleCopyLink(doc.key)}>
+                      <ActionIcon
+                        color="teal"
+                        onClick={() => handleCopyLink(doc.key)}
+                      >
                         <IconShare />
                       </ActionIcon>
                     </Tooltip>
                     <Tooltip label="Delete">
-                      <ActionIcon color="red" onClick={() => handleDelete(doc.key)}>
+                      <ActionIcon
+                        color="red"
+                        onClick={() => handleDelete(doc.key)}
+                      >
                         <IconTrash />
                       </ActionIcon>
                     </Tooltip>
@@ -129,7 +154,11 @@ const MyDocuments = () => {
       </Table>
 
       {modalOpen && (
-        <UploadDocumentModal opened={modalOpen} onClose={() => setModalOpen(false)} fetchDocuments={fetchDocuments} />
+        <UploadDocumentModal
+          opened={modalOpen}
+          onClose={() => setModalOpen(false)}
+          fetchDocuments={fetchDocuments}
+        />
       )}
     </Container>
   );

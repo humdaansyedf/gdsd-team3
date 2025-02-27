@@ -1,6 +1,9 @@
 import { getRandomValues } from "node:crypto";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
+import {
+  encodeBase32LowerCaseNoPadding,
+  encodeHexLowerCase,
+} from "@oslojs/encoding";
 import { z } from "zod";
 import { Router } from "express";
 import { hash, verify } from "@node-rs/argon2";
@@ -100,16 +103,19 @@ const registerSchema = z.discriminatedUnion("type", [
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     name: z.string().min(2, "Name must be at least 2 characters long"),
-    phone: z.string().optional(),
-    address: z.string().optional(),
+    phone: z.string().nullish(),
+    address: z.string().nullish(),
     type: userType.extract(["LANDLORD"]),
   }),
   z.object({
-    email: z.string().email("Invalid email address").endsWith("hs-fulda.de", "Email must be a HS-Fulda email"),
+    email: z
+      .string()
+      .email("Invalid email address")
+      .endsWith("hs-fulda.de", "Email must be a HS-Fulda email"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     name: z.string().min(2, "Name must be at least 2 characters long"),
-    phone: z.string().optional(),
-    address: z.string().optional(),
+    phone: z.string().nullish(),
+    address: z.string().nullish(),
     type: userType.extract(["STUDENT"]),
   }),
 ]);
@@ -131,7 +137,9 @@ authRouter.post("/register", async (req, res) => {
   });
 
   if (user) {
-    return res.status(400).json({ message: "User already exists. Please login." });
+    return res
+      .status(400)
+      .json({ message: "User already exists. Please login." });
   }
 
   try {

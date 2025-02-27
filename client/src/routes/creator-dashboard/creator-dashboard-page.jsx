@@ -15,7 +15,10 @@ import {
   Title,
 } from "@mantine/core";
 import { IconArrowRight, IconMessage, IconPlus } from "@tabler/icons-react";
-import { useCreatorAds, useCreatorAdStats } from "./creator-dashboard-queries.jsx";
+import {
+  useCreatorAds,
+  useCreatorAdStats,
+} from "./creator-dashboard-queries.jsx";
 import { Link } from "react-router-dom";
 import DashboardFiltersSection from "./creator-dashboard-filters-section.jsx";
 import { useAuth } from "../../lib/auth-context.jsx";
@@ -27,21 +30,36 @@ const StudentDashboard = ({ adsQuery }) => {
       <Stack>
         <Paper p="md" withBorder shadow="sm" bg="gray.0">
           <Title order={2}>Student Dashboard</Title>
-          <Text mt="sm">Welcome to the student dashboard. Here you can list your property for rent as a sublet</Text>
+          <Text mt="sm">
+            Welcome to the student dashboard. Here you can list your property
+            for rent as a sublet
+          </Text>
 
           <Group gap="xs" mt="lg">
             {adsQuery.data.length === 0 && (
-              <Button size="lg" component={Link} to="/property/new" rightSection={<IconPlus />}>
+              <Button
+                size="lg"
+                component={Link}
+                to="/property/new"
+                rightSection={<IconPlus />}
+              >
                 Create Ad
               </Button>
             )}
-            <Button size="lg" variant="light" component={Link} to="/messages" rightSection={<IconMessage />}>
+            <Button
+              size="lg"
+              variant="light"
+              component={Link}
+              to="/messages"
+              rightSection={<IconMessage />}
+            >
               Messages
             </Button>
           </Group>
           {adsQuery.data.length > 0 && (
             <Alert mt="xs" color="blue">
-              You have already listed a property as sublet. Archive it to list another
+              You have already listed a property as sublet. Archive it to list
+              another
             </Alert>
           )}
         </Paper>
@@ -88,7 +106,12 @@ const PropertyCard = ({ property }) => {
         <Badge radius="xs" size="lg">
           € {property.totalRent}
         </Badge>
-        <Badge variant="light" radius="xs" size="lg" color={getBadgeColor(property.status)}>
+        <Badge
+          variant="light"
+          radius="xs"
+          size="lg"
+          color={getBadgeColor(property.status)}
+        >
           {property.status}
         </Badge>
       </Flex>
@@ -102,10 +125,10 @@ const PropertyCard = ({ property }) => {
         rightSection={<IconArrowRight size={16} />}
         justify="space-between"
         onClick={() => {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth",
-            });
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
         }}
       >
         Edit
@@ -156,10 +179,21 @@ const LandlordDashboard = ({ adsQuery, adStatsQuery }) => {
             </SimpleGrid>
           )}
           <Group gap="xs" mt="xl">
-            <Button size="lg" component={Link} to="/property/new" rightSection={<IconPlus />}>
+            <Button
+              size="lg"
+              component={Link}
+              to="/property/new"
+              rightSection={<IconPlus />}
+            >
               Create Ad
             </Button>
-            <Button size="lg" variant="light" component={Link} to="/messages" rightSection={<IconMessage />}>
+            <Button
+              size="lg"
+              variant="light"
+              component={Link}
+              to="/messages"
+              rightSection={<IconMessage />}
+            >
               Messages
             </Button>
           </Group>
@@ -199,7 +233,9 @@ export const CreatorDashboardPage = () => {
   }
 
   if (isLandlord) {
-    return <LandlordDashboard adsQuery={adsQuery} adStatsQuery={adStatsQuery} />;
+    return (
+      <LandlordDashboard adsQuery={adsQuery} adStatsQuery={adStatsQuery} />
+    );
   }
 
   return <StudentDashboard adsQuery={adsQuery} />;

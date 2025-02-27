@@ -1,4 +1,15 @@
-import { Avatar, Badge, Button, Container, Flex, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Container,
+  Flex,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../../lib/auth-context";
 
@@ -27,12 +38,24 @@ export function Profile() {
           </Flex>
 
           <Group position="center">
-            <Button variant="filled" size="md" color="green" component={Link} to="/profile/edit">
+            <Button
+              variant="filled"
+              size="md"
+              color="green"
+              component={Link}
+              to="/profile/edit"
+            >
               Edit Profile
             </Button>
 
             {user.type === "STUDENT" && (
-              <Button variant="filled" size="md" color="blue" component={Link} to="/my-documents">
+              <Button
+                variant="filled"
+                size="md"
+                color="blue"
+                component={Link}
+                to="/my-documents"
+              >
                 My Documents
               </Button>
             )}

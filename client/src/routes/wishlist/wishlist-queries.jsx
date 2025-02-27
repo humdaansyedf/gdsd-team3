@@ -27,9 +27,10 @@ export const useWishlist = () => {
       return data.map((item) => ({
         ...item.property,
         note: item.note,
-        media: item.property.media.length > 0
-          ? item.property.media[0].url
-          : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+        media:
+          item.property.media.length > 0
+            ? item.property.media[0].url
+            : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
       }));
     },
     initialData: [],

@@ -14,29 +14,29 @@ const propertySchema = z.object({
   // location and address
   longitude: z.number().min(-180).max(180),
   latitude: z.number().min(-90).max(90),
-  address1: z.string().optional(),
-  address2: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  postcode: z.string().optional(),
+  address1: z.string().nullish(),
+  address2: z.string().nullish(),
+  city: z.string().nullish(),
+  state: z.string().nullish(),
+  postcode: z.string().nullish(),
   // price and costs
   coldRent: z.number().min(0),
-  additionalCosts: z.number().min(0).optional(),
+  additionalCosts: z.number().min(0).nullish(),
   heatingIncludedInAdditionalCosts: z.boolean().default(false),
-  deposit: z.number().min(0).optional(),
+  deposit: z.number().min(0).nullish(),
   // rooms and space
   numberOfRooms: z.number().min(1),
-  numberOfBeds: z.number().min(0).optional(),
-  numberOfBaths: z.number().min(0).optional(),
-  totalFloors: z.number().min(1).optional(),
-  floorNumber: z.number().min(0).optional(),
-  livingSpaceSqm: z.number().min(1).optional(),
-  yearBuilt: z.string().length(4).optional(),
+  numberOfBeds: z.number().min(0).nullish(),
+  numberOfBaths: z.number().min(0).nullish(),
+  totalFloors: z.number().min(1).nullish(),
+  floorNumber: z.number().min(0).nullish(),
+  livingSpaceSqm: z.number().min(1).nullish(),
+  yearBuilt: z.string().length(4).nullish(),
   // availability and lease terms
   availableFrom: z.string().date(),
-  minimumLeaseTermInMonths: z.number().min(1).optional(),
-  maximumLeaseTermInMonths: z.number().min(1).optional(),
-  noticePeriodInMonths: z.number().min(1).optional(),
+  minimumLeaseTermInMonths: z.number().min(1).nullish(),
+  maximumLeaseTermInMonths: z.number().min(1).nullish(),
+  noticePeriodInMonths: z.number().min(1).nullish(),
   // amenities
   pets: z.boolean().default(false),
   smoking: z.boolean().default(false),
@@ -50,8 +50,8 @@ const propertySchema = z.object({
   parking: z.boolean().default(false),
   internet: z.boolean().default(false),
   cableTv: z.boolean().default(false),
-  recommendedPrice: z.number().min(0).optional(),
-  priceRating: z.number().min(0).optional(),
+  recommendedPrice: z.number().min(0).nullish(),
+  priceRating: z.number().min(0).nullish(),
 });
 
 const calculatePriceRating = (totalPrice, recommendedPrice) => {
@@ -72,7 +72,7 @@ const createPropertySchema = propertySchema.extend({
     .array()
     .min(1)
     .max(15),
-  creatorComment: z.string().optional(),
+  creatorComment: z.string().nullish(),
 });
 
 // Create a new property
@@ -91,9 +91,13 @@ creatorRouter.post("/property", async (req, res) => {
 
   try {
     const { media, ...propertyData } = result.data;
-    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const totalRent =
+      propertyData.coldRent + (propertyData.additionalCosts || 0);
     const availableFrom = new Date(propertyData.availableFrom);
-    const priceRating = calculatePriceRating(totalRent, propertyData.recommendedPrice);
+    const priceRating = calculatePriceRating(
+      totalRent,
+      propertyData.recommendedPrice,
+    );
     const isSublet = req.user.type === "STUDENT";
 
     const property = await prisma.$transaction(async (tx) => {
@@ -185,7 +189,7 @@ creatorRouter.post("/property/search", async (req, res) => {
           property.media.length > 0
             ? property.media[0].url
             : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
-      }))
+      })),
     );
   } catch (error) {
     console.error("Error fetching properties:", error);
@@ -275,13 +279,17 @@ creatorRouter.put("/property/:id", async (req, res) => {
 
   try {
     const { media, ...propertyData } = result.data;
-    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
-    const priceRating = calculatePriceRating(totalRent, propertyData.recommendedPrice);
+    const totalRent =
+      propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const priceRating = calculatePriceRating(
+      totalRent,
+      propertyData.recommendedPrice,
+    );
     const availableFrom = new Date(propertyData.availableFrom);
     const where = {
-        id,
-        creatorId: user.id
-      };
+      id,
+      creatorId: user.id,
+    };
     console.log("Received Request Body:", req.body);
     console.log("Updating Property:", where);
     console.log("Available From:", availableFrom);

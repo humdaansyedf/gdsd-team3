@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Button, Center, Flex, SegmentedControl, Stack } from "@mantine/core";
-import { IconMap, IconAdjustments, IconAdjustmentsOff, IconLayoutGrid } from "@tabler/icons-react";
+import {
+  IconMap,
+  IconAdjustments,
+  IconAdjustmentsOff,
+  IconLayoutGrid,
+} from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { usePropertySearch } from "./home-queries";
 import FiltersSection from "./filters-section";
@@ -10,8 +15,10 @@ import GridView from "./grid-view";
 export const Home = () => {
   const [view, setView] = useState("grid");
   const searchQuery = usePropertySearch();
-  const [showMobileFilters, { toggle: toggleMobileFilters }] = useDisclosure(false);
-  const [showDesktopFilters, { toggle: toggleDesktopFilters }] = useDisclosure(true);
+  const [showMobileFilters, { toggle: toggleMobileFilters }] =
+    useDisclosure(false);
+  const [showDesktopFilters, { toggle: toggleDesktopFilters }] =
+    useDisclosure(true);
 
   return (
     <>
@@ -27,7 +34,13 @@ export const Home = () => {
               color="dark"
               variant="light"
               onClick={() => toggleDesktopFilters()}
-              leftSection={showDesktopFilters ? <IconAdjustmentsOff size={16} /> : <IconAdjustments size={16} />}
+              leftSection={
+                showDesktopFilters ? (
+                  <IconAdjustmentsOff size={16} />
+                ) : (
+                  <IconAdjustments size={16} />
+                )
+              }
               visibleFrom="sm"
             >
               Filters
@@ -36,7 +49,13 @@ export const Home = () => {
               color="dark"
               variant="light"
               onClick={() => toggleMobileFilters()}
-              leftSection={showMobileFilters ? <IconAdjustmentsOff size={16} /> : <IconAdjustments size={16} />}
+              leftSection={
+                showMobileFilters ? (
+                  <IconAdjustmentsOff size={16} />
+                ) : (
+                  <IconAdjustments size={16} />
+                )
+              }
               hiddenFrom="sm"
             >
               Filters
