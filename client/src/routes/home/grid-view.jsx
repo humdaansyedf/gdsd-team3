@@ -28,18 +28,24 @@ const DefaultPropertyCard = ({ property }) => {
           }}
         />
         {property.isRecommended && (
-          <Badge
-            variant="gradient"
-            gradient={{ from: "teal", to: "lime", deg: 105 }}
-            style={{
-              position: "absolute",
-              top: 10,
-              left: 10,
-              zIndex: 10,
-            }}
+          <Tooltip
+            label={property.reasons.join(", ")}
+            withArrow
+            position="top-start"
           >
-            Recommended
-          </Badge>
+            <Badge
+              variant="gradient"
+              gradient={{ from: "teal", to: "lime", deg: 105 }}
+              style={{
+                position: "absolute",
+                top: 1,
+                left: 10,
+                zIndex: 10,
+              }}
+            >
+              Recommended
+            </Badge>
+          </Tooltip>
         )}
       </Card.Section>
       <Title mt="sm" order={4}>
