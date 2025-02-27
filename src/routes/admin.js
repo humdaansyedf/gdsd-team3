@@ -242,12 +242,14 @@ adminRouter.get("/property/:id", async (req, res) => {
 // Update property status
 const propertyStatusSchema = z.object({
   status: z.enum(["PENDING", "ACTIVE", "REJECTED"]),
-  adminComment: z.string().optional(),
+  adminComment: z.string().nullish(),
 });
 
 adminRouter.patch("/property/:id/status", adminAuthMiddleware, async (req, res) => {
   const data = req.body;
   const result = propertyStatusSchema.safeParse(data);
+
+  console.log(result);
 
   if (!result.success) {
     return res.status(400).json({

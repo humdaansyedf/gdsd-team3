@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import { useRef, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -73,7 +73,7 @@ export const CreateAdPage = () => {
       cableTv: false,
       creatorComment: "",
       media: [],
-      recommendedPrice: 0
+      recommendedPrice: 0,
     },
 
     validate: {
@@ -142,11 +142,11 @@ export const CreateAdPage = () => {
       lift: values.elevator,
       livingSpace: values.livingSpaceSqm,
       noRooms: values.numberOfRooms,
-      numberOfYear: values.yearBuilt ? 2025 - parseInt(values.yearBuilt) : 1920
+      numberOfYear: values.yearBuilt ? 2025 - parseInt(values.yearBuilt) : 1920,
     };
 
     try {
-      const response = await axios.post("https://gdsdteam3.live/predict-rent", payload);
+      const response = await axios.post("/predict-rent", payload);
       console.log("Prediction Response:", response.data);
       setRecommendedPrice(response.data.predicted_price);
       form.setFieldValue("recommendedPrice", response.data.predicted_price);
@@ -214,14 +214,15 @@ export const CreateAdPage = () => {
     <Container px={0}>
       <Flex justify="space-between" align="center" mb={0}>
         <Title order={2}>Create Property Listing</Title>
-         <Button
-                 component={Link} to="/floor-planner"
-                 variant="gradient"
-                 radius="xl"
-                 gradient={{ from: 'rgb(217, 255, 200)', to: 'rgba(80, 191, 40, 1)', deg: 347 }}
-                >
-                 Floor Planner ✨
-          </Button>
+        <Button
+          component={Link}
+          to="/floor-planner"
+          variant="gradient"
+          radius="xl"
+          gradient={{ from: "rgb(217, 255, 200)", to: "rgba(80, 191, 40, 1)", deg: 347 }}
+        >
+          Floor Planner ✨
+        </Button>
       </Flex>
 
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
@@ -410,22 +411,22 @@ export const CreateAdPage = () => {
             </SimpleGrid>
           </Paper>
           <Textarea
-              label="Creator comment"
-              placeholder="Add any additional comments for the admin"
-              autosize
-              minRows={3}
-              {...form.getInputProps("creatorComment")}
+            label="Creator comment"
+            placeholder="Add any additional comments for the admin"
+            autosize
+            minRows={3}
+            {...form.getInputProps("creatorComment")}
           />
           <Button fullWidth color="green" type="submit" radius="md" size="lg" my="xl">
             Submit for review
           </Button>
           <PriceRecommendationModal
-              isOpen={isModalOpen}
-              onClose={closeModal}
-              recommendedPrice={recommendedPrice}
-              form={form}
-              setFinalPayload={setFinalPayload}
-              submitAfterConfirmation={submitAfterConfirmation}
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            recommendedPrice={recommendedPrice}
+            form={form}
+            setFinalPayload={setFinalPayload}
+            submitAfterConfirmation={submitAfterConfirmation}
           />
         </Stack>
       </form>
