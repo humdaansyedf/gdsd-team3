@@ -86,29 +86,26 @@ export function CompareTable({ properties }) {
                 {prop.smoking ? "Yes" : "No"}
               </td>
             ))}
-          </tr>
+           </tr>
 
-          <tr>
-            <td style={{ borderRight: "2px solid #ddd" }}>Amenities</td>
-            {properties.map((prop) => {
-              // Get the list of available amenities (where boolean is true)
-              const availableAmenities = Object.entries(AMENITIES_MAP)
-                .filter(([key]) => prop[key]) // Check if the property has this amenity
-                .map(([_, label]) => label); // Extract the readable name
+            <tr>
+                <td style={{ borderRight: "2px solid #ddd" }}>Amenities</td>
+                {properties.map((prop) => {
+                    const availableAmenities = Object.entries(AMENITIES_MAP)
+                    .filter(([key]) => prop[key])
+                    .map(([_, label]) => label);
 
-              return (
-                <td key={prop.id} style={{ borderRight: "2px solid #ddd" }}>
-                  {availableAmenities.length > 0 ? (
-                    <Text size="sm">{availableAmenities.join(", ")}</Text> // Comma-separated amenities
-                  ) : (
-                    <Text size="sm" c="dimmed">
-                      No amenities listed
-                    </Text>
-                  )}
-                </td>
-              );
-            })}
-          </tr>
+                    return (
+                    <td key={prop.id} style={{ borderRight: "2px solid #ddd" }}>
+                        {availableAmenities.length > 0 ? (
+                        <Text size="sm">{availableAmenities.join(", ")}</Text>
+                        ) : (
+                        <Text size="sm" c="dimmed">No amenities listed</Text>
+                        )}
+                    </td>
+                    );
+                })}
+            </tr>
         </tbody>
       </Table>
     </Paper>
