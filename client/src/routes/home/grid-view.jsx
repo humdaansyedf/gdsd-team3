@@ -9,12 +9,7 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import {
-  IconArrowRight,
-  IconDog,
-  IconSmoking,
-  IconInfoCircle,
-} from "@tabler/icons-react";
+import { IconArrowRight, IconDog, IconSmoking } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
 import "./grid-view.css";
@@ -103,7 +98,7 @@ export const GridView = ({ properties, renderCard }) => {
   return (
     <div className="property-grid">
       {properties.map((property) => {
-        const CardComponent = renderCard || DefaultPropertyCard;// use renderCard prop or DefaultPropertyCard
+        const CardComponent = renderCard || DefaultPropertyCard; // use renderCard prop or DefaultPropertyCard
         return <CardComponent key={property.id} property={property} />;
       })}
     </div>
