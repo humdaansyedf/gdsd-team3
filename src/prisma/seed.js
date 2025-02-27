@@ -1207,17 +1207,22 @@ async function createProperties() {
     "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/interior-1.jpg",
     "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/interior-2.jpg",
     "https://gdsd.s3.eu-central-1.amazonaws.com/public/property/interior-3.jpg",
+    "https://gdsd.s3.eu-central-1.amazonaws.com/public/1740636339186-building-5.jpg",
+    "https://gdsd.s3.eu-central-1.amazonaws.com/public/1740636377000-interior-4.jpg",
+    "https://gdsd.s3.eu-central-1.amazonaws.com/public/1740636390292-interior-5.jpg",
+    "https://gdsd.s3.eu-central-1.amazonaws.com/public/1740636396837-interior-6.jpg",
+    "https://gdsd.s3.eu-central-1.amazonaws.com/public/1740636400253-interior-7.jpg",
   ];
   const propertyMedia = [];
-  for (let i = 0; i < 40; i++) {
-    const url = images[faker.number.int({ min: 0, max: 6 })];
+  for (let i = 0; i < 60; i++) {
+    const url = images[faker.number.int({ min: 0, max: 11 })];
     const name = url.split("amazonaws.com/")[1];
     const media = {
       status: "ACTIVE",
       type: "IMAGE",
       url: url,
       name: name,
-      propertyId: faker.number.int({ min: 1, max: 40 }),
+      propertyId: faker.number.int({ min: 1, max: 45 }),
     };
     propertyMedia.push(media);
   }
