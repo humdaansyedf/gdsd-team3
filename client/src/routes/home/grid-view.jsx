@@ -16,7 +16,7 @@ import "./grid-view.css";
 
 const DefaultPropertyCard = ({ property }) => {
   return (
-    <Card withBorder p="md" shadow="sm" style={{ position: "relative" }}>
+    <Card withBorder p="md" shadow="sm">
       {property.isRecommended && (
         <Tooltip
           label={property.reasons.join(", ")}
