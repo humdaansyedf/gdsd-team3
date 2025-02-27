@@ -49,7 +49,6 @@ wishlistRouter.post("/wishlist", async (req, res) => {
     });
     res.json({ message: "Property added to wishlist" });
 
-    //recording interaction
     setImmediate(async () => {
       try {
         addInteraction(req.user.id, propertyId, "wishlist");
@@ -121,7 +120,6 @@ wishlistRouter.delete("/wishlist/:propertyId", async (req, res) => {
     });
     res.json({ message: "Property removed from wishlist" });
 
-    //removing interaction
     setImmediate(async () => {
       try {
         deleteInteraction(req.user.id, Number(propertyId), "wishlist");

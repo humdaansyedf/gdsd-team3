@@ -36,7 +36,6 @@ export const useWishlist = () => {
   });
 };
 
-// Add property to wishlist
 export const useAddToWishlist = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -53,12 +52,11 @@ export const useAddToWishlist = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["wishlist"]); // Refresh wishlist data
+      queryClient.invalidateQueries(["wishlist"]);
     },
   });
 };
 
-// Remove property from wishlist
 export const useRemoveFromWishlist = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -74,7 +72,7 @@ export const useRemoveFromWishlist = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["wishlist"]); // Refresh wishlist data
+      queryClient.invalidateQueries(["wishlist"]);
     },
   });
 };
@@ -94,16 +92,16 @@ export const useUpdatePropertyNote = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json(); // Log the error response
+        const errorData = await response.json();
         console.error("Failed to update note:", errorData);
         throw new Error("Failed to update property note");
       }
 
-      return response.json(); // Ensure response is properly returned
+      return response.json();
     },
     onSuccess: (data) => {
       console.log("Note updated successfully:", data);
-      queryClient.invalidateQueries(["wishlist"]); // Refresh wishlist data
+      queryClient.invalidateQueries(["wishlist"]);
     },
   });
 };

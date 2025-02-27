@@ -10,7 +10,6 @@ export const WishlistButton = ({ propertyId }) => {
   const { mutate: addToWishlist } = useAddToWishlist();
   const { mutate: removeFromWishlist } = useRemoveFromWishlist();
 
-  // Check if the property is in the wishlist
   const isWishlisted = wishlist?.some((item) => item.id === propertyId);
 
   const toggleWishlist = () => {

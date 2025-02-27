@@ -1,6 +1,6 @@
 import React from "react";
 import { WishlistPropertyCard } from "./wishlist-property-card";
-import "../home/grid-view.css"; // for .property-grid styling
+import "../home/grid-view.css";
 
 export function WishlistCompareView({ properties, selectedIds, onToggleSelect }) {
   return (
