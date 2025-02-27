@@ -101,6 +101,12 @@ const PropertyCard = ({ property }) => {
         to={`/property/${property.id}/edit`}
         rightSection={<IconArrowRight size={16} />}
         justify="space-between"
+        onClick={() => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+            });
+        }}
       >
         Edit
       </Button>

@@ -1,5 +1,5 @@
-import { useLocation, Link } from "react-router-dom";
 import { Button, Container, Group, Paper, Text, Title } from "@mantine/core";
+import { Link, useLocation } from "react-router-dom";
 
 export const AdConfirmation = () => {
   const location = useLocation();

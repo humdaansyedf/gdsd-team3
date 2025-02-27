@@ -73,7 +73,7 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       const validAvailableFrom = new Date(availableFrom);
       if (!isNaN(validAvailableFrom.getTime())) {
         where.availableFrom = {
-          gte: validAvailableFrom,
+          lte: validAvailableFrom,
         };
       }
     }
@@ -90,7 +90,7 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       const radiusInMeters = radius * 1000;
       const query = await prisma.$queryRaw`
       SELECT id
-      FROM property
+      FROM gdsd.Property
       WHERE ST_Distance_Sphere(
         POINT(longitude, latitude),
         POINT(${fuldaLon}, ${fuldaLat})
