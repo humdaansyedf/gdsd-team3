@@ -62,7 +62,7 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       const validAvailableFrom = new Date(availableFrom);
       if (!isNaN(validAvailableFrom.getTime())) {
         where.availableFrom = {
-          gte: validAvailableFrom,
+          lte: validAvailableFrom,
         };
       }
     }
