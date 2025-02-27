@@ -38,7 +38,7 @@ const DefaultPropertyCard = ({ property }) => {
               gradient={{ from: "teal", to: "lime", deg: 105 }}
               style={{
                 position: "absolute",
-                top: 10,
+                top: 1,
                 left: 10,
                 zIndex: 10,
               }}
