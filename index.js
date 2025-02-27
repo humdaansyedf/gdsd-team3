@@ -1,6 +1,7 @@
 import "dotenv/config";
-import express from "express";
 import cors from "cors";
+import helmet from "helmet";
+import express from "express";
 import cookieParser from "cookie-parser";
 import { createServer } from "node:http";
 import { dirname, join } from "node:path";
@@ -18,38 +19,45 @@ import { documentRouter } from "./src/routes/doc.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { chatHandlers } from "./src/lib/chatHandlers.js";
 
+const SERVER_CONFIG = {
+  port: process.env.PORT || 3000,
+  cors: {
+    origin: IS_DEV ? ["http://localhost:5173"] : false,
+    credentials: true,
+  },
+  socket: {
+    cors: {
+      origin: IS_DEV ? ["http://localhost:5173"] : false,
+    },
+  },
+};
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const port = process.env.PORT || 3000;
 
 const app = express();
 
 const server = createServer(app);
 // Initialize Socket.IO
-const io = new Server(server, {
-  cors: {
-    origin: IS_DEV ? ["http://localhost:5173"] : false, // Allow client origin in development
-  },
-});
+const io = new Server(server, SERVER_CONFIG.socket);
 
-// Socket.IO Connection
+// Socket.IO Event Handlers
 io.on("connection", (socket) => {
-  // Handle chat-related events
   chatHandlers(io, socket);
-  socket.on("disconnect", () => {});
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
 });
 
 // Disable some headers
 app.set("etag", false);
 app.set("x-powered-by", false);
 
+// Security Headers
+app.use(helmet());
+
 // Enable CORS
-app.use(
-  cors({
-    origin: IS_DEV ? ["http://localhost:5173"] : false, // Allow client origin in development
-    credentials: true, // Allow cookies/auth headers
-  })
-);
+app.use(cors(SERVER_CONFIG.cors));
 
 // Middleware for parsing JSON bodies
 app.use(express.json());
@@ -96,6 +104,6 @@ if (IS_DEV) {
 }
 
 // Start the server
-server.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port} 🚀`);
+server.listen(SERVER_CONFIG.port, () => {
+  console.log(`Server is running at http://localhost:${SERVER_CONFIG.port} 🚀`);
 });
