@@ -23,15 +23,7 @@ const AMENITIES = [
 
 // Route to get multiple properties
 publicPropertyRouter.post("/public/property/search", async (req, res) => {
-  const {
-    title,
-    amenities,
-    minPrice,
-    maxPrice,
-    availableFrom,
-    searchRadius,
-    page = 1,
-  } = req.body;
+  const { title, amenities, minPrice, maxPrice, availableFrom, searchRadius, page = 1 } = req.body;
   const userId = req.headers["x-user-id"];
   const limit = 50;
   const offset = (page - 1) * limit;
@@ -133,14 +125,12 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
     }
 
     let formattedProperties = properties.map((property) => {
-      const recommended = recommendedPropertyData.find(
-        (rec) => rec.id === property.id
-      );
+      const recommended = recommendedPropertyData.find((rec) => rec.id === property.id);
 
       return {
         ...property,
         isRecommended: !!recommended,
-        reasons: recommended ? recommended.reasons : [],
+        reasons: recommended?.reasons ? recommended.reasons : [],
       };
     });
 
@@ -154,11 +144,9 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
         const featuredMedia = property.media[0];
         return {
           ...property,
-          media: featuredMedia
-            ? featuredMedia.url
-            : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+          media: featuredMedia ? featuredMedia.url : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
         };
-      }),
+      })
     );
   } catch (error) {
     console.log(error);
@@ -204,10 +192,7 @@ publicPropertyRouter.get("/public/property/:id", async (req, res) => {
         addInteraction(parseInt(userId), id, "view");
         // console.log("added view");
       } catch (error) {
-        console.error(
-          "Warning: Error recording interaction (background):",
-          error,
-        );
+        console.error("Warning: Error recording interaction (background):", error);
       }
     });
   }

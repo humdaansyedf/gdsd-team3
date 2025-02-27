@@ -1,14 +1,4 @@
-import {
-  ActionIcon,
-  Badge,
-  Button,
-  Card,
-  Flex,
-  Image,
-  Text,
-  Title,
-  Tooltip,
-} from "@mantine/core";
+import { ActionIcon, Badge, Button, Card, Flex, Image, Text, Title, Tooltip } from "@mantine/core";
 import { IconArrowRight, IconDog, IconSmoking } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
@@ -29,16 +19,17 @@ const DefaultPropertyCard = ({ property }) => {
         />
         {property.isRecommended && (
           <Tooltip
+            disabled={!property.reasons || property.reasons.length === 0}
             label={property.reasons.join(", ")}
             withArrow
-            position="top-start"
+            position="bottom"
           >
             <Badge
               variant="gradient"
               gradient={{ from: "teal", to: "lime", deg: 105 }}
               style={{
                 position: "absolute",
-                top: 1,
+                top: 10,
                 left: 10,
                 zIndex: 10,
               }}
