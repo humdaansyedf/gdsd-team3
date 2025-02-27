@@ -1,7 +1,7 @@
-import cookieParser from "cookie-parser";
-import cors from "cors";
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import { createServer } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,13 +9,13 @@ import { Server } from "socket.io";
 import { IS_DEV } from "./src/lib/utils.js";
 import { adminRouter } from "./src/routes/admin.js";
 import { authMiddleware, authRouter } from "./src/routes/auth.js";
+import { chatRouter } from "./src/routes/chat.js";
 import { creatorRouter } from "./src/routes/creator.js";
-import { documentRouter } from "./src/routes/doc.js";
 import { fileRouter } from "./src/routes/file.js";
 import { profileRouter } from "./src/routes/profile.js";
-import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { wishlistRouter } from "./src/routes/wishlist.js";
-import { chatRouter } from "./src/routes/chat.js";
+import { documentRouter } from "./src/routes/doc.js";
+import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { chatHandlers } from "./src/lib/chatHandlers.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,13 +23,6 @@ const __dirname = dirname(__filename);
 const port = process.env.PORT || 3000;
 
 const app = express();
-
-app.use(
-  cors({
-    origin: IS_DEV ? ["http://localhost:5173"] : false, // Allow client origin in development
-    credentials: true, // Allow cookies/auth headers
-  })
-);
 
 const server = createServer(app);
 // Initialize Socket.IO
@@ -50,6 +43,14 @@ io.on("connection", (socket) => {
 app.set("etag", false);
 app.set("x-powered-by", false);
 
+// Enable CORS
+app.use(
+  cors({
+    origin: IS_DEV ? ["http://localhost:5173"] : false, // Allow client origin in development
+    credentials: true, // Allow cookies/auth headers
+  })
+);
+
 // Middleware for parsing JSON bodies
 app.use(express.json());
 
@@ -69,16 +70,7 @@ app.use("/api", authRouter, publicPropertyRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use(
-  "/api",
-  propertyRouter,
-  fileRouter,
-  creatorRouter,
-  wishlistRouter,
-  chatRouter,
-  documentRouter,
-  profileRouter
-);
+app.use("/api", propertyRouter, fileRouter, creatorRouter, wishlistRouter, chatRouter, documentRouter, profileRouter);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
