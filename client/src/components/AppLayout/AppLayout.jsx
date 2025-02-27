@@ -1,6 +1,20 @@
-import { Anchor, AppShell, Autocomplete, Burger, Button, Group, Stack } from "@mantine/core";
+import {
+  Anchor,
+  AppShell,
+  Autocomplete,
+  Burger,
+  Button,
+  Group,
+  Stack,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconHeart, IconLayoutGrid, IconMessage, IconSearch, IconUserCircle } from "@tabler/icons-react";
+import {
+  IconHeart,
+  IconLayoutGrid,
+  IconMessage,
+  IconSearch,
+  IconUserCircle,
+} from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Footer } from "../Footer/Footer.jsx";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -17,7 +31,8 @@ export function AppLayout() {
   const [recentSearches, setRecentSearches] = useState([]);
 
   useEffect(() => {
-    const storedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
+    const storedSearches =
+      JSON.parse(localStorage.getItem("recentSearches")) || [];
     setRecentSearches(storedSearches);
   }, []);
 
@@ -26,7 +41,10 @@ export function AppLayout() {
       const query = value.trim().replace(/\s+/g, "+");
 
       // Save search to recent searches (keep only 5)
-      const updatedSearches = [value, ...recentSearches.filter((s) => s !== value)].slice(0, 5);
+      const updatedSearches = [
+        value,
+        ...recentSearches.filter((s) => s !== value),
+      ].slice(0, 5);
       localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
       setRecentSearches(updatedSearches);
 
@@ -49,10 +67,18 @@ export function AppLayout() {
       >
         <AppShell.Header>
           <Group px="md" className={classes.disclaimer}>
-            <p>FOR DEMONSTRATION ONLY. Fulda University of Applied Sciences Software Engineering Project, Fall 2024.</p>
+            <p>
+              FOR DEMONSTRATION ONLY. Fulda University of Applied Sciences
+              Software Engineering Project, Fall 2024.
+            </p>
           </Group>
           <Group px="md" h={50}>
-            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+            />
             <Group justify="space-between" style={{ flex: 1 }}>
               <Anchor component={Link} to="/">
                 NeuAnfang
@@ -116,10 +142,20 @@ export function AppLayout() {
                   </>
                 ) : (
                   <>
-                    <Button component={Link} variant="subtle" size="compact-sm" to="/login">
+                    <Button
+                      component={Link}
+                      variant="subtle"
+                      size="compact-sm"
+                      to="/login"
+                    >
                       Login
                     </Button>
-                    <Button component={Link} variant="subtle" size="compact-sm" to="/register">
+                    <Button
+                      component={Link}
+                      variant="subtle"
+                      size="compact-sm"
+                      to="/register"
+                    >
                       Register
                     </Button>
                   </>
@@ -163,10 +199,20 @@ export function AppLayout() {
               </>
             ) : (
               <>
-                <Button component={Link} style={{ justifyContent: "flex-start" }} variant="subtle" to="/login">
+                <Button
+                  component={Link}
+                  style={{ justifyContent: "flex-start" }}
+                  variant="subtle"
+                  to="/login"
+                >
                   Login
                 </Button>
-                <Button component={Link} style={{ justifyContent: "flex-start" }} variant="subtle" to="/register">
+                <Button
+                  component={Link}
+                  style={{ justifyContent: "flex-start" }}
+                  variant="subtle"
+                  to="/register"
+                >
                   Register
                 </Button>
               </>
