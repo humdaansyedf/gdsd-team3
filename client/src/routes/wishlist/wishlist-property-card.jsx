@@ -27,26 +27,20 @@ export function WishlistPropertyCard({
   const [originalNote, setOriginalNote] = useState(property.note || "");
   const [note, setNote] = useState(property.note || "");
 
-  // If the DB note changes from outside (query refetch),
-  // sync local states
   useEffect(() => {
     setOriginalNote(property.note || "");
     setNote(property.note || "");
   }, [property.note]);
 
-  // React Query mutation
   const updateNoteMutation = useUpdatePropertyNote();
 
-  // The "Save Note" button is enabled only if note differs from original
   const hasChanged = note !== originalNote;
 
-  // Called after user clicks "Add Note" or "Edit Note"
   const handleEnterEditMode = () => {
     setIsEditing(true);
   };
 
   const handleCancel = () => {
-    // Revert changes
     setNote(originalNote);
     setIsEditing(false);
   };
@@ -56,7 +50,6 @@ export function WishlistPropertyCard({
       { propertyId: property.id, note },
       {
         onSuccess: () => {
-          // Once the note is successfully saved in DB:
           setOriginalNote(note);
           setIsEditing(false);
 
@@ -130,12 +123,10 @@ export function WishlistPropertyCard({
 
       <Text my="sm">{property.description.slice(0, 50)}...</Text>
 
-      {/* If we're not editing, show either "Add Note" or the existing note + "Edit Note" */}
       <div style={{ minHeight: "100px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
         {!isEditing ? (
             <>
             {originalNote ? (
-                // If we have a saved note, show it in blue italic plus "Edit Note" button
                 <>
                 {renderFormattedNote(originalNote)}
 
@@ -144,14 +135,12 @@ export function WishlistPropertyCard({
                 </Button>
                 </>
             ) : (
-                // If there's no note yet, show "Add Note"
                 <Button mt="md" variant="outline" onClick={handleEnterEditMode}>
                 Add Note
                 </Button>
             )}
             </>
         ) : (
-            // Editing mode: TextArea + Save/Cancel
             <>
             <Textarea
                 placeholder="Write your note here..."
