@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
 import "./grid-view.css";
 
-const PropertyCard = ({ property }) => {
+const DefaultPropertyCard = ({ property }) => {
   return (
     <Card withBorder p="md" shadow="sm">
       {property.isRecommended && (
@@ -88,12 +88,13 @@ const PropertyCard = ({ property }) => {
   );
 };
 
-export const GridView = ({ properties }) => {
+export const GridView = ({ properties, renderCard }) => {
   return (
     <div className="property-grid">
-      {properties.map((property) => (
-        <PropertyCard key={property.id} property={property} />
-      ))}
+      {properties.map((property) => {
+        const CardComponent = renderCard || DefaultPropertyCard;// use renderCard prop or DefaultPropertyCard
+        return <CardComponent key={property.id} property={property} />;
+      })}
     </div>
   );
 };

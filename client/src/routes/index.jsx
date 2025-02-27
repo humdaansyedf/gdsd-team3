@@ -4,6 +4,7 @@ import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import { AppLayout } from "../components/AppLayout/AppLayout.jsx";
 import { AdminAuthProvider } from "../lib/admin-auth-provider";
 import { AuthProvider, PrivateRoute, PublicOnlyRoute } from "../lib/auth-provider";
+import FloorPlanner from "./floor-planner/floor-planner.jsx";
 
 const Login = React.lazy(() => import("./login/login-page").then((mod) => ({ default: mod.Login })));
 const Register = React.lazy(() => import("./register/register-page").then((mod) => ({ default: mod.Register })));
@@ -43,6 +44,7 @@ const AdminDashboard = React.lazy(() =>
     default: mod.AdminDashboard,
   }))
 );
+
 const AdminProperty = React.lazy(() =>
   import("./admin/admin-property-page").then((mod) => ({
     default: mod.AdminProperty,
@@ -181,6 +183,14 @@ export const App = () => {
                 </PrivateRoute>
               }
             />
+            <Route
+            path="floor-planner"
+            element={
+              <PrivateRoute>
+                <FloorPlanner />
+              </PrivateRoute>
+            }
+          />
             <Route
               path="property/submission-confirmation"
               element={

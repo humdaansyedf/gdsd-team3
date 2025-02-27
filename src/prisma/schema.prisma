@@ -123,6 +123,10 @@ model Property {
   heatingIncludedInAdditionalCosts Boolean @default(false)
   deposit                          Float?
 
+  // price prediction fields
+  recommendedPrice  Float?
+  priceRating       Int?
+
   // rooms and space
   numberOfRooms  Int
   numberOfBeds   Int?
@@ -188,6 +192,7 @@ model Wishlist {
   userId     Int
   propertyId Int
   createdAt  DateTime @default(now())
+  note       String?
 
   user     User     @relation(fields: [userId], references: [id])
   property Property @relation(fields: [propertyId], references: [id])

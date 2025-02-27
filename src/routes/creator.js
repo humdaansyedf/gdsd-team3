@@ -50,7 +50,19 @@ const propertySchema = z.object({
   parking: z.boolean().default(false),
   internet: z.boolean().default(false),
   cableTv: z.boolean().default(false),
+  recommendedPrice: z.number().min(0).optional(),
+  priceRating: z.number().min(0).optional(),
 });
+
+const calculatePriceRating = (totalPrice, recommendedPrice) => {
+  if (recommendedPrice === 0) return 0;
+  const ratio = totalPrice / recommendedPrice;
+  if (ratio < 0.5) return 5;
+  if (ratio < 0.8) return 4;
+  if (ratio < 1.2) return 3;
+  if (ratio < 1.5) return 2;
+  return 1;
+};
 
 const createPropertySchema = propertySchema.extend({
   media: z
@@ -81,7 +93,7 @@ creatorRouter.post("/property", async (req, res) => {
     const { media, ...propertyData } = result.data;
     const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
     const availableFrom = new Date(propertyData.availableFrom);
-
+    const priceRating = calculatePriceRating(totalRent, propertyData.recommendedPrice);
     const isSublet = req.user.type === "STUDENT";
 
     const property = await prisma.$transaction(async (tx) => {
@@ -90,6 +102,7 @@ creatorRouter.post("/property", async (req, res) => {
           ...propertyData,
           availableFrom,
           totalRent,
+          priceRating,
           creatorId: user.id,
           isSublet: isSublet,
         },
@@ -263,6 +276,7 @@ creatorRouter.put("/property/:id", async (req, res) => {
   try {
     const { media, ...propertyData } = result.data;
     const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const priceRating = calculatePriceRating(totalRent, propertyData.recommendedPrice);
     const availableFrom = new Date(propertyData.availableFrom);
     const where = {
         id,
@@ -283,6 +297,7 @@ creatorRouter.put("/property/:id", async (req, res) => {
           availableFrom,
           totalRent,
           isSublet,
+          priceRating,
         },
       });
 
