@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `wishlist` ADD COLUMN `note` VARCHAR(191) NULL;
+ALTER TABLE `Wishlist` ADD COLUMN `note` VARCHAR(191) NULL;
