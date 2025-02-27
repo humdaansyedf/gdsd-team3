@@ -41,7 +41,7 @@ chatRouter.get(
 chatRouter.get("/chats/users", async (req, res) => {
   const currentUserId = parseInt(req.query.currentUserId);
 
-  console.log("Fetching users for:", { currentUserId });
+  // console.log("Fetching users for:", { currentUserId });
   try {
     const chatrooms = await prisma.chatParticipant.findMany({
       where: { userid: currentUserId },
@@ -61,7 +61,7 @@ chatRouter.get("/chats/users", async (req, res) => {
     // console.dir(chatrooms, { depth: null });
 
     const users = chatrooms.map((chatroom) => ({
-      id: chatroom.chat.participants[0].user.id,
+      senderId: chatroom.chat.participants[0].user.id,
       name: chatroom.chat.participants[0].user.name,
       propertyId: chatroom.chat.propertyId,
       propertyTitle: chatroom.chat.property.title,
@@ -78,7 +78,7 @@ chatRouter.get("/chats/users", async (req, res) => {
 //route to get unread messages for this user
 chatRouter.get("/messages/unread", async (req, res) => {
   const currentUserId = parseInt(req.query.currentUserId);
-  console.log("entered unread route", currentUserId);
+  // console.log("entered unread route", currentUserId);
   try {
     const unreadMessagesList = await prisma.message.findMany({
       where: {

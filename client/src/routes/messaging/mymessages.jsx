@@ -71,6 +71,7 @@ export function Mymessages() {
     //fetch users list, unread messages and join notifications room, upon user login.
     if (currentUserId) {
       setUsers(fetchedUsers);
+      // console.log("fetchedUsers", fetchedUsers);
       setNotifications(fetchedUnreadMessages);
       socket.emit("join_notifications", {
         currentUserId,
@@ -105,7 +106,6 @@ export function Mymessages() {
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          id: data.id,
           senderId: data.senderId,
           content: data.content,
           align: "left",
@@ -117,7 +117,7 @@ export function Mymessages() {
 
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.id === data.senderId && user.propertyId === data.propertyId
+          user.senderId === data.senderId && user.propertyId === data.propertyId
             ? { ...user, lastMessage: data.content }
             : user
         )
@@ -146,18 +146,54 @@ export function Mymessages() {
         ]);
       }
 
-      //update last message when notif received-important when chat not open
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === notificationData.senderId &&
+      //   //update last message when notif received-important when chat not open
+      //   setUsers((prevUsers) =>
+      //     prevUsers.map((user) =>
+      //       user.id === notificationData.senderId &&
+      //       user.propertyId === notificationData.propertyId
+      //         ? {
+      //             ...user,
+      //             lastMessage: notificationData.content,
+      //           }
+      //         : user
+      //     )
+      //   );
+      // };
+
+      setUsers((prevUsers) => {
+        const userExists = prevUsers.some(
+          (user) =>
+            user.senderId === notificationData.senderId &&
+            user.propertyId === notificationData.propertyId
+        );
+
+        if (notificationData.type === "newMessage" && !userExists) {
+          // Add new user if it's a new chat
+          return [
+            ...prevUsers,
+            {
+              senderId: notificationData.senderId,
+              name: notificationData.name || "User", // Ensure name is available
+              lastMessage: notificationData.content,
+              lastMessageAt: notificationData.createdAt,
+              propertyId: notificationData.propertyId,
+              propertyTitle: notificationData.propertyTitle,
+            },
+          ];
+        }
+
+        // Otherwise, just update last message for existing users
+        return prevUsers.map((user) =>
+          user.senderId === notificationData.senderId &&
           user.propertyId === notificationData.propertyId
             ? {
                 ...user,
                 lastMessage: notificationData.content,
+                lastMessageAt: notificationData.createdAt,
               }
             : user
-        )
-      );
+        );
+      });
     };
 
     const handleMessagesMarkedAsRead = ({ seenAt, senderId }) => {
@@ -195,26 +231,27 @@ export function Mymessages() {
     socket.emit("join_room", {
       propertyId: user.propertyId,
       currentUserId,
-      selectedUserId: user.id,
+      selectedUserId: user.senderId,
     });
     console.log("User clicked:", user);
 
     const updatedPropertyId = user.propertyId || activePropertyId;
     setActivePropertyId(updatedPropertyId);
-    setSelectedUserId(user.id);
+    setSelectedUserId(user.senderId);
     setSelectedUsername(user.name);
 
     // Mark all notifications as read for this specific chat
     socket.emit("mark_notifications_as_read", {
       propertyId: updatedPropertyId,
       currentUserId: currentUserId,
-      selectedUserId: user.id,
+      selectedUserId: user.senderId,
     });
 
     // Remove notifications from global state for this specific chat
     setNotifications((prev) =>
       prev.filter(
-        (n) => n.senderId !== user.id || n.propertyId !== updatedPropertyId
+        (n) =>
+          n.senderId !== user.senderId || n.propertyId !== updatedPropertyId
       )
     );
   };
@@ -252,7 +289,8 @@ export function Mymessages() {
       if (userExists) {
         // Update existing user
         return prevUsers.map((user) =>
-          user.propertyId === activePropertyId
+          user.propertyId === activePropertyId &&
+          user.senderId === selectedUserId
             ? { ...user, lastMessage: messageContent }
             : user
         );
@@ -261,7 +299,7 @@ export function Mymessages() {
         return [
           ...prevUsers,
           {
-            id: selectedUserId,
+            senderId: selectedUserId,
             name: selectedUsername,
             lastMessage: messageContent,
             propertyId: activePropertyId,
@@ -285,14 +323,15 @@ export function Mymessages() {
           <UnstyledButton
             key={user.index}
             onClick={() => handleUserClick(user)}
-            data-active={selectedUserId === user.id}
+            data-active={selectedUserId === user.senderId}
           >
             <Group p="xs" gap="xs" wrap="nowrap">
               <Indicator
                 label={
                   notifications.filter(
                     (n) =>
-                      n.senderId === user.id && n.propertyId === user.propertyId
+                      n.senderId === user.senderId &&
+                      n.propertyId === user.propertyId
                   ).length
                 }
                 size={16}
@@ -300,7 +339,8 @@ export function Mymessages() {
                   !notifications ||
                   notifications.filter(
                     (n) =>
-                      n.senderId === user.id && n.propertyId === user.propertyId
+                      n.senderId === user.senderId &&
+                      n.propertyId === user.propertyId
                   ).length === 0
                 }
               >

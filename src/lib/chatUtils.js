@@ -15,3 +15,25 @@ export const getChatByParticipants = async (
     },
   });
 };
+
+export const getUserById = async (userId) => {
+  try {
+    return await prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true },
+    });
+  } catch (error) {
+    console.log("error getting username", error);
+  }
+};
+
+export const getPropertyTitle = async (propertyId) => {
+  try {
+    return await prisma.property.findUnique({
+      where: { id: propertyId },
+      select: { title: true },
+    });
+  } catch (error) {
+    console.log("error getting username", error);
+  }
+};

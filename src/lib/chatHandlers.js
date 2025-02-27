@@ -1,5 +1,9 @@
 import { prisma } from "../prisma/index.js";
-import { getChatByParticipants } from "./chatUtils.js";
+import {
+  getChatByParticipants,
+  getUserById,
+  getPropertyTitle,
+} from "./chatUtils.js";
 
 export const chatHandlers = (io, socket) => {
   socket.on(
@@ -20,19 +24,18 @@ export const chatHandlers = (io, socket) => {
         socket.join(chatId);
         socket.to(chatId).emit("user_joined", { userId: currentUserId });
       } catch (error) {
+        console.error("error in joining chat room", error);
         socket.emit("error", "Could not join the room");
       }
     }
   );
 
   socket.on("join_notifications", ({ currentUserId }) => {
-    //for fix- added pId
     try {
       const notificationsRoom = `notifications_${currentUserId}`;
-
       socket.join(notificationsRoom);
-      // console.log(`User ${currentUserId} joined notifications room`);
     } catch (error) {
+      console.error("error in joining notification room", error);
       socket.emit("error", "Could not join notifications room");
     }
   });
@@ -46,9 +49,10 @@ export const chatHandlers = (io, socket) => {
           currentUserId,
           selectedUserId
         );
-
+        let isNewChat = false;
         //create chatroom if not present
         if (!chat) {
+          isNewChat = true;
           chat = await prisma.chat.create({
             data: {
               propertyId: propertyId,
@@ -87,26 +91,31 @@ export const chatHandlers = (io, socket) => {
           },
         });
 
-        //send notification - for fix
-        socket.to(`notifications_${selectedUserId}`).emit("new_notification", {
+        let notificationData = {
           type: "message",
-          chatId: chat.id,
+          chatId,
           messageId: message.id,
-          propertyId: propertyId,
+          propertyId,
           senderId: currentUserId,
           content,
           createdAt: message.createdAt,
-        });
+        };
 
-        //send message  -new fix
-        // socket.broadcast.to(chatId).emit("receive_message", {
-        //   id: message.id,
-        //   chatId: chatId,
-        //   senderId: currentUserId,
-        //   content: content,
-        //   createdAt: message.createdAt,
-        //   seenAt: null,
-        // });
+        if (isNewChat) {
+          const [sender, property] = await Promise.all([
+            getUserById(currentUserId),
+            getPropertyTitle(propertyId),
+          ]);
+
+          notificationData.type = "newMessage";
+          notificationData.propertyTitle = property.title;
+          notificationData.name = sender.name;
+        }
+
+        // Send notification
+        socket
+          .to(`notifications_${selectedUserId}`)
+          .emit("new_notification", notificationData);
 
         socket.to(chatId).emit("receive_message", {
           id: message.id,
@@ -119,6 +128,7 @@ export const chatHandlers = (io, socket) => {
           seenAt: null,
         });
       } catch (error) {
+        console.error("Error in sending message", error);
         socket.emit("error", "Could not send message");
       }
     }
@@ -134,34 +144,33 @@ export const chatHandlers = (io, socket) => {
           selectedUserId
         );
 
-        //update messages table
-        await prisma.message.updateMany({
-          where: {
-            chatid: chat.id,
-            userid: selectedUserId,
-            seenAt: null,
-          },
-          data: {
-            seenAt: new Date(),
-          },
-        });
+        // Run message and notification updates in parallel
+        await Promise.all([
+          prisma.message.updateMany({
+            where: {
+              chatid: chat.id,
+              userid: selectedUserId,
+              seenAt: null,
+            },
+            data: { seenAt: new Date() },
+          }),
+          prisma.notification.updateMany({
+            where: {
+              userId: currentUserId,
+              chatId: chat.id,
+              readAt: { equals: null },
+            },
+            data: { readAt: new Date() },
+          }),
+        ]);
 
-        //update readAt times in notification table
-        await prisma.notification.updateMany({
-          where: {
-            userId: currentUserId,
-            chatId: chat.id,
-            readAt: { equals: null },
-          },
-          data: { readAt: new Date() },
-        });
-
-        socket.broadcast.to(chat.id).emit("messages_marked_as_read", {
+        socket.to(chat.id).emit("messages_marked_as_read", {
           seenAt: new Date(),
           senderId: selectedUserId,
         });
       } catch (error) {
-        socket.emit("error", "Could not mark notifications as read", error);
+        console.error("Error in marking notifications as read", error);
+        socket.emit("error", "Error in marking notifications as read", error);
       }
     }
   );

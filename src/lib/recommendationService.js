@@ -25,6 +25,7 @@ export const getUserRecommendations = async (userId) => {
   return combinedProperties;
 };
 
+//based on user interactions
 export const getPreferenceBasedRecommendations = async (userId) => {
   const userInteractions = await prisma.interaction.findMany({
     where: { userId },
@@ -70,10 +71,8 @@ export const getPreferenceBasedRecommendations = async (userId) => {
     omit: { creatorComment: true, adminComment: true },
   });
 
-  // Relaxing filters if no properties are found
+  // no properties are found, relax price filters
   if (recommendedProperties.length === 0) {
-    // console.log("No exact preference matches, relaxing filters...");
-
     recommendedProperties = await prisma.property.findMany({
       where: {
         status: "ACTIVE",
@@ -132,8 +131,8 @@ function cosineSimilarity(userA, userB, interactionMatrix) {
   return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
+//based on similar users
 export const recommendProperties = async (userId, interactionMatrix) => {
-  // console.log("Finding similar users for:", userId);
   const similarities = {};
 
   for (let otherUserId in interactionMatrix) {
@@ -168,11 +167,8 @@ export const recommendProperties = async (userId, interactionMatrix) => {
       maxSimilarityUser = otherUserId;
     }
   }
-
+  //when no user matching threshold, use next most similar user
   if (recommendedProperties.size === 0 && maxSimilarityUser) {
-    console.log(
-      `No users found above threshold. Using most similar user (${maxSimilarityUser}) with similarity ${maxSimilarityScore}`
-    );
     const remainingProperties = interactionMatrix[maxSimilarityUser];
     for (let propertyId in remainingProperties) {
       if (!interactionMatrix[userId]?.[propertyId]) {
@@ -180,9 +176,6 @@ export const recommendProperties = async (userId, interactionMatrix) => {
       }
     }
   }
-
-  // console.log("Recommended Properties:", recommendedProperties);
-  // console.log("sortedSimilarUsers:", sortedSimilarUsers);
 
   const properties = await prisma.property.findMany({
     where: { status: "ACTIVE", id: { in: Array.from(recommendedProperties) } },
@@ -224,7 +217,7 @@ function mergeRecommendations(preferenceProperties, collaborativeProperties) {
   //   .slice(0, 3) //sending top 3
   //   .map(({ score, ...rest }) => rest);
 
-  return Array.from(combined.keys()).slice(0, RECOMMENDATIONS); //sending top 3
+  return Array.from(combined.keys()).slice(0, RECOMMENDATIONS); //sending top 3 propertyIds
 }
 
 //utility functions
