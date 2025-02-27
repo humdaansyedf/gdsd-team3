@@ -92,7 +92,7 @@ export const GridView = ({ properties, renderCard }) => {
   return (
     <div className="property-grid">
       {properties.map((property) => {
-        const CardComponent = renderCard || DefaultPropertyCard;// use renderCard prop or DefaultPropertyCard
+        const CardComponent = renderCard || DefaultPropertyCard; // use renderCard prop or DefaultPropertyCard
         return <CardComponent key={property.id} property={property} />;
       })}
     </div>

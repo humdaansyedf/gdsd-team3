@@ -1,12 +1,22 @@
 import { Button, Container, TextInput } from "@mantine/core";
 import {
   IconDoor,
-  IconTextSize, IconTrashXFilled,
+  IconTextSize,
+  IconTrashXFilled,
   IconWall,
-  IconWindow
+  IconWindow,
 } from "@tabler/icons-react";
 import React, { useEffect, useRef, useState } from "react";
-import { Group, Layer, Line, Path, Rect, Stage, Text, Transformer } from "react-konva";
+import {
+  Group,
+  Layer,
+  Line,
+  Path,
+  Rect,
+  Stage,
+  Text,
+  Transformer,
+} from "react-konva";
 
 const FloorPlanner = () => {
   const [objects, setObjects] = useState([]);
@@ -97,7 +107,7 @@ const FloorPlanner = () => {
       y: 400,
       width: 30,
       height: 10,
-    },  
+    },
     {
       id: "wall-10",
       type: "wall",
@@ -105,39 +115,39 @@ const FloorPlanner = () => {
       y: 400,
       width: 10,
       height: 200,
-  },
-  {
-    id: "wall-11",
-    type: "wall",
-    x: 500,
-    y: 400,
-    width: 6,
-    height: 210,
-  },
-  {
-    id: "wall-12",
-    type: "wall",
-    x: 500,
-    y: 400,
-    width: 50,
-    height: 10,
-  },
-  {
-    id: "wall-12.1",
-    type: "wall",
-    x: 635,
-    y: 400,
-    width: 70,
-    height: 10,
-  },
-  {
-    id: "wall-13",
-    type: "wall",
-    x: 700,
-    y: 200,
-    width: 15,
-    height: 50,
-  },
+    },
+    {
+      id: "wall-11",
+      type: "wall",
+      x: 500,
+      y: 400,
+      width: 6,
+      height: 210,
+    },
+    {
+      id: "wall-12",
+      type: "wall",
+      x: 500,
+      y: 400,
+      width: 50,
+      height: 10,
+    },
+    {
+      id: "wall-12.1",
+      type: "wall",
+      x: 635,
+      y: 400,
+      width: 70,
+      height: 10,
+    },
+    {
+      id: "wall-13",
+      type: "wall",
+      x: 700,
+      y: 200,
+      width: 15,
+      height: 50,
+    },
     {
       id: "door-1",
       type: "door",
@@ -323,14 +333,16 @@ const FloorPlanner = () => {
               width: Math.max(5, obj.width * scaleX),
               height: Math.max(5, obj.height * scaleY),
             }
-          : obj
-      )
+          : obj,
+      ),
     );
   };
 
   const handleDelete = () => {
     if (selectedId) {
-      setObjects((prevObjects) => prevObjects.filter((obj) => obj.id !== selectedId));
+      setObjects((prevObjects) =>
+        prevObjects.filter((obj) => obj.id !== selectedId),
+      );
       setSelectedId(null);
     }
   };
@@ -347,8 +359,8 @@ const FloorPlanner = () => {
   const handleTextBlur = () => {
     setObjects((prevObjects) =>
       prevObjects.map((obj) =>
-        obj.id === editingTextId ? { ...obj, text: textValue } : obj
-      )
+        obj.id === editingTextId ? { ...obj, text: textValue } : obj,
+      ),
     );
     setEditingTextId(null);
   };
@@ -387,8 +399,21 @@ const FloorPlanner = () => {
   };
 
   return (
-    <Container fluid style={{ width: "100vw", height: "100vh", overflow: "hidden", position: "relative" }}>
-      <Stage ref={stageRef} width={window.innerWidth * 0.98} height={window.innerHeight} style={{ background: "#F1F0F0", borderRadius: "20px" }}>
+    <Container
+      fluid
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      <Stage
+        ref={stageRef}
+        width={window.innerWidth * 0.98}
+        height={window.innerHeight}
+        style={{ background: "#F1F0F0", borderRadius: "20px" }}
+      >
         <Layer>
           {objects.map((obj) => (
             <Group
@@ -433,12 +458,36 @@ const FloorPlanner = () => {
               {obj.type === "window" && (
                 <Group>
                   {/* Outer Frame */}
-                  <Rect x={0} y={0} width={100} height={20} stroke="black" strokeWidth={2} fill="white" />
+                  <Rect
+                    x={0}
+                    y={0}
+                    width={100}
+                    height={20}
+                    stroke="black"
+                    strokeWidth={2}
+                    fill="white"
+                  />
                   {/* Left and Right Sections */}
-                  <Line points={[20, 0, 20, 20]} stroke="black" strokeWidth={2} />
-                  <Line points={[80, 0, 80, 20]} stroke="black" strokeWidth={2} />
+                  <Line
+                    points={[20, 0, 20, 20]}
+                    stroke="black"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    points={[80, 0, 80, 20]}
+                    stroke="black"
+                    strokeWidth={2}
+                  />
                   {/* Inner Fixed Middle Section */}
-                  <Rect x={25} y={5} width={50} height={10} stroke="black" strokeWidth={2} fill="white" />
+                  <Rect
+                    x={25}
+                    y={5}
+                    width={50}
+                    height={10}
+                    stroke="black"
+                    strokeWidth={2}
+                    fill="white"
+                  />
                 </Group>
               )}
               {obj.type === "text" && (
@@ -455,15 +504,65 @@ const FloorPlanner = () => {
               )}
             </Group>
           ))}
-          <Transformer ref={transformerRef} enabledAnchors={["middle-left", "middle-right"]} />
+          <Transformer
+            ref={transformerRef}
+            enabledAnchors={["middle-left", "middle-right"]}
+          />
         </Layer>
       </Stage>
-      <div style={{ position: "absolute", top: 20, left: 40, display: "flex", gap: "10px", background: "white", padding: "10px", borderRadius: "10px", opacity: 0.8 }}>
-        <Button leftSection={<IconWall size={16} />} color="green" variant="light" onClick={() => addObject("wall") }>Wall</Button>
-        <Button leftSection={<IconDoor size={16} />} color="green" variant="light" onClick={() => addObject("door")}>Door</Button>
-        <Button leftSection={<IconWindow size={16} />} color="green" variant="light" onClick={() => addObject("window")}>Window</Button>
-        <Button leftSection={<IconTextSize size={16} />} color="blue" variant="light" onClick={() => addObject("text")}>Text</Button>
-        <Button leftSection={<IconTrashXFilled size={16} />} onClick={handleDelete} variant="light" color="red">Bin</Button>
+      <div
+        style={{
+          position: "absolute",
+          top: 20,
+          left: 40,
+          display: "flex",
+          gap: "10px",
+          background: "white",
+          padding: "10px",
+          borderRadius: "10px",
+          opacity: 0.8,
+        }}
+      >
+        <Button
+          leftSection={<IconWall size={16} />}
+          color="green"
+          variant="light"
+          onClick={() => addObject("wall")}
+        >
+          Wall
+        </Button>
+        <Button
+          leftSection={<IconDoor size={16} />}
+          color="green"
+          variant="light"
+          onClick={() => addObject("door")}
+        >
+          Door
+        </Button>
+        <Button
+          leftSection={<IconWindow size={16} />}
+          color="green"
+          variant="light"
+          onClick={() => addObject("window")}
+        >
+          Window
+        </Button>
+        <Button
+          leftSection={<IconTextSize size={16} />}
+          color="blue"
+          variant="light"
+          onClick={() => addObject("text")}
+        >
+          Text
+        </Button>
+        <Button
+          leftSection={<IconTrashXFilled size={16} />}
+          onClick={handleDelete}
+          variant="light"
+          color="red"
+        >
+          Bin
+        </Button>
       </div>
       {editingTextId && (
         <div style={{ position: "absolute", top: 20, right: 150 }}>
@@ -478,7 +577,11 @@ const FloorPlanner = () => {
       <Button
         onClick={exportCanvas}
         variant="gradient"
-        gradient={{ from: 'rgb(189, 253, 162)', to: 'rgba(80, 191, 40, 1)', deg: 153 }}
+        gradient={{
+          from: "rgb(189, 253, 162)",
+          to: "rgba(80, 191, 40, 1)",
+          deg: 153,
+        }}
         style={{ position: "absolute", top: 20, right: 40 }}
       >
         Export ✨

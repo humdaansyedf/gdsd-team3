@@ -6,20 +6,19 @@ const SIMILARITY_THRESHOLD = 0.55;
 export const getUserRecommendations = async (userId) => {
   userId = parseInt(userId);
 
-  const preferenceBasedProperties = await getPreferenceBasedRecommendations(
-    userId
-  );
+  const preferenceBasedProperties =
+    await getPreferenceBasedRecommendations(userId);
 
   const interactionMatrix = await getUserPropertyInteractionMatrix();
 
   const collaborativeProperties = await recommendProperties(
     userId,
-    interactionMatrix
+    interactionMatrix,
   );
 
   const combinedProperties = mergeRecommendations(
     preferenceBasedProperties,
-    collaborativeProperties
+    collaborativeProperties,
   );
   console.log("combinedProperties", combinedProperties);
   return combinedProperties;
@@ -33,11 +32,11 @@ export const getPreferenceBasedRecommendations = async (userId) => {
   });
 
   const interactedPropertyIds = new Set(
-    userInteractions.map((i) => i.property.id)
+    userInteractions.map((i) => i.property.id),
   );
 
   const uniqueProperties = Array.from(
-    new Map(userInteractions.map((i) => [i.property.id, i.property])).values()
+    new Map(userInteractions.map((i) => [i.property.id, i.property])).values(),
   );
 
   const userPreferences = {
@@ -140,13 +139,13 @@ export const recommendProperties = async (userId, interactionMatrix) => {
       similarities[otherUserId] = cosineSimilarity(
         userId,
         otherUserId,
-        interactionMatrix
+        interactionMatrix,
       );
     }
   }
 
   const sortedSimilarUsers = Object.entries(similarities).sort(
-    (a, b) => b[1] - a[1]
+    (a, b) => b[1] - a[1],
   );
 
   const recommendedProperties = new Set();

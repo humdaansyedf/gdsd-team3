@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   ActionIcon,
   Badge,
@@ -18,11 +18,7 @@ import { WishlistButton } from "../../components/WishlistButton/WishlistButton";
 import { useUpdatePropertyNote } from "./wishlist-queries";
 import { showNotification } from "@mantine/notifications";
 
-export function WishlistPropertyCard({
-    property,
-    isSelected,
-    onToggleSelect,
-  })  {
+export function WishlistPropertyCard({ property, isSelected, onToggleSelect }) {
   const [isEditing, setIsEditing] = useState(false);
   const [originalNote, setOriginalNote] = useState(property.note || "");
   const [note, setNote] = useState(property.note || "");
@@ -59,7 +55,7 @@ export function WishlistPropertyCard({
             color: "green",
           });
         },
-      }
+      },
     );
   };
 
@@ -80,7 +76,7 @@ export function WishlistPropertyCard({
           style={{ width: "100%", height: "200px", objectFit: "cover" }}
         />
       </Card.Section>
-      
+
       <Flex align="center" justify="space-between" mt="sm">
         <Title order={4}>{property.title}</Title>
         <Checkbox
@@ -123,45 +119,52 @@ export function WishlistPropertyCard({
 
       <Text my="sm">{property.description.slice(0, 50)}...</Text>
 
-      <div style={{ minHeight: "100px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+      <div
+        style={{
+          minHeight: "100px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
+        }}
+      >
         {!isEditing ? (
-            <>
+          <>
             {originalNote ? (
-                <>
+              <>
                 {renderFormattedNote(originalNote)}
 
                 <Button mt="md" variant="outline" onClick={handleEnterEditMode}>
-                    Edit Note
+                  Edit Note
                 </Button>
-                </>
+              </>
             ) : (
-                <Button mt="md" variant="outline" onClick={handleEnterEditMode}>
+              <Button mt="md" variant="outline" onClick={handleEnterEditMode}>
                 Add Note
-                </Button>
+              </Button>
             )}
-            </>
+          </>
         ) : (
-            <>
+          <>
             <Textarea
-                placeholder="Write your note here..."
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                mb="sm"
+              placeholder="Write your note here..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              mb="sm"
             />
 
             <Flex gap="sm">
-                <Button
+              <Button
                 variant="filled"
                 disabled={!hasChanged || updateNoteMutation.isLoading}
                 onClick={handleSave}
-                >
+              >
                 Save Note
-                </Button>
-                <Button variant="outline" color="gray" onClick={handleCancel}>
+              </Button>
+              <Button variant="outline" color="gray" onClick={handleCancel}>
                 Cancel
-                </Button>
+              </Button>
             </Flex>
-            </>
+          </>
         )}
       </div>
 

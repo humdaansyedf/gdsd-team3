@@ -3,7 +3,7 @@ import { prisma } from "../prisma/index.js";
 export const getChatByParticipants = async (
   propertyId,
   currentUserId,
-  selectedUserId
+  selectedUserId,
 ) => {
   return await prisma.chat.findFirst({
     where: {

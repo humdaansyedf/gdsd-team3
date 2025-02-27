@@ -1,6 +1,21 @@
 import { useParams } from "react-router-dom";
-import { useAdminProperty, useAdminPropertyUpdateStatus } from "./admin-queries";
-import { Box, Group, Text, Title, SimpleGrid, Badge, Button, Container, Textarea, Paper, Flex } from "@mantine/core";
+import {
+  useAdminProperty,
+  useAdminPropertyUpdateStatus,
+} from "./admin-queries";
+import {
+  Box,
+  Group,
+  Text,
+  Title,
+  SimpleGrid,
+  Badge,
+  Button,
+  Container,
+  Textarea,
+  Paper,
+  Flex,
+} from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { getBadgeColor } from "./admin-utils";
 import { PropertyDetailView } from "../property-detail/property-detail-page";
@@ -37,7 +52,9 @@ const AdminUpdateStatus = ({ defaultValue, id, status }) => {
           size="lg"
           color="green"
           loading={updateStatusMutation.isPending}
-          onClick={() => updateStatusMutation.mutate({ status: "ACTIVE", adminComment })}
+          onClick={() =>
+            updateStatusMutation.mutate({ status: "ACTIVE", adminComment })
+          }
           leftSection={<IconCheck />}
         >
           APPROVE
@@ -48,7 +65,9 @@ const AdminUpdateStatus = ({ defaultValue, id, status }) => {
           size="lg"
           color="red"
           loading={updateStatusMutation.isPending}
-          onClick={() => updateStatusMutation.mutate({ status: "REJECTED", adminComment })}
+          onClick={() =>
+            updateStatusMutation.mutate({ status: "REJECTED", adminComment })
+          }
           leftSection={<IconX />}
         >
           REJECT
@@ -79,7 +98,13 @@ export const AdminProperty = () => {
     <Box py="lg">
       <Group justify="space-between" align="center" mb="md">
         <Title order={1}>Admin Dashboard</Title>
-        <Badge mr="auto" radius="sm" variant="light" size="xl" color={getBadgeColor(propertyQuery.data.status)}>
+        <Badge
+          mr="auto"
+          radius="sm"
+          variant="light"
+          size="xl"
+          color={getBadgeColor(propertyQuery.data.status)}
+        >
           {propertyQuery.data.status}
         </Badge>
       </Group>
@@ -101,7 +126,11 @@ export const AdminProperty = () => {
             </Text>
           </Flex>
         </Paper>
-        <AdminUpdateStatus id={id} status={propertyQuery.data.status} defaultValue={propertyQuery.data.adminComment} />
+        <AdminUpdateStatus
+          id={id}
+          status={propertyQuery.data.status}
+          defaultValue={propertyQuery.data.adminComment}
+        />
       </Container>
     </Box>
   );

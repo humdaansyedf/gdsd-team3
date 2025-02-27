@@ -1,6 +1,9 @@
 import { getRandomValues } from "node:crypto";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
+import {
+  encodeBase32LowerCaseNoPadding,
+  encodeHexLowerCase,
+} from "@oslojs/encoding";
 import { z } from "zod";
 import { Router } from "express";
 import { verify } from "@node-rs/argon2";
@@ -34,7 +37,9 @@ async function createAdminSession(token, adminId) {
 
 async function validateAdminSessionToken(token) {
   try {
-    const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+    const sessionId = encodeHexLowerCase(
+      sha256(new TextEncoder().encode(token)),
+    );
     const result = await prisma.adminSession.findUnique({
       where: {
         id: sessionId,
@@ -206,9 +211,11 @@ adminRouter.get("/property", adminAuthMiddleware, async (req, res) => {
         const featuredMedia = property.media[0];
         return {
           ...property,
-          media: featuredMedia ? featuredMedia.url : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
+          media: featuredMedia
+            ? featuredMedia.url
+            : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
         };
-      })
+      }),
     );
     return;
   } catch (e) {
@@ -245,39 +252,43 @@ const propertyStatusSchema = z.object({
   adminComment: z.string().nullish(),
 });
 
-adminRouter.patch("/property/:id/status", adminAuthMiddleware, async (req, res) => {
-  const data = req.body;
-  const result = propertyStatusSchema.safeParse(data);
+adminRouter.patch(
+  "/property/:id/status",
+  adminAuthMiddleware,
+  async (req, res) => {
+    const data = req.body;
+    const result = propertyStatusSchema.safeParse(data);
 
-  console.log(result);
+    console.log(result);
 
-  if (!result.success) {
-    return res.status(400).json({
-      message: "Invalid data",
-      errors: result.error.errors,
-    });
-  }
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Invalid data",
+        errors: result.error.errors,
+      });
+    }
 
-  const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id);
 
-  try {
-    const property = await prisma.property.update({
-      where: {
-        id,
-      },
-      data: {
-        status: result.data.status,
-        adminComment: result.data.adminComment,
-      },
-    });
+    try {
+      const property = await prisma.property.update({
+        where: {
+          id,
+        },
+        data: {
+          status: result.data.status,
+          adminComment: result.data.adminComment,
+        },
+      });
 
-    res.json({
-      message: "Property status updated",
-      data: property,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to update property status",
-    });
-  }
-});
+      res.json({
+        message: "Property status updated",
+        data: property,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Failed to update property status",
+      });
+    }
+  },
+);

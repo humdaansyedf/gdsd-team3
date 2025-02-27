@@ -9,7 +9,12 @@ export const PriceRecommendationModal = ({
   submitAfterConfirmation,
 }) => {
   return (
-    <Modal opened={isOpen} onClose={onClose} title="We have calculated a recommended price for you:" size="lg">
+    <Modal
+      opened={isOpen}
+      onClose={onClose}
+      title="We have calculated a recommended price for you:"
+      size="lg"
+    >
       <Text size="md" weight={500}>
         You can edit your price here or leave it as is.
       </Text>
@@ -19,7 +24,8 @@ export const PriceRecommendationModal = ({
           Recommended Total Price Range:
           <Text span c="green">
             {" "}
-            €{parseInt(recommendedPrice * 0.8)} - €{parseInt(recommendedPrice * 1.2)}
+            €{parseInt(recommendedPrice * 0.8)} - €
+            {parseInt(recommendedPrice * 1.2)}
           </Text>
         </Text>
       </Group>
@@ -31,7 +37,9 @@ export const PriceRecommendationModal = ({
           description="Base rent"
           value={form.values.coldRent}
           withAsterisk
-          onChange={(value) => form.setFieldValue("coldRent", value || form.values.coldRent)}
+          onChange={(value) =>
+            form.setFieldValue("coldRent", value || form.values.coldRent)
+          }
           {...form.getInputProps("coldRent")}
         />
 
@@ -40,7 +48,12 @@ export const PriceRecommendationModal = ({
           description="e.g. Heating, Water, etc."
           min={0}
           value={form.values.additionalCosts}
-          onChange={(value) => form.setFieldValue("additionalCosts", value || form.values.additionalCosts)}
+          onChange={(value) =>
+            form.setFieldValue(
+              "additionalCosts",
+              value || form.values.additionalCosts,
+            )
+          }
           {...form.getInputProps("additionalCosts")}
         />
         <NumberInput

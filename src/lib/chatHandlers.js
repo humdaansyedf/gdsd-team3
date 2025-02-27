@@ -13,7 +13,7 @@ export const chatHandlers = (io, socket) => {
         const chat = await getChatByParticipants(
           propertyId,
           currentUserId,
-          selectedUserId
+          selectedUserId,
         );
         if (!chat) {
           socket.emit("error", "Chat not found");
@@ -27,7 +27,7 @@ export const chatHandlers = (io, socket) => {
         console.error("error in joining chat room", error);
         socket.emit("error", "Could not join the room");
       }
-    }
+    },
   );
 
   socket.on("join_notifications", ({ currentUserId }) => {
@@ -47,7 +47,7 @@ export const chatHandlers = (io, socket) => {
         let chat = await getChatByParticipants(
           propertyId,
           currentUserId,
-          selectedUserId
+          selectedUserId,
         );
         let isNewChat = false;
         //create chatroom if not present
@@ -131,7 +131,7 @@ export const chatHandlers = (io, socket) => {
         console.error("Error in sending message", error);
         socket.emit("error", "Could not send message");
       }
-    }
+    },
   );
 
   socket.on(
@@ -141,7 +141,7 @@ export const chatHandlers = (io, socket) => {
         let chat = await getChatByParticipants(
           propertyId,
           currentUserId,
-          selectedUserId
+          selectedUserId,
         );
 
         // Run message and notification updates in parallel
@@ -172,6 +172,6 @@ export const chatHandlers = (io, socket) => {
         console.error("Error in marking notifications as read", error);
         socket.emit("error", "Error in marking notifications as read", error);
       }
-    }
+    },
   );
 };

@@ -91,9 +91,13 @@ creatorRouter.post("/property", async (req, res) => {
 
   try {
     const { media, ...propertyData } = result.data;
-    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const totalRent =
+      propertyData.coldRent + (propertyData.additionalCosts || 0);
     const availableFrom = new Date(propertyData.availableFrom);
-    const priceRating = calculatePriceRating(totalRent, propertyData.recommendedPrice);
+    const priceRating = calculatePriceRating(
+      totalRent,
+      propertyData.recommendedPrice,
+    );
     const isSublet = req.user.type === "STUDENT";
 
     const property = await prisma.$transaction(async (tx) => {
@@ -185,7 +189,7 @@ creatorRouter.post("/property/search", async (req, res) => {
           property.media.length > 0
             ? property.media[0].url
             : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
-      }))
+      })),
     );
   } catch (error) {
     console.error("Error fetching properties:", error);
@@ -275,8 +279,12 @@ creatorRouter.put("/property/:id", async (req, res) => {
 
   try {
     const { media, ...propertyData } = result.data;
-    const totalRent = propertyData.coldRent + (propertyData.additionalCosts || 0);
-    const priceRating = calculatePriceRating(totalRent, propertyData.recommendedPrice);
+    const totalRent =
+      propertyData.coldRent + (propertyData.additionalCosts || 0);
+    const priceRating = calculatePriceRating(
+      totalRent,
+      propertyData.recommendedPrice,
+    );
     const availableFrom = new Date(propertyData.availableFrom);
     const where = {
       id,
