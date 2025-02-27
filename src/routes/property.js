@@ -127,19 +127,26 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
       });
     }
 
-    let recommendedPropertyIds = [];
+    let recommendedPropertyData = [];
     if (userId && !isSearching) {
-      recommendedPropertyIds = await getUserRecommendations(userId);
+      recommendedPropertyData = await getUserRecommendations(userId);
     }
 
-    let formattedProperties = properties.map((property) => ({
-      ...property,
-      isRecommended: recommendedPropertyIds.includes(property.id),
-    }));
+    let formattedProperties = properties.map((property) => {
+      const recommended = recommendedPropertyData.find(
+        (rec) => rec.id === property.id
+      );
 
-    // recommended properties on top
+      return {
+        ...property,
+        isRecommended: !!recommended,
+        reasons: recommended ? recommended.reasons : [],
+      };
+    });
+
     const recommended = formattedProperties.filter((p) => p.isRecommended);
     const nonRecommended = formattedProperties.filter((p) => !p.isRecommended);
+
     formattedProperties = [...recommended, ...nonRecommended];
 
     res.json(

@@ -21,7 +21,6 @@ export const getUserRecommendations = async (userId) => {
     preferenceBasedProperties,
     collaborativeProperties
   );
-  console.log("combinedProperties", combinedProperties);
   return combinedProperties;
 };
 
@@ -135,6 +134,8 @@ function cosineSimilarity(userA, userB, interactionMatrix) {
 export const recommendProperties = async (userId, interactionMatrix) => {
   const similarities = {};
 
+  const propertyExplanations = {};
+
   for (let otherUserId in interactionMatrix) {
     if (parseInt(otherUserId) !== userId) {
       similarities[otherUserId] = cosineSimilarity(
@@ -159,6 +160,12 @@ export const recommendProperties = async (userId, interactionMatrix) => {
       for (let propertyId in properties) {
         if (!interactionMatrix[userId]?.[propertyId]) {
           recommendedProperties.add(parseInt(propertyId));
+          //explanation
+          if (!propertyExplanations[propertyId]) {
+            propertyExplanations[propertyId] = {
+              reasons: [`Liked by users similar to you.`],
+            };
+          }
         }
       }
     }
@@ -173,6 +180,12 @@ export const recommendProperties = async (userId, interactionMatrix) => {
     for (let propertyId in remainingProperties) {
       if (!interactionMatrix[userId]?.[propertyId]) {
         recommendedProperties.add(parseInt(propertyId));
+        //explanation
+        if (!propertyExplanations[propertyId]) {
+          propertyExplanations[propertyId] = {
+            reasons: [`Liked by users similar to you.`],
+          };
+        }
       }
     }
   }
@@ -183,7 +196,12 @@ export const recommendProperties = async (userId, interactionMatrix) => {
     omit: { creatorComment: true, adminComment: true },
   });
 
-  return properties;
+  return properties.map((property) => {
+    return {
+      ...property,
+      explanation: propertyExplanations[property.id] || { reasons: [] },
+    };
+  });
 };
 
 function mergeRecommendations(preferenceProperties, collaborativeProperties) {
@@ -195,6 +213,9 @@ function mergeRecommendations(preferenceProperties, collaborativeProperties) {
       propertyId: property.id,
       property,
       score: 1,
+      explanation: {
+        reasons: [`Matches your preferences.`],
+      },
     });
   });
 
@@ -207,17 +228,20 @@ function mergeRecommendations(preferenceProperties, collaborativeProperties) {
         propertyId: property.id,
         property,
         score: 1,
+        explanation: {
+          reasons: [`Liked by users with similar interests.`],
+        },
       });
     }
   });
 
-  //to get properties
-  // return Array.from(combined.values())
-  //   .sort((a, b) => b.score - a.score)
-  //   .slice(0, 3) //sending top 3
-  //   .map(({ score, ...rest }) => rest);
-
-  return Array.from(combined.keys()).slice(0, RECOMMENDATIONS); //sending top 3 propertyIds
+  return Array.from(combined.entries())
+    .sort((a, b) => b[1].score - a[1].score)
+    .slice(0, RECOMMENDATIONS) // Top 3
+    .map(([id, { explanation }]) => ({
+      id,
+      reasons: explanation.reasons,
+    }));
 }
 
 //utility functions
