@@ -122,6 +122,10 @@ model Property {
   heatingIncludedInAdditionalCosts Boolean @default(false)
   deposit                          Float?
 
+  // price prediction fields
+  recommendedPrice  Float?
+  priceRating       Int?
+
   // rooms and space
   numberOfRooms  Int
   numberOfBeds   Int?
