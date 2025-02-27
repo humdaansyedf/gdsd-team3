@@ -35,9 +35,17 @@ const socket = io();
 
 export function Mymessages() {
   const { state } = useLocation(); // Contains propertyId, otherUserId from propertyDetailsPage
-  const { propertyId, selectedUserId: initialSelectedUserId } = state || {};
+  const {
+    propertyId,
+    selectedUserId: initialSelectedUserId,
+    selectedUsername: initialSelectedUsername,
+    propertyTitle: initialPropertyTitle,
+  } = state || {};
   const [selectedUserId, setSelectedUserId] = useState(
     initialSelectedUserId || null
+  );
+  const [selectedUsername, setSelectedUsername] = useState(
+    initialSelectedUsername || " "
   );
 
   const [activePropertyId, setActivePropertyId] = useState(propertyId || null);
@@ -45,7 +53,6 @@ export function Mymessages() {
   const [newMessage, setNewMessage] = useState("");
   const [users, setUsers] = useState([]);
   const [notifications, setNotifications] = useState([]);
-  const [selectedUser, setSelectedUser] = useState({ name: null });
 
   // Logged-in user's details
   const auth = useAuth();
@@ -64,6 +71,7 @@ export function Mymessages() {
     //fetch users list, unread messages and join notifications room, upon user login.
     if (currentUserId) {
       setUsers(fetchedUsers);
+      // console.log("fetchedUsers", fetchedUsers);
       setNotifications(fetchedUnreadMessages);
       socket.emit("join_notifications", {
         currentUserId,
@@ -90,53 +98,102 @@ export function Mymessages() {
     if (!currentUserId) return;
 
     const handleReceiveMessage = (data) => {
-      const isActiveChat = data.senderId === selectedUserId;
+      console.log("Message received:", data);
+      const isActiveChat =
+        selectedUserId === data.senderId &&
+        activePropertyId === data.propertyId;
 
-      // add to messages
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          id: data.id,
           senderId: data.senderId,
           content: data.content,
           align: "left",
           createdAt: data.createdAt,
           seenAt: data.seenAt,
+          propertyId: data.propertyId,
         },
       ]);
 
-      //update last message
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.id === selectedUserId
+          user.senderId === data.senderId && user.propertyId === data.propertyId
             ? { ...user, lastMessage: data.content }
             : user
         )
       );
 
+      // Mark as read if this message belongs to the active chat
       if (isActiveChat) {
         socket.emit("mark_notifications_as_read", {
           propertyId: activePropertyId,
-          currentUserId: currentUserId,
-          selectedUserId: selectedUserId,
+          currentUserId,
+          selectedUserId,
         });
       }
     };
 
     const handleNewNotification = (notificationData) => {
-      console.log("notification received", notificationData);
-      // if not in active chat - update notification count
+      console.log("Notification received:", notificationData);
+      // only if not in active chat - update notification count
       if (notificationData.senderId !== selectedUserId) {
-        setNotifications((prev) => [notificationData, ...prev]);
+        setNotifications((prev) => [
+          ...prev,
+          {
+            ...notificationData,
+            propertyId: notificationData.propertyId,
+          },
+        ]);
       }
-      //update last message when notif received-important when chat not open
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === notificationData.senderId
-            ? { ...user, lastMessage: notificationData.content }
+
+      //   //update last message when notif received-important when chat not open
+      //   setUsers((prevUsers) =>
+      //     prevUsers.map((user) =>
+      //       user.id === notificationData.senderId &&
+      //       user.propertyId === notificationData.propertyId
+      //         ? {
+      //             ...user,
+      //             lastMessage: notificationData.content,
+      //           }
+      //         : user
+      //     )
+      //   );
+      // };
+
+      setUsers((prevUsers) => {
+        const userExists = prevUsers.some(
+          (user) =>
+            user.senderId === notificationData.senderId &&
+            user.propertyId === notificationData.propertyId
+        );
+
+        if (notificationData.type === "newMessage" && !userExists) {
+          // Add new user if it's a new chat
+          return [
+            ...prevUsers,
+            {
+              senderId: notificationData.senderId,
+              name: notificationData.name || "User", // Ensure name is available
+              lastMessage: notificationData.content,
+              lastMessageAt: notificationData.createdAt,
+              propertyId: notificationData.propertyId,
+              propertyTitle: notificationData.propertyTitle,
+            },
+          ];
+        }
+
+        // Otherwise, just update last message for existing users
+        return prevUsers.map((user) =>
+          user.senderId === notificationData.senderId &&
+          user.propertyId === notificationData.propertyId
+            ? {
+                ...user,
+                lastMessage: notificationData.content,
+                lastMessageAt: notificationData.createdAt,
+              }
             : user
-        )
-      );
+        );
+      });
     };
 
     const handleMessagesMarkedAsRead = ({ seenAt, senderId }) => {
@@ -169,29 +226,34 @@ export function Mymessages() {
   }, [auth?.user?.id, activePropertyId, selectedUserId]);
 
   const handleUserClick = (user) => {
-    //reset messages state
     setMessages([]);
-
     //join/create a chatroom
     socket.emit("join_room", {
       propertyId: user.propertyId,
       currentUserId,
-      selectedUserId: user.id,
+      selectedUserId: user.senderId,
     });
-    setSelectedUser({ name: user.name }); //to display selected user name
-    // console.log("selected user", selectedUser);
-    setSelectedUserId(user.id); //important to fetch chat data
+    console.log("User clicked:", user);
 
     const updatedPropertyId = user.propertyId || activePropertyId;
     setActivePropertyId(updatedPropertyId);
+    setSelectedUserId(user.senderId);
+    setSelectedUsername(user.name);
 
-    //mark all messages read -internally marks only updates seen status for unread messages
+    // Mark all notifications as read for this specific chat
     socket.emit("mark_notifications_as_read", {
       propertyId: updatedPropertyId,
       currentUserId: currentUserId,
-      selectedUserId: user.id,
+      selectedUserId: user.senderId,
     });
-    setNotifications((prev) => prev.filter((n) => n.senderId !== user.id));
+
+    // Remove notifications from global state for this specific chat
+    setNotifications((prev) =>
+      prev.filter(
+        (n) =>
+          n.senderId !== user.senderId || n.propertyId !== updatedPropertyId
+      )
+    );
   };
 
   const handleSendMessage = () => {
@@ -217,15 +279,34 @@ export function Mymessages() {
         createdAt: new Date(),
       },
     ]);
-
     //update last message for sender
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === selectedUserId
-          ? { ...user, lastMessage: messageContent }
-          : user
-      )
-    );
+    setUsers((prevUsers) => {
+      // Check if property already exists in the list
+      const userExists = prevUsers.some(
+        (user) => user.propertyId === activePropertyId
+      );
+
+      if (userExists) {
+        // Update existing user
+        return prevUsers.map((user) =>
+          user.propertyId === activePropertyId &&
+          user.senderId === selectedUserId
+            ? { ...user, lastMessage: messageContent }
+            : user
+        );
+      } else {
+        // Add new user to the list
+        return [
+          ...prevUsers,
+          {
+            senderId: selectedUserId,
+            name: selectedUsername,
+            lastMessage: messageContent,
+            propertyId: activePropertyId,
+          },
+        ];
+      }
+    });
 
     setNewMessage("");
   };
@@ -238,28 +319,39 @@ export function Mymessages() {
       data-active={selectedUserId !== null}
     >
       <Paper withBorder shadow="sm" className={classes.chatLeft}>
-        {users.map((user) => (
+        {users.map((user, index) => (
           <UnstyledButton
-            key={user.id}
+            key={user.index}
             onClick={() => handleUserClick(user)}
-            data-active={selectedUserId === user.id}
+            data-active={selectedUserId === user.senderId}
           >
             <Group p="xs" gap="xs" wrap="nowrap">
               <Indicator
                 label={
-                  notifications.filter((n) => n.senderId === user.id).length
+                  notifications.filter(
+                    (n) =>
+                      n.senderId === user.senderId &&
+                      n.propertyId === user.propertyId
+                  ).length
                 }
                 size={16}
                 disabled={
-                  notifications.filter((n) => n.senderId === user.id).length ===
-                  0
+                  !notifications ||
+                  notifications.filter(
+                    (n) =>
+                      n.senderId === user.senderId &&
+                      n.propertyId === user.propertyId
+                  ).length === 0
                 }
               >
                 <Avatar />
               </Indicator>
               <Stack gap={0}>
-                <Text size="sm" weight={500}>
+                <Text size="md" fw={700}>
                   {user.name}
+                </Text>
+                <Text size="sm" weight={500}>
+                  {user.propertyTitle}
                 </Text>
                 <Text size="xs" c="dimmed">
                   {user.lastMessage}
@@ -292,14 +384,14 @@ export function Mymessages() {
               >
                 <IconArrowLeft />
               </ActionIcon>
-              <Title order={3}>{selectedUser.name}</Title>
+              <Title order={3}>{selectedUsername}</Title>
             </Group>
 
             <ScrollArea style={{ height: "70vh" }}>
               <Stack p="xs">
                 {messages.map((message, index) => (
                   <Group
-                    key={message.id} //was index
+                    key={message.index} //was index first -changed to id -again to index
                     align="center"
                     justify={
                       message.align === "right" ? "flex-end" : "flex-start"

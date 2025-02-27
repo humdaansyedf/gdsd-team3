@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../prisma/index.js";
+import { addInteraction } from "../lib/interaction.js";
+import { getUserRecommendations } from "../lib/recommendationService.js";
 
 export const publicPropertyRouter = Router();
 export const propertyRouter = Router();
@@ -30,9 +32,18 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
     searchRadius,
     page = 1,
   } = req.body;
+  const userId = req.headers["x-user-id"];
   const limit = 50;
   const offset = (page - 1) * limit;
   try {
+    const isSearching =
+      (title && title.trim() !== "") ||
+      (amenities && amenities.length > 0) ||
+      (minPrice && minPrice > 0) ||
+      (maxPrice && maxPrice < 999999) ||
+      (availableFrom && availableFrom.trim() !== "") ||
+      (searchRadius && searchRadius !== "whole area");
+
     const where = {
       status: "ACTIVE",
     };
@@ -107,25 +118,33 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
     });
 
     // If no properties are found, return all properties
-    if (properties.length === 0) {
+    if (properties.length === 0 && isSearching) {
       properties = await prisma.property.findMany({
         take: limit,
         skip: offset,
-        include: {
-          media: true,
-        },
-        omit: {
-          creatorComment: true,
-          adminComment: true,
-        },
+        include: { media: true },
+        omit: { creatorComment: true, adminComment: true },
       });
     }
 
-    res.json(
-      properties.map((property) => {
-        // Get the first media item as the featured image
-        const featuredMedia = property.media[0];
+    let recommendedPropertyIds = [];
+    if (userId && !isSearching) {
+      recommendedPropertyIds = await getUserRecommendations(userId);
+    }
 
+    let formattedProperties = properties.map((property) => ({
+      ...property,
+      isRecommended: recommendedPropertyIds.includes(property.id),
+    }));
+
+    // recommended properties on top
+    const recommended = formattedProperties.filter((p) => p.isRecommended);
+    const nonRecommended = formattedProperties.filter((p) => !p.isRecommended);
+    formattedProperties = [...recommended, ...nonRecommended];
+
+    res.json(
+      formattedProperties.map((property) => {
+        const featuredMedia = property.media[0];
         return {
           ...property,
           media: featuredMedia
@@ -143,6 +162,8 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
 // Route to get a single property
 publicPropertyRouter.get("/public/property/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  const userId = req.headers["x-user-id"];
+  // console.log("in backend:", userId);
   const property = await prisma.property.findUnique({
     where: {
       id,
@@ -150,6 +171,11 @@ publicPropertyRouter.get("/public/property/:id", async (req, res) => {
     },
     include: {
       media: true,
+      user: {
+        select: {
+          name: true, // Only fetch the creator's name
+        },
+      },
     },
     omit: {
       creatorComment: true,
@@ -163,5 +189,21 @@ publicPropertyRouter.get("/public/property/:id", async (req, res) => {
   }
 
   res.json(property);
+
+  if (userId) {
+    //recording interaction
+    setImmediate(async () => {
+      try {
+        addInteraction(parseInt(userId), id, "view");
+        // console.log("added view");
+      } catch (error) {
+        console.error(
+          "Warning: Error recording interaction (background):",
+          error
+        );
+      }
+    });
+  }
+
   return;
 });

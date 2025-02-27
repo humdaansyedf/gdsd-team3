@@ -76,7 +76,9 @@ const Filters = ({ onFilter, onReset }) => {
     maxPrice: searchParams.get("maxPrice") || 5000,
     availableFrom: searchParams.get("availableFrom") || "",
     searchRadius: searchParams.get("searchRadius") || "whole area",
-    amenities: searchParams.get("amenities") ? searchParams.get("amenities").split(",") : [],
+    amenities: searchParams.get("amenities")
+      ? searchParams.get("amenities").split(",")
+      : [],
   };
 
   const form = useForm({
@@ -109,9 +111,12 @@ const Filters = ({ onFilter, onReset }) => {
         if (values.title) params.set("title", values.title);
         if (values.minPrice !== 0) params.set("minPrice", values.minPrice);
         if (values.maxPrice !== 5000) params.set("maxPrice", values.maxPrice);
-        if (values.availableFrom) params.set("availableFrom", values.availableFrom);
-        if (values.searchRadius !== "whole area") params.set("searchRadius", values.searchRadius);
-        if (values.amenities && values.amenities.length) params.set("amenities", values.amenities.join(","));
+        if (values.availableFrom)
+          params.set("availableFrom", values.availableFrom);
+        if (values.searchRadius !== "whole area")
+          params.set("searchRadius", values.searchRadius);
+        if (values.amenities && values.amenities.length)
+          params.set("amenities", values.amenities.join(","));
 
         setSearchParams(params);
         if (onFilter) {
@@ -122,7 +127,11 @@ const Filters = ({ onFilter, onReset }) => {
       <Title order={3}>Filters</Title>
       <Stack gap={4}>
         <Title order={4}>Title:</Title>
-        <TextInput placeholder="Enter query" key={form.key("title")} {...form.getInputProps("title")} />
+        <TextInput
+          placeholder="Enter query"
+          key={form.key("title")}
+          {...form.getInputProps("title")}
+        />
       </Stack>
 
       <Stack gap={4}>
@@ -216,7 +225,13 @@ const DesktopFilters = ({ showFilters }) => {
   }
 
   return (
-    <Paper withBorder p="md" shadow="sm" className={classes.filtersSection} visibleFrom="sm">
+    <Paper
+      withBorder
+      p="md"
+      shadow="sm"
+      className={classes.filtersSection}
+      visibleFrom="sm"
+    >
       <Filters />
     </Paper>
   );
@@ -230,11 +245,18 @@ const MobileFilters = ({ showFilters, toggleFilters }) => {
   );
 };
 
-const FiltersSection = ({ showDesktopFilters, showMobileFilters, toggleMobileFilters }) => {
+const FiltersSection = ({
+  showDesktopFilters,
+  showMobileFilters,
+  toggleMobileFilters,
+}) => {
   return (
     <>
       <DesktopFilters showFilters={showDesktopFilters} />
-      <MobileFilters showFilters={showMobileFilters} toggleFilters={toggleMobileFilters} />
+      <MobileFilters
+        showFilters={showMobileFilters}
+        toggleFilters={toggleMobileFilters}
+      />
     </>
   );
 };

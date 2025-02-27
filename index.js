@@ -16,7 +16,7 @@ import { profileRouter } from "./src/routes/profile.js";
 import { propertyRouter, publicPropertyRouter } from "./src/routes/property.js";
 import { wishlistRouter } from "./src/routes/wishlist.js";
 import { chatRouter } from "./src/routes/chat.js";
-import { chatHandlers } from "./chatHandlers.js";
+import { chatHandlers } from "./src/lib/chatHandlers.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -69,7 +69,16 @@ app.use("/api", authRouter, publicPropertyRouter);
 app.use("/api", authMiddleware);
 
 // Private routes
-app.use("/api", propertyRouter, fileRouter, creatorRouter, wishlistRouter, chatRouter, documentRouter, profileRouter);
+app.use(
+  "/api",
+  propertyRouter,
+  fileRouter,
+  creatorRouter,
+  wishlistRouter,
+  chatRouter,
+  documentRouter,
+  profileRouter
+);
 
 // Error handling middleware
 app.use((err, _req, res, _next) => {
