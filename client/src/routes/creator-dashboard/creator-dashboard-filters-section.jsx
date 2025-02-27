@@ -1,4 +1,14 @@
-import { Button, Select, NumberInput, SimpleGrid, Paper, Flex, Title, Group, Box } from "@mantine/core";
+import {
+  Button,
+  Select,
+  NumberInput,
+  SimpleGrid,
+  Paper,
+  Flex,
+  Title,
+  Group,
+  Box,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useSearchParams } from "react-router-dom";
 
@@ -48,8 +58,20 @@ const DashboardFiltersSection = () => {
         <Box>
           <Title order={4}>Price Range:</Title>
           <SimpleGrid cols={2} spacing="xs">
-            <NumberInput placeholder="Min. Rent" min={0} max={5000} step={50} {...form.getInputProps("minPrice")} />
-            <NumberInput placeholder="Max. Rent" min={0} max={5000} step={50} {...form.getInputProps("maxPrice")} />
+            <NumberInput
+              placeholder="Min. Rent"
+              min={0}
+              max={5000}
+              step={50}
+              {...form.getInputProps("minPrice")}
+            />
+            <NumberInput
+              placeholder="Max. Rent"
+              min={0}
+              max={5000}
+              step={50}
+              {...form.getInputProps("maxPrice")}
+            />
           </SimpleGrid>
         </Box>
 

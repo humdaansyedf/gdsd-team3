@@ -42,10 +42,10 @@ export function Mymessages() {
     propertyTitle: initialPropertyTitle,
   } = state || {};
   const [selectedUserId, setSelectedUserId] = useState(
-    initialSelectedUserId || null
+    initialSelectedUserId || null,
   );
   const [selectedUsername, setSelectedUsername] = useState(
-    initialSelectedUsername || " "
+    initialSelectedUsername || " ",
   );
 
   const [activePropertyId, setActivePropertyId] = useState(propertyId || null);
@@ -62,7 +62,7 @@ export function Mymessages() {
   const { data: fetchedMessages = [] } = useChatHistory(
     activePropertyId,
     currentUserId,
-    selectedUserId
+    selectedUserId,
   );
   const { data: fetchedUnreadMessages = [] } = useUnreadMessages(currentUserId);
 
@@ -119,8 +119,8 @@ export function Mymessages() {
         prevUsers.map((user) =>
           user.senderId === data.senderId && user.propertyId === data.propertyId
             ? { ...user, lastMessage: data.content }
-            : user
-        )
+            : user,
+        ),
       );
 
       // Mark as read if this message belongs to the active chat
@@ -164,7 +164,7 @@ export function Mymessages() {
         const userExists = prevUsers.some(
           (user) =>
             user.senderId === notificationData.senderId &&
-            user.propertyId === notificationData.propertyId
+            user.propertyId === notificationData.propertyId,
         );
 
         if (notificationData.type === "newMessage" && !userExists) {
@@ -191,7 +191,7 @@ export function Mymessages() {
                 lastMessage: notificationData.content,
                 lastMessageAt: notificationData.createdAt,
               }
-            : user
+            : user,
         );
       });
     };
@@ -200,8 +200,8 @@ export function Mymessages() {
       //update messages with seenAt time
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.senderId === senderId ? { ...msg, seenAt } : msg
-        )
+          msg.senderId === senderId ? { ...msg, seenAt } : msg,
+        ),
       );
       //update notifications count
       setNotifications((prev) => prev.filter((n) => n.senderId !== senderId));
@@ -251,8 +251,8 @@ export function Mymessages() {
     setNotifications((prev) =>
       prev.filter(
         (n) =>
-          n.senderId !== user.senderId || n.propertyId !== updatedPropertyId
-      )
+          n.senderId !== user.senderId || n.propertyId !== updatedPropertyId,
+      ),
     );
   };
 
@@ -283,7 +283,7 @@ export function Mymessages() {
     setUsers((prevUsers) => {
       // Check if property already exists in the list
       const userExists = prevUsers.some(
-        (user) => user.propertyId === activePropertyId
+        (user) => user.propertyId === activePropertyId,
       );
 
       if (userExists) {
@@ -292,7 +292,7 @@ export function Mymessages() {
           user.propertyId === activePropertyId &&
           user.senderId === selectedUserId
             ? { ...user, lastMessage: messageContent }
-            : user
+            : user,
         );
       } else {
         // Add new user to the list
@@ -331,7 +331,7 @@ export function Mymessages() {
                   notifications.filter(
                     (n) =>
                       n.senderId === user.senderId &&
-                      n.propertyId === user.propertyId
+                      n.propertyId === user.propertyId,
                   ).length
                 }
                 size={16}
@@ -340,7 +340,7 @@ export function Mymessages() {
                   notifications.filter(
                     (n) =>
                       n.senderId === user.senderId &&
-                      n.propertyId === user.propertyId
+                      n.propertyId === user.propertyId,
                   ).length === 0
                 }
               >

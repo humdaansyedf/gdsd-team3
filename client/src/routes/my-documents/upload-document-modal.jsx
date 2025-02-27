@@ -18,7 +18,11 @@ const UploadDocumentModal = ({ opened, onClose, fetchDocuments }) => {
 
     try {
       console.log("Requesting signed URL...");
-      const response = await axios.post("/api/document", { name: file.name }, { withCredentials: true });
+      const response = await axios.post(
+        "/api/document",
+        { name: file.name },
+        { withCredentials: true },
+      );
       console.log("Signed URL response:", response.data);
 
       const uploadUrl = response.data.data.url; // Fix here
@@ -35,7 +39,10 @@ const UploadDocumentModal = ({ opened, onClose, fetchDocuments }) => {
       fetchDocuments();
       onClose();
     } catch (error) {
-      console.error("Error uploading document:", error.response?.data || error.message);
+      console.error(
+        "Error uploading document:",
+        error.response?.data || error.message,
+      );
       setError("Upload failed. Please try again.");
     } finally {
       setUploading(false);

@@ -7,6 +7,22 @@ import { hash, verify } from "@node-rs/argon2";
 import { prisma } from "../prisma/index.js";
 import { IS_DEV } from "../lib/utils.js";
 
+// CONFIG
+const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+const SESSION_REFRESH_WINDOW_MS = 12 * 60 * 60 * 1000; // 12 hours
+const ARGON2_CONFIG = {
+  memoryCost: 19456,
+  timeCost: 2,
+  outputLen: 32,
+  parallelism: 1,
+};
+
+const COOKIE_CONFIG = {
+  httpOnly: true,
+  sameSite: "lax",
+  secure: !IS_DEV,
+};
+
 // AUTH UTILS
 function generateSessionToken() {
   const bytes = new Uint8Array(20);
@@ -20,7 +36,7 @@ async function createSession(token, userId) {
   const session = {
     id: sessionId,
     userId,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
   };
   await prisma.session.create({
     data: {
@@ -56,8 +72,8 @@ async function validateSessionToken(token) {
     await prisma.session.delete({ where: { id: sessionId } });
     return { session: null, user: null };
   }
-  if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 12) {
-    session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24);
+  if (Date.now() >= session.expiresAt.getTime() - SESSION_REFRESH_WINDOW_MS) {
+    session.expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
     await prisma.session.update({
       where: {
         id: session.id,
@@ -100,16 +116,16 @@ const registerSchema = z.discriminatedUnion("type", [
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     name: z.string().min(2, "Name must be at least 2 characters long"),
-    phone: z.string().optional(),
-    address: z.string().optional(),
+    phone: z.string().nullish(),
+    address: z.string().nullish(),
     type: userType.extract(["LANDLORD"]),
   }),
   z.object({
     email: z.string().email("Invalid email address").endsWith("hs-fulda.de", "Email must be a HS-Fulda email"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     name: z.string().min(2, "Name must be at least 2 characters long"),
-    phone: z.string().optional(),
-    address: z.string().optional(),
+    phone: z.string().nullish(),
+    address: z.string().nullish(),
     type: userType.extract(["STUDENT"]),
   }),
 ]);
@@ -135,12 +151,7 @@ authRouter.post("/register", async (req, res) => {
   }
 
   try {
-    const passwordHash = await hash(password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    });
+    const passwordHash = await hash(password, ARGON2_CONFIG);
 
     await prisma.user.create({
       data: {
@@ -189,12 +200,7 @@ authRouter.post("/login", async (req, res) => {
     return res.status(400).json({ message: "Invalid email or password" });
   }
 
-  const validPassword = await verify(user.passwordHash, password, {
-    memoryCost: 19456,
-    timeCost: 2,
-    outputLen: 32,
-    parallelism: 1,
-  });
+  const validPassword = await verify(user.passwordHash, password, ARGON2_CONFIG);
 
   if (!validPassword) {
     return res.status(400).json({ message: "Invalid email or password" });
@@ -205,10 +211,8 @@ authRouter.post("/login", async (req, res) => {
     const session = await createSession(token, user.id);
 
     res.cookie("auth_session", token, {
-      httpOnly: true,
-      sameSite: "lax",
+      ...COOKIE_CONFIG,
       expires: session.expiresAt,
-      secure: !IS_DEV,
     });
     return res.json({ message: "Logged in" });
   } catch (e) {
@@ -220,11 +224,7 @@ authRouter.post("/logout", authMiddleware, async (req, res) => {
   try {
     await invalidateSession(req.session.id);
 
-    res.clearCookie("auth_session", {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: !IS_DEV,
-    });
+    res.clearCookie("auth_session", COOKIE_CONFIG);
 
     return res.json({ message: "Logged out" });
   } catch (e) {

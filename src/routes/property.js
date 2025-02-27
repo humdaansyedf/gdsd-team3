@@ -158,7 +158,7 @@ publicPropertyRouter.post("/public/property/search", async (req, res) => {
             ? featuredMedia.url
             : "https://gdsd.s3.eu-central-1.amazonaws.com/public/fulda.png",
         };
-      })
+      }),
     );
   } catch (error) {
     console.log(error);
@@ -206,7 +206,7 @@ publicPropertyRouter.get("/public/property/:id", async (req, res) => {
       } catch (error) {
         console.error(
           "Warning: Error recording interaction (background):",
-          error
+          error,
         );
       }
     });

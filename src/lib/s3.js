@@ -1,4 +1,8 @@
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 
 // Initialize the S3 client
 const s3Client = new S3Client({
@@ -9,7 +13,6 @@ const s3Client = new S3Client({
   },
 });
 
-// Upload Function
 export const uploadObject = async ({ Bucket, Key, Body, ContentType }) => {
   try {
     const command = new PutObjectCommand({
@@ -27,12 +30,11 @@ export const uploadObject = async ({ Bucket, Key, Body, ContentType }) => {
   }
 };
 
-// Function to delete an image from S3
 export const deleteImageFromS3 = async (key) => {
   try {
     const command = new DeleteObjectCommand({
       Bucket: process.env.APP_AWS_BUCKET_NAME,
-      Key: key, // File key in the bucket
+      Key: key,
     });
 
     await s3Client.send(command);

@@ -17,26 +17,6 @@ import "./grid-view.css";
 const DefaultPropertyCard = ({ property }) => {
   return (
     <Card withBorder p="md" shadow="sm">
-      {property.isRecommended && (
-        <Tooltip
-          label={property.reasons.join(", ")}
-          withArrow
-          position="top-start"
-        >
-          <Badge
-            variant="gradient"
-            gradient={{ from: "teal", to: "lime", deg: 105 }}
-            style={{
-              position: "absolute",
-              top: 10,
-              left: 10,
-              zIndex: 10,
-            }}
-          >
-            Recommended
-          </Badge>
-        </Tooltip>
-      )}
       <Card.Section>
         <Image
           src={property.media}
@@ -47,6 +27,26 @@ const DefaultPropertyCard = ({ property }) => {
             objectFit: "cover",
           }}
         />
+        {property.isRecommended && (
+          <Tooltip
+            label={property.reasons.join(", ")}
+            withArrow
+            position="top-start"
+          >
+            <Badge
+              variant="gradient"
+              gradient={{ from: "teal", to: "lime", deg: 105 }}
+              style={{
+                position: "absolute",
+                top: 10,
+                left: 10,
+                zIndex: 10,
+              }}
+            >
+              Recommended
+            </Badge>
+          </Tooltip>
+        )}
       </Card.Section>
       <Title mt="sm" order={4}>
         {property.title}
@@ -98,7 +98,7 @@ export const GridView = ({ properties, renderCard }) => {
   return (
     <div className="property-grid">
       {properties.map((property) => {
-        const CardComponent = renderCard || DefaultPropertyCard; // use renderCard prop or DefaultPropertyCard
+        const CardComponent = renderCard || DefaultPropertyCard;
         return <CardComponent key={property.id} property={property} />;
       })}
     </div>

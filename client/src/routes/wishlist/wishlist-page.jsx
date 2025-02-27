@@ -38,7 +38,9 @@ export const WishlistPage = () => {
       </Title>
 
       {wishlist.length === 0 ? (
-        <Alert color="gray" fw={700}>No wishlisted properties</Alert>
+        <Alert color="gray" fw={700}>
+          No wishlisted properties
+        </Alert>
       ) : (
         <>
           <Button
@@ -58,7 +60,11 @@ export const WishlistPage = () => {
           <Modal
             opened={compareModalOpen}
             onClose={() => setCompareModalOpen(false)}
-            title={<span style={{ fontWeight: "bold", fontSize: "20px" }}>Compare Properties</span>}
+            title={
+              <span style={{ fontWeight: "bold", fontSize: "20px" }}>
+                Compare Properties
+              </span>
+            }
             size="xl"
           >
             <CompareTable properties={selectedProperties} />

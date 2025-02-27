@@ -53,7 +53,12 @@ export function Footer() {
           © 2024 NeuAnfang. All rights reserved.
         </Text>
 
-        <Group gap={0} className={classes.social} justify="flex-end" wrap="nowrap">
+        <Group
+          gap={0}
+          className={classes.social}
+          justify="flex-end"
+          wrap="nowrap"
+        >
           <ActionIcon size="lg" color="gray" variant="subtle">
             <IconBrandTwitter size={18} stroke={1.5} />
           </ActionIcon>
@@ -68,7 +73,8 @@ export function Footer() {
 
       {/* Disclaimer Section */}
       <div className={classes.disclaimer}>
-        FOR DEMONSTRATION ONLY. Fulda University of Applied Sciences Software Engineering Project, Fall 2024.
+        FOR DEMONSTRATION ONLY. Fulda University of Applied Sciences Software
+        Engineering Project, Fall 2024.
       </div>
     </footer>
   );

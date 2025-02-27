@@ -1,19 +1,19 @@
 .tableContainer {
-    background-color: rgb(231, 251, 201);
-    border-radius: 8px;
-  }
-  
-  th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  th {
-    text-align: left;
-    font-weight: bold;
-  }
-  
-  td {
-    text-align: center;
-  }
-  
+  background-color: rgb(231, 251, 201);
+  border-radius: 8px;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  text-align: left;
+  font-weight: bold;
+}
+
+td {
+  text-align: center;
+}

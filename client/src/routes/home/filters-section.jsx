@@ -85,7 +85,8 @@ const Filters = ({ onFilter, onReset }) => {
     mode: "uncontrolled",
     initialValues: initialValues,
     validate: {
-      title: (value) => (value.length > 40 ? "Title must be less than 40 characters" : null),
+      title: (value) =>
+        value.length > 40 ? "Title must be less than 40 characters" : null,
       minPrice: (value, values) => {
         if (value > values.maxPrice) {
           return "Min. Price must be less than Max. Price";

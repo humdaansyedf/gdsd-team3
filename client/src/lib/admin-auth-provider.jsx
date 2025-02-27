@@ -1,12 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  Button,
-  Container,
-  Paper,
-  PasswordInput,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Button, Container, Paper, PasswordInput, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
 import { AdminAuthContext } from "./admin-auth-context";
@@ -15,36 +8,44 @@ function AdminLogin() {
   const queryClient = useQueryClient();
   const loginMutation = useMutation({
     mutationFn: async (values) => {
-      const response = await fetch(`/api/admin/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-        }),
-      });
-      const data = await response.json();
-      queryClient.refetchQueries({
-        queryKey: ["admin/me"],
-      });
-
-      if (response.ok) {
-        notifications.show({
-          title: "Login successful",
-          message: "You have successfully logged in",
-          color: "green",
+      try {
+        const response = await fetch(`/api/admin/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password,
+          }),
         });
-      } else {
+        const data = await response.json();
+        queryClient.refetchQueries({
+          queryKey: ["admin/me"],
+        });
+
+        if (response.ok) {
+          notifications.show({
+            title: "Login successful",
+            message: "You have successfully logged in",
+            color: "green",
+          });
+        } else {
+          notifications.show({
+            title: "Failed to login",
+            message: data.message,
+            color: "red",
+          });
+        }
+
+        return data;
+      } catch (e) {
         notifications.show({
           title: "Failed to login",
-          message: data.message,
+          message: e.message,
           color: "red",
         });
       }
-
-      return data;
     },
   });
 
@@ -56,8 +57,7 @@ function AdminLogin() {
     },
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      password: (value) =>
-        value.length < 8 ? "Password must have at least 8 letters" : null,
+      password: (value) => (value.length < 8 ? "Password must have at least 8 letters" : null),
     },
   });
 
@@ -87,12 +87,7 @@ function AdminLogin() {
           {...form.getInputProps("password")}
           disabled={loginMutation.isPending}
         />
-        <Button
-          type="submit"
-          fullWidth
-          mt="xl"
-          loading={loginMutation.isPending}
-        >
+        <Button type="submit" fullWidth mt="xl" loading={loginMutation.isPending}>
           Sign in as admin
         </Button>
       </Paper>
@@ -137,8 +132,8 @@ export const AdminAuthProvider = ({ children }) => {
     return null;
   }
 
-  // If the query is done and the user is not an admin, show the login page
-  if (!adminQuery.data) {
+  // If the user is not an admin, show the login form
+  if (!adminQuery.data || adminQuery.error) {
     return <AdminLogin />;
   }
 

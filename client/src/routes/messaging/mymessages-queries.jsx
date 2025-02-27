@@ -7,7 +7,7 @@ export const useChatUsers = (currentUserId) => {
     queryFn: async () => {
       if (!currentUserId) return [];
       const response = await fetch(
-        `/api/chats/users?currentUserId=${currentUserId}`
+        `/api/chats/users?currentUserId=${currentUserId}`,
       );
 
       if (!response.ok) {
@@ -24,7 +24,7 @@ export const useChatHistory = (propertyId, currentUserId, selectedUserId) => {
     queryFn: async () => {
       if (!propertyId || !currentUserId || !selectedUserId) return [];
       const response = await fetch(
-        `/api/chats/${propertyId}/${currentUserId}/${selectedUserId}`
+        `/api/chats/${propertyId}/${currentUserId}/${selectedUserId}`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch chat history");
@@ -42,7 +42,7 @@ export const useUnreadMessages = (currentUserId) => {
     queryFn: async () => {
       if (!currentUserId) return [];
       const response = await fetch(
-        `/api/messages/unread?currentUserId=${currentUserId}`
+        `/api/messages/unread?currentUserId=${currentUserId}`,
       );
 
       if (!response.ok) {
