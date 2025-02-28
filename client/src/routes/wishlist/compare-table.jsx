@@ -1,6 +1,4 @@
-import React from "react";
-import { Table, Text, Paper } from "@mantine/core";
-import classes from "./compare-table.module.css";
+import { Table, Text } from "@mantine/core";
 
 const AMENITIES_MAP = {
   pets: "Pets Allowed",
@@ -27,87 +25,66 @@ export function CompareTable({ properties }) {
   }
 
   return (
-    <Paper shadow="sm" radius="md" p="lg" className={classes.tableContainer}>
-      <Table striped highlightOnHover withBorder>
-        <thead>
-          <tr>
-            <th style={{ borderRight: "2px solid #ddd" }}>Attribute</th>
+    <Table.ScrollContainer>
+      <Table withColumnBorders withRowBorders withTableBorder>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th miw={140}>Attribute</Table.Th>
             {properties.map((prop) => (
-              <th
-                key={prop.id}
-                style={{ borderRight: "2px solid #ddd", textAlign: "center" }}
-              >
+              <Table.Th key={prop.id} miw={200}>
                 {prop.title}
-              </th>
+              </Table.Th>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style={{ borderRight: "2px solid #ddd" }}>Total Rent (€)</td>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          <Table.Tr>
+            <Table.Td>Total Rent (€)</Table.Td>
             {properties.map((prop) => (
-              <td
-                key={prop.id}
-                style={{ borderRight: "2px solid #ddd", textAlign: "center" }}
-              >
-                €{prop.totalRent}
-              </td>
+              <Table.Td key={prop.id}>€{prop.totalRent}</Table.Td>
             ))}
-          </tr>
-          <tr>
-            <td style={{ borderRight: "2px solid #ddd" }}>Sublet?</td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Sublet?</Table.Td>
             {properties.map((prop) => (
-              <td
-                key={prop.id}
-                style={{ borderRight: "2px solid #ddd", textAlign: "center" }}
-              >
-                {prop.isSublet ? "Yes" : "No"}
-              </td>
+              <Table.Td key={prop.id}>{prop.isSublet ? "Yes" : "No"}</Table.Td>
             ))}
-          </tr>
-          <tr>
-            <td style={{ borderRight: "2px solid #ddd" }}>Pets Allowed?</td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Pets Allowed?</Table.Td>
             {properties.map((prop) => (
-              <td
-                key={prop.id}
-                style={{ borderRight: "2px solid #ddd", textAlign: "center" }}
-              >
-                {prop.pets ? "Yes" : "No"}
-              </td>
+              <Table.Td key={prop.id}>{prop.pets ? "Yes" : "No"}</Table.Td>
             ))}
-          </tr>
-          <tr>
-            <td style={{ borderRight: "2px solid #ddd" }}>Smoking Allowed?</td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>Smoking Allowed?</Table.Td>
             {properties.map((prop) => (
-              <td
-                key={prop.id}
-                style={{ borderRight: "2px solid #ddd", textAlign: "center" }}
-              >
-                {prop.smoking ? "Yes" : "No"}
-              </td>
+              <Table.Td key={prop.id}>{prop.smoking ? "Yes" : "No"}</Table.Td>
             ))}
-           </tr>
+          </Table.Tr>
 
-            <tr>
-                <td style={{ borderRight: "2px solid #ddd" }}>Amenities</td>
-                {properties.map((prop) => {
-                    const availableAmenities = Object.entries(AMENITIES_MAP)
-                    .filter(([key]) => prop[key])
-                    .map(([_, label]) => label);
+          <Table.Tr>
+            <Table.Td>Amenities</Table.Td>
+            {properties.map((prop) => {
+              const availableAmenities = Object.entries(AMENITIES_MAP)
+                .filter(([key]) => prop[key])
+                .map(([_, label]) => label);
 
-                    return (
-                    <td key={prop.id} style={{ borderRight: "2px solid #ddd" }}>
-                        {availableAmenities.length > 0 ? (
-                        <Text size="sm">{availableAmenities.join(", ")}</Text>
-                        ) : (
-                        <Text size="sm" c="dimmed">No amenities listed</Text>
-                        )}
-                    </td>
-                    );
-                })}
-            </tr>
-        </tbody>
+              return (
+                <Table.Td key={prop.id}>
+                  {availableAmenities.length > 0 ? (
+                    <Text size="sm">{availableAmenities.join(", ")}</Text>
+                  ) : (
+                    <Text size="sm" c="dimmed">
+                      No amenities listed
+                    </Text>
+                  )}
+                </Table.Td>
+              );
+            })}
+          </Table.Tr>
+        </Table.Tbody>
       </Table>
-    </Paper>
+    </Table.ScrollContainer>
   );
 }

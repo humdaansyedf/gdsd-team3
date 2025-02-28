@@ -1,9 +1,4 @@
-import {
-  APIProvider,
-  Map,
-  Marker,
-  InfoWindow,
-} from "@vis.gl/react-google-maps";
+import { APIProvider, Map, Marker, InfoWindow } from "@vis.gl/react-google-maps";
 import { Paper, Text, Badge, ActionIcon, Flex, Tooltip } from "@mantine/core";
 import { IconDog, IconSmoking } from "@tabler/icons-react";
 import { useState } from "react";
@@ -11,19 +6,27 @@ import { useState } from "react";
 export const WishlistMapView = ({ properties }) => {
   const [selectedProperty, setSelectedProperty] = useState(null);
 
+  const defaultBounds = {};
+  defaultBounds.north = Math.max(...properties.map((p) => p.latitude));
+  defaultBounds.south = Math.min(...properties.map((p) => p.latitude));
+  defaultBounds.east = Math.max(...properties.map((p) => p.longitude));
+  defaultBounds.west = Math.min(...properties.map((p) => p.longitude));
+  const defaultCenter = {
+    lat: (defaultBounds.north + defaultBounds.south) / 2,
+    lng: (defaultBounds.east + defaultBounds.west) / 2,
+  };
+  const defaultZoom = 12;
+
   return (
     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <Map
-        defaultCenter={{
-          lat: properties[0]?.latitude || 50.52,
-          lng: properties[0]?.longitude || 9.67,
-        }}
-        defaultZoom={12}
+        defaultBounds={defaultBounds}
+        defaultCenter={defaultCenter}
+        defaultZoom={defaultZoom}
         disableDefaultUI={true}
         style={{
           width: "100%",
           height: "300px",
-          marginTop: "20px",
           borderRadius: "8px",
         }}
       >

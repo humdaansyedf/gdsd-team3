@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../../lib/auth-context";
 import { useWishlist } from "./wishlist-queries";
 import { Alert, Title, Button, Modal } from "@mantine/core";
@@ -43,32 +43,19 @@ export const WishlistPage = () => {
         </Alert>
       ) : (
         <>
-          <Button
-            mb="md"
-            onClick={() => setCompareModalOpen(true)}
-            disabled={selectedIds.length < 2}
-          >
+          <Button mb="md" onClick={() => setCompareModalOpen(true)} disabled={selectedIds.length < 2}>
             Compare Selected ({selectedIds.length})
           </Button>
 
-          <WishlistCompareView
-            properties={wishlist}
-            selectedIds={selectedIds}
-            onToggleSelect={toggleSelect}
-          />
+          <WishlistCompareView properties={wishlist} selectedIds={selectedIds} onToggleSelect={toggleSelect} />
 
           <Modal
             opened={compareModalOpen}
             onClose={() => setCompareModalOpen(false)}
-            title={
-              <span style={{ fontWeight: "bold", fontSize: "20px" }}>
-                Compare Properties
-              </span>
-            }
+            title={<span style={{ fontWeight: "bold", fontSize: "20px" }}>Compare Properties</span>}
             size="xl"
           >
             <CompareTable properties={selectedProperties} />
-
             <WishlistMapView properties={selectedProperties} />
           </Modal>
         </>
