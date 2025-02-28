@@ -1,6 +1,5 @@
 import "dotenv/config";
 import cors from "cors";
-import helmet from "helmet";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { createServer } from "node:http";
@@ -52,35 +51,6 @@ io.on("connection", (socket) => {
 // Disable some headers
 app.set("etag", false);
 app.set("x-powered-by", false);
-
-// Security Headers
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "script-src": ["'self'", "https://maps.googleapis.com", "https://maps.gstatic.com"],
-        "img-src": [
-          "'self'",
-          "data:",
-          "https://gdsd.s3.eu-central-1.amazonaws.com",
-          "https://*.googleapis.com",
-          "https://*.gstatic.com",
-          "https://maps.google.com",
-        ],
-        "connect-src": [
-          "'self'",
-          "ws:",
-          "wss:",
-          "https://*.googleapis.com",
-          "https://gdsd.s3.eu-central-1.amazonaws.com",
-        ],
-      },
-    },
-    crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-  })
-);
 
 // Enable CORS
 app.use(cors(SERVER_CONFIG.cors));
