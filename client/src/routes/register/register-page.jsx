@@ -26,8 +26,8 @@ export function Register() {
         body: JSON.stringify({
           name: values.name,
           email: values.email,
-          phone: values.phone,
-          address: values.address,
+          phone: values.phone || null,
+          address: values.address || null,
           password: values.password,
           type: values.type,
         }),
@@ -88,9 +88,7 @@ export function Register() {
         return null;
       },
       password: (value) => {
-        return value.length < 8
-          ? "Password must have at least 8 letters"
-          : null;
+        return value.length < 8 ? "Password must have at least 8 letters" : null;
       },
       confirmPassword: (value, values) => {
         return value !== values.password ? "Passwords do not match" : null;
@@ -185,12 +183,7 @@ export function Register() {
           />
         </Group>
 
-        <Button
-          type="submit"
-          fullWidth
-          mt="xl"
-          loading={registerMutation.isPending}
-        >
+        <Button type="submit" fullWidth mt="xl" loading={registerMutation.isPending}>
           Create account
         </Button>
       </Paper>
