@@ -54,7 +54,16 @@ app.set("etag", false);
 app.set("x-powered-by", false);
 
 // Security Headers
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "img-src": ["'self'", "data:", "https://gdsd.s3.eu-central-1.amazonaws.com"],
+      },
+    },
+  })
+);
 
 // Enable CORS
 app.use(cors(SERVER_CONFIG.cors));
