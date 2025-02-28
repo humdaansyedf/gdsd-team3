@@ -1,22 +1,7 @@
 import { Button, Container, TextInput } from "@mantine/core";
-import {
-  IconDoor,
-  IconTextSize,
-  IconTrashXFilled,
-  IconWall,
-  IconWindow,
-} from "@tabler/icons-react";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Group,
-  Layer,
-  Line,
-  Path,
-  Rect,
-  Stage,
-  Text,
-  Transformer,
-} from "react-konva";
+import { IconDoor, IconSparkles, IconTextSize, IconTrashXFilled, IconWall, IconWindow } from "@tabler/icons-react";
+import { useEffect, useRef, useState } from "react";
+import { Group, Layer, Line, Path, Rect, Stage, Text, Transformer } from "react-konva";
 
 const FloorPlanner = () => {
   const [objects, setObjects] = useState([]);
@@ -333,16 +318,14 @@ const FloorPlanner = () => {
               width: Math.max(5, obj.width * scaleX),
               height: Math.max(5, obj.height * scaleY),
             }
-          : obj,
-      ),
+          : obj
+      )
     );
   };
 
   const handleDelete = () => {
     if (selectedId) {
-      setObjects((prevObjects) =>
-        prevObjects.filter((obj) => obj.id !== selectedId),
-      );
+      setObjects((prevObjects) => prevObjects.filter((obj) => obj.id !== selectedId));
       setSelectedId(null);
     }
   };
@@ -358,9 +341,7 @@ const FloorPlanner = () => {
 
   const handleTextBlur = () => {
     setObjects((prevObjects) =>
-      prevObjects.map((obj) =>
-        obj.id === editingTextId ? { ...obj, text: textValue } : obj,
-      ),
+      prevObjects.map((obj) => (obj.id === editingTextId ? { ...obj, text: textValue } : obj))
     );
     setEditingTextId(null);
   };
@@ -425,15 +406,7 @@ const FloorPlanner = () => {
               onClick={() => handleSelect(obj.id)}
               onTransformEnd={(e) => handleTransformEnd(e, obj.id)}
             >
-              {obj.type === "wall" && (
-                <Rect
-                  x={0}
-                  y={0}
-                  width={obj.width}
-                  height={obj.height}
-                  fill="black"
-                />
-              )}
+              {obj.type === "wall" && <Rect x={0} y={0} width={obj.width} height={obj.height} fill="black" />}
               {obj.type === "door" && (
                 <Group>
                   {/* Door Rectangle */}
@@ -458,36 +431,12 @@ const FloorPlanner = () => {
               {obj.type === "window" && (
                 <Group>
                   {/* Outer Frame */}
-                  <Rect
-                    x={0}
-                    y={0}
-                    width={100}
-                    height={20}
-                    stroke="black"
-                    strokeWidth={2}
-                    fill="white"
-                  />
+                  <Rect x={0} y={0} width={100} height={20} stroke="black" strokeWidth={2} fill="white" />
                   {/* Left and Right Sections */}
-                  <Line
-                    points={[20, 0, 20, 20]}
-                    stroke="black"
-                    strokeWidth={2}
-                  />
-                  <Line
-                    points={[80, 0, 80, 20]}
-                    stroke="black"
-                    strokeWidth={2}
-                  />
+                  <Line points={[20, 0, 20, 20]} stroke="black" strokeWidth={2} />
+                  <Line points={[80, 0, 80, 20]} stroke="black" strokeWidth={2} />
                   {/* Inner Fixed Middle Section */}
-                  <Rect
-                    x={25}
-                    y={5}
-                    width={50}
-                    height={10}
-                    stroke="black"
-                    strokeWidth={2}
-                    fill="white"
-                  />
+                  <Rect x={25} y={5} width={50} height={10} stroke="black" strokeWidth={2} fill="white" />
                 </Group>
               )}
               {obj.type === "text" && (
@@ -504,10 +453,7 @@ const FloorPlanner = () => {
               )}
             </Group>
           ))}
-          <Transformer
-            ref={transformerRef}
-            enabledAnchors={["middle-left", "middle-right"]}
-          />
+          <Transformer ref={transformerRef} enabledAnchors={["middle-left", "middle-right"]} />
         </Layer>
       </Stage>
       <div
@@ -523,20 +469,10 @@ const FloorPlanner = () => {
           opacity: 0.8,
         }}
       >
-        <Button
-          leftSection={<IconWall size={16} />}
-          color="green"
-          variant="light"
-          onClick={() => addObject("wall")}
-        >
+        <Button leftSection={<IconWall size={16} />} color="green" variant="light" onClick={() => addObject("wall")}>
           Wall
         </Button>
-        <Button
-          leftSection={<IconDoor size={16} />}
-          color="green"
-          variant="light"
-          onClick={() => addObject("door")}
-        >
+        <Button leftSection={<IconDoor size={16} />} color="green" variant="light" onClick={() => addObject("door")}>
           Door
         </Button>
         <Button
@@ -547,44 +483,29 @@ const FloorPlanner = () => {
         >
           Window
         </Button>
-        <Button
-          leftSection={<IconTextSize size={16} />}
-          color="blue"
-          variant="light"
-          onClick={() => addObject("text")}
-        >
+        <Button leftSection={<IconTextSize size={16} />} color="blue" variant="light" onClick={() => addObject("text")}>
           Text
         </Button>
-        <Button
-          leftSection={<IconTrashXFilled size={16} />}
-          onClick={handleDelete}
-          variant="light"
-          color="red"
-        >
+        <Button leftSection={<IconTrashXFilled size={16} />} onClick={handleDelete} variant="light" color="red">
           Bin
         </Button>
       </div>
       {editingTextId && (
         <div style={{ position: "absolute", top: 20, right: 150 }}>
-          <TextInput
-            value={textValue}
-            onChange={handleTextChange}
-            onBlur={handleTextBlur}
-            placeholder="Edit text"
-          />
+          <TextInput value={textValue} onChange={handleTextChange} onBlur={handleTextBlur} placeholder="Edit text" />
         </div>
       )}
       <Button
         onClick={exportCanvas}
         variant="gradient"
         gradient={{
-          from: "rgb(189, 253, 162)",
-          to: "rgba(80, 191, 40, 1)",
-          deg: 153,
+          from: "#51cf66",
+          to: "#94d82d",
         }}
+        rightSection={<IconSparkles size={16} />}
         style={{ position: "absolute", top: 20, right: 40 }}
       >
-        Export ✨
+        Export
       </Button>
     </Container>
   );

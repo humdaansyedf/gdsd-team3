@@ -23,6 +23,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { ImageUploader } from "../../components/ImageUploader/ImageUploader";
 import { PriceRecommendationModal } from "../../components/PriceRecommendationModal/PriceRecommendationModal.jsx";
+import { IconSparkles } from "@tabler/icons-react";
 
 const libraries = ["places"];
 
@@ -30,8 +31,7 @@ export const CreateAdPage = () => {
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
   const [recommendedPrice, setRecommendedPrice] = useState(null);
-  const [isModalOpen, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
+  const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [finalPayload, setFinalPayload] = useState(null); // Store predicted price
 
   const form = useForm({
@@ -79,39 +79,24 @@ export const CreateAdPage = () => {
 
     validate: {
       title: (value) =>
-        value?.trim().length < 5 || value.trim().length > 100
-          ? "Title must be between 5 and 100 characters."
-          : null,
+        value?.trim().length < 5 || value.trim().length > 100 ? "Title must be between 5 and 100 characters." : null,
       propertyType: (value) => (!value ? "Property Type is required" : null),
       description: (value) =>
         value?.trim().length < 10 || value.trim().length > 2000
           ? "Description must be between 10 and 2000 characters."
           : null,
-      address1: (value) =>
-        !value || !value.trim() ? "Address is required" : null,
-      coldRent: (value) =>
-        value <= 0 ? "Cold Rent must be greater than 0" : null,
-      totalRent: (value) =>
-        value <= 0 ? "Total Rent must be greater than 0" : null,
-      additionalCosts: (value) =>
-        value < 0 ? "Additional Costs cannot be negative" : null,
+      address1: (value) => (!value || !value.trim() ? "Address is required" : null),
+      coldRent: (value) => (value <= 0 ? "Cold Rent must be greater than 0" : null),
+      totalRent: (value) => (value <= 0 ? "Total Rent must be greater than 0" : null),
+      additionalCosts: (value) => (value < 0 ? "Additional Costs cannot be negative" : null),
       deposit: (value) => (value < 0 ? "Deposit cannot be negative" : null),
-      numberOfRooms: (value) =>
-        value < 1 ? "Number of Rooms must be at least 1" : null,
-      numberOfBeds: (value) =>
-        value < 0 ? "Number of Beds cannot be negative" : null,
-      numberOfBaths: (value) =>
-        value < 0 ? "Number of Baths cannot be negative" : null,
-      livingSpaceSqm: (value) =>
-        value <= 0 ? "Living Space must be greater than 0" : null,
-      availableFrom: (value) =>
-        !value ? "Available From date is required" : null,
-      yearBuilt: (value) =>
-        value && isNaN(Number(value))
-          ? "Year Built must be a valid year"
-          : null,
-      media: (value) =>
-        value.length === 0 ? "At least one image must be uploaded." : null,
+      numberOfRooms: (value) => (value < 1 ? "Number of Rooms must be at least 1" : null),
+      numberOfBeds: (value) => (value < 0 ? "Number of Beds cannot be negative" : null),
+      numberOfBaths: (value) => (value < 0 ? "Number of Baths cannot be negative" : null),
+      livingSpaceSqm: (value) => (value <= 0 ? "Living Space must be greater than 0" : null),
+      availableFrom: (value) => (!value ? "Available From date is required" : null),
+      yearBuilt: (value) => (value && isNaN(Number(value)) ? "Year Built must be a valid year" : null),
+      media: (value) => (value.length === 0 ? "At least one image must be uploaded." : null),
     },
   });
 
@@ -147,9 +132,7 @@ export const CreateAdPage = () => {
   };
 
   const handleImageDelete = (deletedUrl) => {
-    const updatedMedia = form.values.media.filter(
-      (image) => image.url !== deletedUrl,
-    );
+    const updatedMedia = form.values.media.filter((image) => image.url !== deletedUrl);
     form.setFieldValue("media", updatedMedia);
   };
 
@@ -205,9 +188,7 @@ export const CreateAdPage = () => {
       ...updatedFields,
       status: "PENDING",
       availableFrom: values.availableFrom.toISOString().substring(0, 10),
-      media: updatedFields.media
-        ? updatedFields.media.map((item) => ({ url: item.url }))
-        : [],
+      media: updatedFields.media ? updatedFields.media.map((item) => ({ url: item.url })) : [],
       yearBuilt: values.yearBuilt
         ? new Date(values.yearBuilt).getFullYear().toString() // Keep valid year as string
         : "0000", // Fallback value
@@ -238,24 +219,20 @@ export const CreateAdPage = () => {
           component={Link}
           to="/floor-planner"
           variant="gradient"
-          radius="xl"
           gradient={{
-            from: "rgb(217, 255, 200)",
-            to: "rgba(80, 191, 40, 1)",
-            deg: 347,
+            from: "#51cf66",
+            to: "#94d82d",
           }}
+          rightSection={<IconSparkles size={16} />}
         >
-          Floor Planner ✨
+          Floor Planner
         </Button>
       </Flex>
 
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Stack mt="lg" gap="lg">
           <div>
-            <ImageUploader
-              onUpload={handleImageUpload}
-              onDelete={handleImageDelete}
-            />
+            <ImageUploader onUpload={handleImageUpload} onDelete={handleImageDelete} />
             {form.errors.media && (
               <Text size="xs" c="red" mt={4}>
                 {form.errors.media}
@@ -264,12 +241,7 @@ export const CreateAdPage = () => {
           </div>
 
           <SimpleGrid cols={{ base: 1, sm: 2 }}>
-            <TextInput
-              label="Ad Title"
-              placeholder="Enter Ad Title"
-              withAsterisk
-              {...form.getInputProps("title")}
-            />
+            <TextInput label="Ad Title" placeholder="Enter Ad Title" withAsterisk {...form.getInputProps("title")} />
             <Select
               label="Property Type"
               placeholder="Select Property Type"
@@ -294,22 +266,13 @@ export const CreateAdPage = () => {
             {...form.getInputProps("description")}
           />
 
-          <LoadScriptNext
-            googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-            libraries={libraries}
-          >
+          <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={libraries}>
             <Autocomplete
               options={{ componentRestrictions: { country: "de" } }}
-              onLoad={(autocomplete) =>
-                (autocompleteRef.current = autocomplete)
-              }
+              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
               onPlaceChanged={handlePlaceChanged}
             >
-              <TextInput
-                label="Address"
-                withAsterisk
-                {...form.getInputProps("address1")}
-              />
+              <TextInput label="Address" withAsterisk {...form.getInputProps("address1")} />
             </Autocomplete>
           </LoadScriptNext>
 
@@ -349,9 +312,7 @@ export const CreateAdPage = () => {
                   withAsterisk
                   readOnly
                   description="Cold Rent + Additional Costs."
-                  value={
-                    form.values.coldRent + (form.values.additionalCosts || 0)
-                  }
+                  value={form.values.coldRent + (form.values.additionalCosts || 0)}
                 />
               </Group>
               <Checkbox
@@ -382,42 +343,14 @@ export const CreateAdPage = () => {
               error={form.errors.availableFrom}
             />
             <Group grow align="start">
-              <NumberInput
-                label="Rooms"
-                min={1}
-                withAsterisk
-                {...form.getInputProps("numberOfRooms")}
-              />
-              <NumberInput
-                label="Beds"
-                min={0}
-                withAsterisk
-                {...form.getInputProps("numberOfBeds")}
-              />
-              <NumberInput
-                min={0}
-                label="Baths"
-                withAsterisk
-                {...form.getInputProps("numberOfBaths")}
-              />
+              <NumberInput label="Rooms" min={1} withAsterisk {...form.getInputProps("numberOfRooms")} />
+              <NumberInput label="Beds" min={0} withAsterisk {...form.getInputProps("numberOfBeds")} />
+              <NumberInput min={0} label="Baths" withAsterisk {...form.getInputProps("numberOfBaths")} />
             </Group>
             <Group grow align="start">
-              <NumberInput
-                min={1}
-                label="Total Floors"
-                {...form.getInputProps("totalFloors")}
-              />
-              <NumberInput
-                min={0}
-                label="Floor Number"
-                {...form.getInputProps("floorNumber")}
-              />
-              <NumberInput
-                min={0}
-                label="Living Space (sqm)"
-                withAsterisk
-                {...form.getInputProps("livingSpaceSqm")}
-              />
+              <NumberInput min={1} label="Total Floors" {...form.getInputProps("totalFloors")} />
+              <NumberInput min={0} label="Floor Number" {...form.getInputProps("floorNumber")} />
+              <NumberInput min={0} label="Living Space (sqm)" withAsterisk {...form.getInputProps("livingSpaceSqm")} />
             </Group>
             <Group grow align="start">
               <YearPickerInput
@@ -425,23 +358,12 @@ export const CreateAdPage = () => {
                 maxDate={new Date()}
                 valueFormat="YYYY"
                 placeholder="YYYY"
-                value={
-                  form.values.yearBuilt
-                    ? new Date(`${form.values.yearBuilt}-01-01`)
-                    : null
-                }
+                value={form.values.yearBuilt ? new Date(`${form.values.yearBuilt}-01-01`) : null}
                 onChange={(value) => {
-                  form.setFieldValue(
-                    "yearBuilt",
-                    value ? value.getFullYear().toString() : null,
-                  );
+                  form.setFieldValue("yearBuilt", value ? value.getFullYear().toString() : null);
                 }}
               />
-              <NumberInput
-                label="Notice Period (months)"
-                min={0}
-                {...form.getInputProps("noticePeriodInMonths")}
-              />
+              <NumberInput label="Notice Period (months)" min={0} {...form.getInputProps("noticePeriodInMonths")} />
             </Group>
             <Group grow align="start">
               <NumberInput
@@ -499,14 +421,7 @@ export const CreateAdPage = () => {
             minRows={3}
             {...form.getInputProps("creatorComment")}
           />
-          <Button
-            fullWidth
-            color="green"
-            type="submit"
-            radius="md"
-            size="lg"
-            my="xl"
-          >
+          <Button fullWidth color="green" type="submit" radius="md" size="lg" my="xl">
             Submit for review
           </Button>
           <PriceRecommendationModal
