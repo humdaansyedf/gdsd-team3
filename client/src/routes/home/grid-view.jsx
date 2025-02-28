@@ -6,7 +6,7 @@ import "./grid-view.css";
 
 const DefaultPropertyCard = ({ property }) => {
   return (
-    <Card withBorder p="md" shadow="sm">
+    <Card withBorder shadow="sm">
       <Card.Section>
         <Image
           src={property.media}
