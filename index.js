@@ -67,6 +67,7 @@ app.use(
           "https://*.googleapis.com",
           "https://*.gstatic.com",
           "https://maps.google.com",
+          "https://gdsd.s3.eu-central-1.amazonaws.com",
         ],
         "connect-src": ["'self'", "ws:", "wss:", "https://*.googleapis.com"],
       },
