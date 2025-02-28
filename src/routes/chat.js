@@ -19,7 +19,7 @@ chatRouter.get(
       const chat = await getChatByParticipants(
         propertyId,
         currentUserId,
-        selectedUserId,
+        selectedUserId
       );
 
       if (!chat) return res.json([]); // No chat found
@@ -34,7 +34,7 @@ chatRouter.get(
     } catch (error) {
       res.status(500).json({ error: "Could not fetch chat history" });
     }
-  },
+  }
 );
 
 // route to get users the current user has chatted with
@@ -61,13 +61,14 @@ chatRouter.get("/chats/users", async (req, res) => {
     // console.dir(chatrooms, { depth: null });
 
     const users = chatrooms.map((chatroom) => ({
-      senderId: chatroom.chat.participants[0].user.id,
+      id: chatroom.chat.participants[0].user.id,
       name: chatroom.chat.participants[0].user.name,
       propertyId: chatroom.chat.propertyId,
       propertyTitle: chatroom.chat.property.title,
       lastMessage: chatroom.chat.messages[0]?.content || "No messages",
       lastMessageAt: chatroom.chat.lastMessageAt,
     }));
+    console.log("sending users");
     res.json(users);
   } catch (error) {
     console.log(error);
