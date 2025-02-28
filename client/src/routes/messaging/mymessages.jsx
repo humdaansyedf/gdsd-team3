@@ -42,10 +42,14 @@ export function Mymessages() {
     propertyTitle: initialPropertyTitle,
   } = state || {};
   const [selectedUserId, setSelectedUserId] = useState(
-    initialSelectedUserId || null,
+    initialSelectedUserId || null
   );
   const [selectedUsername, setSelectedUsername] = useState(
-    initialSelectedUsername || " ",
+    initialSelectedUsername || " "
+  );
+
+  const [propertyTitle, setpropertyTitle] = useState(
+    initialPropertyTitle || " "
   );
 
   const [activePropertyId, setActivePropertyId] = useState(propertyId || null);
@@ -62,7 +66,7 @@ export function Mymessages() {
   const { data: fetchedMessages = [] } = useChatHistory(
     activePropertyId,
     currentUserId,
-    selectedUserId,
+    selectedUserId
   );
   const { data: fetchedUnreadMessages = [] } = useUnreadMessages(currentUserId);
 
@@ -117,10 +121,10 @@ export function Mymessages() {
 
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.senderId === data.senderId && user.propertyId === data.propertyId
+          user.id === data.senderId && user.propertyId === data.propertyId
             ? { ...user, lastMessage: data.content }
-            : user,
-        ),
+            : user
+        )
       );
 
       // Mark as read if this message belongs to the active chat
@@ -146,25 +150,12 @@ export function Mymessages() {
         ]);
       }
 
-      //   //update last message when notif received-important when chat not open
-      //   setUsers((prevUsers) =>
-      //     prevUsers.map((user) =>
-      //       user.id === notificationData.senderId &&
-      //       user.propertyId === notificationData.propertyId
-      //         ? {
-      //             ...user,
-      //             lastMessage: notificationData.content,
-      //           }
-      //         : user
-      //     )
-      //   );
-      // };
-
+      //update last message when notif received, add user in chatted with list-important when chat not open
       setUsers((prevUsers) => {
         const userExists = prevUsers.some(
           (user) =>
-            user.senderId === notificationData.senderId &&
-            user.propertyId === notificationData.propertyId,
+            user.id === notificationData.senderId &&
+            user.propertyId === notificationData.propertyId
         );
 
         if (notificationData.type === "newMessage" && !userExists) {
@@ -172,7 +163,7 @@ export function Mymessages() {
           return [
             ...prevUsers,
             {
-              senderId: notificationData.senderId,
+              id: notificationData.senderId,
               name: notificationData.name || "User", // Ensure name is available
               lastMessage: notificationData.content,
               lastMessageAt: notificationData.createdAt,
@@ -184,14 +175,14 @@ export function Mymessages() {
 
         // Otherwise, just update last message for existing users
         return prevUsers.map((user) =>
-          user.senderId === notificationData.senderId &&
+          user.id === notificationData.senderId &&
           user.propertyId === notificationData.propertyId
             ? {
                 ...user,
                 lastMessage: notificationData.content,
                 lastMessageAt: notificationData.createdAt,
               }
-            : user,
+            : user
         );
       });
     };
@@ -200,8 +191,8 @@ export function Mymessages() {
       //update messages with seenAt time
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.senderId === senderId ? { ...msg, seenAt } : msg,
-        ),
+          msg.senderId === senderId ? { ...msg, seenAt } : msg
+        )
       );
       //update notifications count
       setNotifications((prev) => prev.filter((n) => n.senderId !== senderId));
@@ -231,28 +222,27 @@ export function Mymessages() {
     socket.emit("join_room", {
       propertyId: user.propertyId,
       currentUserId,
-      selectedUserId: user.senderId,
+      selectedUserId: user.id,
     });
     console.log("User clicked:", user);
 
     const updatedPropertyId = user.propertyId || activePropertyId;
     setActivePropertyId(updatedPropertyId);
-    setSelectedUserId(user.senderId);
+    setSelectedUserId(user.id);
     setSelectedUsername(user.name);
 
     // Mark all notifications as read for this specific chat
     socket.emit("mark_notifications_as_read", {
       propertyId: updatedPropertyId,
       currentUserId: currentUserId,
-      selectedUserId: user.senderId,
+      selectedUserId: user.id,
     });
 
     // Remove notifications from global state for this specific chat
     setNotifications((prev) =>
       prev.filter(
-        (n) =>
-          n.senderId !== user.senderId || n.propertyId !== updatedPropertyId,
-      ),
+        (n) => n.senderId !== user.id || n.propertyId !== updatedPropertyId
+      )
     );
   };
 
@@ -283,31 +273,32 @@ export function Mymessages() {
     setUsers((prevUsers) => {
       // Check if property already exists in the list
       const userExists = prevUsers.some(
-        (user) => user.propertyId === activePropertyId,
+        (user) =>
+          user.propertyId === activePropertyId && user.id === selectedUserId
       );
 
       if (userExists) {
         // Update existing user
         return prevUsers.map((user) =>
-          user.propertyId === activePropertyId &&
-          user.senderId === selectedUserId
+          user.propertyId === activePropertyId && user.id === selectedUserId
             ? { ...user, lastMessage: messageContent }
-            : user,
+            : user
         );
       } else {
         // Add new user to the list
         return [
           ...prevUsers,
           {
-            senderId: selectedUserId,
-            name: selectedUsername,
-            lastMessage: messageContent,
+            id: selectedUserId,
+            name: selectedUsername || "",
+            lastMessage: messageContent || "",
             propertyId: activePropertyId,
+            propertyTitle,
           },
         ];
       }
     });
-
+    console.log("users", users);
     setNewMessage("");
   };
 
@@ -323,15 +314,14 @@ export function Mymessages() {
           <UnstyledButton
             key={user.index}
             onClick={() => handleUserClick(user)}
-            data-active={selectedUserId === user.senderId}
+            data-active={selectedUserId === user.id}
           >
             <Group p="xs" gap="xs" wrap="nowrap">
               <Indicator
                 label={
                   notifications.filter(
                     (n) =>
-                      n.senderId === user.senderId &&
-                      n.propertyId === user.propertyId,
+                      n.senderId === user.id && n.propertyId === user.propertyId
                   ).length
                 }
                 size={16}
@@ -339,8 +329,7 @@ export function Mymessages() {
                   !notifications ||
                   notifications.filter(
                     (n) =>
-                      n.senderId === user.senderId &&
-                      n.propertyId === user.propertyId,
+                      n.senderId === user.id && n.propertyId === user.propertyId
                   ).length === 0
                 }
               >
