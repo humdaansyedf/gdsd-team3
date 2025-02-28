@@ -59,9 +59,20 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "img-src": ["'self'", "data:", "https://gdsd.s3.eu-central-1.amazonaws.com"],
+        "script-src": ["'self'", "https://maps.googleapis.com", "https://maps.gstatic.com"],
+        "img-src": [
+          "'self'",
+          "data:",
+          "https://gdsd.s3.eu-central-1.amazonaws.com",
+          "https://*.googleapis.com",
+          "https://*.gstatic.com",
+          "https://maps.google.com",
+        ],
+        "connect-src": ["'self'", "ws:", "wss:", "https://*.googleapis.com"],
       },
     },
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
 
