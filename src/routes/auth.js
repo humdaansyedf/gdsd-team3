@@ -166,7 +166,6 @@ authRouter.post("/register", async (req, res) => {
 
     return res.json({ message: "Signed up" });
   } catch (e) {
-    req.log.error(e);
     return res.status(400).json({ message: "Failed to create user account" });
   }
 });

@@ -1,31 +1,20 @@
-import {
-  Avatar,
-  Badge,
-  Button,
-  Container,
-  FileInput,
-  Group,
-  Notification,
-  Paper,
-  Stack,
-  TextInput,
-} from "@mantine/core";
-import { IconCheck, IconPencil, IconX } from "@tabler/icons-react";
+import { Button, Container, Group, Paper, Stack, TextInput } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/auth-context";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function ProfileEdit() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     name: user.name || "",
     phone: user.phone || "",
     address: user.address || "",
   });
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [notification, setNotification] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,98 +23,44 @@ export function ProfileEdit() {
 
   const handleSubmit = async () => {
     const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) =>
-      formDataToSend.append(key, formData[key]),
-    );
-    if (profilePicture) formDataToSend.append("profilePicture", profilePicture);
+    Object.keys(formData).forEach((key) => formDataToSend.append(key, formData[key]));
 
     try {
       await axios.put("/api/profile", formDataToSend, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setNotification({
-        type: "success",
-        message: "Profile updated successfully!",
+      notifications.show({
+        message: "Profile updated successfully",
+        color: "green",
       });
-      setTimeout(() => {
-        navigate("/profile");
-        setTimeout(() => window.location.reload(), 1);
-      }, 1500);
+      queryClient.refetchQueries({ queryKey: ["me"] });
+      navigate("/profile");
     } catch (error) {
       console.error("Error updating profile:", error);
-      setNotification({ type: "error", message: "Failed to update profile." });
+      notifications.show({
+        message: "Error updating profile",
+        color: "red",
+      });
     }
   };
 
   return (
     <Container size="xs" mt="xl">
       <Paper withBorder shadow="md" p="lg">
-        <Stack align="center" spacing="md">
-          <div style={{ position: "relative" }}>
-            <Avatar size="xl" src={user.profilePicture} alt="Profile" />
-            <Badge
-              style={{
-                position: "absolute",
-                bottom: 0,
-                right: 5,
-                cursor: "pointer",
-              }}
-              variant="filled"
-              color="green"
-              p={2}
-              onClick={() => document.getElementById("file-input").click()}
-            >
-              <IconPencil size={18} />
-            </Badge>
-            <FileInput
-              id="file-input"
-              style={{ display: "none" }}
-              accept="image/*"
-              onChange={(file) => setProfilePicture(file)}
-            />
-          </div>
-
-          <TextInput
-            label="Edit Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-          <TextInput
-            label="Edit Phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-          <TextInput
-            label="Edit Address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
+        <Stack spacing="md">
+          <TextInput fullWidth label="Edit Name" name="name" value={formData.name} onChange={handleChange} />
+          <TextInput fullWidth label="Edit Phone" name="phone" value={formData.phone} onChange={handleChange} />
+          <TextInput fullWidth label="Edit Address" name="address" value={formData.address} onChange={handleChange} />
 
           <Group position="center">
             <Button color="green" onClick={handleSubmit}>
-              Done
+              Save
+            </Button>
+            <Button color="green" variant="outline" onClick={() => navigate("/profile")}>
+              Cancel
             </Button>
           </Group>
-
-          {notification && (
-            <Notification
-              icon={
-                notification.type === "success" ? (
-                  <IconCheck size={18} />
-                ) : (
-                  <IconX size={18} />
-                )
-              }
-              color={notification.type === "success" ? "green" : "red"}
-              onClose={() => setNotification(null)}
-            >
-              {notification.message}
-            </Notification>
-          )}
         </Stack>
       </Paper>
     </Container>
